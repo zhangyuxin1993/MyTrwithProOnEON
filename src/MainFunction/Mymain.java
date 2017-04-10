@@ -33,15 +33,14 @@ public class Mymain {
 	public void grooming(Network network, Layer iplayer, Layer oplayer) {
 		RouteSearching Dijkstra = new RouteSearching();
 		int numOfTransponder = 0;
-		// ReadFlowFile rff = new ReadFlowFile();
-		// rff.Readflow(iplayer, "G:/Topology/6.csv");// Q1 这里是干嘛用的
-		// /*
+
 		ArrayList<Link> DelLinklist = new ArrayList<Link>();
 		ArrayList<Link> SumDelLinklist = new ArrayList<Link>();
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
-		for (NodePair nodepair : demandlist) {
-			System.out.println(nodepair.getName() + "    " + nodepair.getTrafficdemand());
-		}
+		// for (NodePair nodepair : demandlist) {
+		// System.out.println(nodepair.getName() + " " +
+		// nodepair.getTrafficdemand());
+		// }
 		// 操作list里面的节点对
 		for (int n = 0; n < demandlist.size(); n++) {
 			NodePair nodepair = demandlist.get(n);
@@ -74,31 +73,8 @@ public class Mymain {
 				iplayer.removeLink(nowlink.getName());
 			}
 
-			// 将iplayer里面的link copy到copylayer里面去
-			Layer ipcopylayer = network.getLayerlist().get("ipcopylayer");
-			HashMap<String, Link> linklist1 = iplayer.getLinklist();
-			Iterator<String> linkitor1 = linklist1.keySet().iterator();
-			while (linkitor1.hasNext()) {
-				Link link = (Link) (linklist1.get(linkitor1.next()));
-
-				Node srcnode_copylayer = ipcopylayer.getNodelist().get(link.getNodeA().getName());
-				Node desnode_copylayer = ipcopylayer.getNodelist().get(link.getNodeB().getName());
-
-				String name = srcnode_copylayer.getName() + "-" + desnode_copylayer.getName();
-				int index = iplayer.getLinkNum();
-				double length = link.getLength();
-				double cost = link.getCost();
-				Link addlink = new Link(name, index, null, ipcopylayer, srcnode_copylayer, desnode_copylayer, length,
-						cost);
-				ipcopylayer.addLink(addlink);
-			}
-
-			// 在ipcopylayer里面找寻最短路径
-			Node srcnode_copylayer = ipcopylayer.getNodelist().get(srcnode.getName());
-			Node desnode_copylayer = ipcopylayer.getNodelist().get(desnode.getName());
 			LinearRoute newRoute = new LinearRoute(null, 0, null);
-
-			Dijkstra.Dijkstras(srcnode_copylayer, desnode_copylayer, ipcopylayer, newRoute, null);
+			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
 			// 恢复iplayer里面删除的link
 			for (Link nowlink : SumDelLinklist) {
@@ -106,19 +82,6 @@ public class Mymain {
 			}
 			SumDelLinklist.clear();
 			DelLinklist.clear();
-
-			// 清空ipcopylayer里面的link
-			ArrayList<Link> CopyDelLinklist = new ArrayList<Link>();
-			HashMap<String, Link> copylinklist = ipcopylayer.getLinklist();
-			Iterator<String> copylinkitor = copylinklist.keySet().iterator();
-			while (copylinkitor.hasNext()) {
-				Link link = (Link) (copylinklist.get(copylinkitor.next()));
-				CopyDelLinklist.add(link);
-			}
-			for (Link nowlink : CopyDelLinklist) {
-				ipcopylayer.removeLink(nowlink.getName());
-			}
-			CopyDelLinklist.clear();
 
 			// 储存dijkstra经过的链路 并且改变这些链路上的容量
 			if (newRoute.getLinklist().size() != 0) {// 工作路径路由成功
@@ -137,7 +100,8 @@ public class Mymain {
 								&& link.getNodeB().getName().equals(link1.getNodeB().getName())
 								&& link1.getNature() == 0) {
 							link1.setFlow(link1.getFlow() + nodepair.getTrafficdemand());
-							System.out.println("链路 " + link1.getName() + "上已经使用的流量" + link1.getFlow() + "链路上剩余容量 ="
+							link1.setIpremainflow(link1.getSumflow()-link1.getFlow());
+							System.out.println("链路 " + link1.getName() + "上已经使用的流量" + link1.getFlow() + "  链路上剩余容量 ="
 									+ link1.getIpremainflow());
 							newrouteLinklist.add(link);
 						}
@@ -195,13 +159,13 @@ public class Mymain {
 							cost = cost + link.getCost();
 							Request request = null;
 							ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
-							// 这里与原版不一致 将两个循环写在一起
+						
 							link.setMaxslot(slotnum + link.getMaxslot());
 							// System.out.println("链路 " + link.getName() + "
 							// 的最大slot是： " + link.getMaxslot()+
 							// " 可用频谱窗数： "+link.getSlotsindex().size());
 						}
-						String name = opsrcnode.getName() + "-" + 0 + "-" + opdesnode.getName();// 为什么这样设置name
+						String name = opsrcnode.getName() + "-" + opdesnode.getName();
 						int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的
 																	// 故这样设置index
 						Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost);
@@ -209,6 +173,7 @@ public class Mymain {
 						newlink.setNature(0);
 						newlink.setFlow(nodepair.getTrafficdemand());
 						newlink.setSumflow(slotnum * X);// 多出来的flow是从这里产生的
+						newlink.setIpremainflow(newlink.getSumflow()-newlink.getFlow());
 						System.out.println(newlink.getName() + " 上面的已用flow: " + newlink.getFlow() + "    共有的flow:  "
 								+ newlink.getSumflow() + "    预留的flow：  " + newlink.getIpremainflow());
 						numOfTransponder = numOfTransponder + 2;
@@ -217,7 +182,6 @@ public class Mymain {
 				}
 			}
 		}
-		// */
 	}
 
 	private ArrayList<Integer> spectrumallocationOneRoute(LinearRoute route) {

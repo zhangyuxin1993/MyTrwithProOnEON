@@ -36,14 +36,6 @@ public class Network extends CommonObject{
 		physical.setClientlayer(layer0);
 		layer0.setAssociateNetwork(this);
 		layer0.setServerlayer(physical);
-		
-		
-		Layer ipcopylayer = new Layer("ipcopylayer", 2, "", this);
-		this.addLayer(ipcopylayer);
-	
-		ipcopylayer.setAssociateNetwork(this);
-		ipcopylayer.setServerlayer(this.getLayerlist().get("Physical"));
-		
 	}
 
 	
