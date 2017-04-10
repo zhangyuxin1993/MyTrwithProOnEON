@@ -144,8 +144,8 @@ public class Network extends CommonObject{
 		Layer layer = this.getLayerlist().get("Physical");
 		Layer currentlayer = this.getLayerlist().get("Layer0");
 		currentlayer.copyNodes(layer);
-		Layer currentlayer2 = this.getLayerlist().get("ipcopylayer");
-		currentlayer2.copyNodes(layer);
+//		Layer currentlayer2 = this.getLayerlist().get("ipcopylayer");
+//		currentlayer2.copyNodes(layer);
 		
 	}
 	/**
