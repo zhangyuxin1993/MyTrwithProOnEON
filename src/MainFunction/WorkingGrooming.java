@@ -1,4 +1,4 @@
-package MainFunction;
+ï»¿package MainFunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import subgraph.LinearRoute;
 
 public class WorkingGrooming {
 	
-	public void WorkingGrooming( Network network, Layer iplayer, Layer oplayer) {
+	public void MyWorkingGrooming( Network network, Layer iplayer, Layer oplayer) {
 		RouteSearching Dijkstra = new RouteSearching();
 		int numOfTransponder = 0;
 
@@ -27,28 +27,28 @@ public class WorkingGrooming {
 		// System.out.println(nodepair.getName() + " " +
 		// nodepair.getTrafficdemand());
 		// }
-		// ²Ù×÷listÀïÃæµÄ½Úµã¶Ô
+		// æ“ä½œlisté‡Œé¢çš„èŠ‚ç‚¹å¯¹
 		for (int n = 0; n < demandlist.size(); n++) {
 			NodePair nodepair = demandlist.get(n);
 
 			Node srcnode = nodepair.getSrcNode();
 			Node desnode = nodepair.getDesNode();
 
-			System.out.println("ÕıÔÚ²Ù×÷µÄ½Úµã¶Ô£º " + nodepair.getName() + "  ËûµÄÁ÷Á¿ĞèÇóÊÇ£º " + nodepair.getTrafficdemand());
+			System.out.println("æ­£åœ¨æ“ä½œçš„èŠ‚ç‚¹å¯¹ï¼š " + nodepair.getName() + "  ä»–çš„æµé‡éœ€æ±‚æ˜¯ï¼š " + nodepair.getTrafficdemand());
 
 			HashMap<String, Link> linklist = iplayer.getLinklist();
 			Iterator<String> linkitor = linklist.keySet().iterator();
 			while (linkitor.hasNext()) {
 				Link link = (Link) (linklist.get(linkitor.next()));
-				System.out.println("Á´Â·Ãû×Ö£º " + link.getName());
+				System.out.println("é“¾è·¯åå­—ï¼š " + link.getName());
 				if (link.getSumflow() - link.getFlow() < nodepair.getTrafficdemand()) {
-					System.out.println("linkÉÏµÄ×ÜÁ÷Á¿£º" + link.getSumflow());
-					System.out.println("linkÉÏµÄÒÑÊ¹ÓÃÁ÷Á¿£º" + link.getFlow());
+					System.out.println("linkä¸Šçš„æ€»æµé‡ï¼š" + link.getSumflow());
+					System.out.println("linkä¸Šçš„å·²ä½¿ç”¨æµé‡ï¼š" + link.getFlow());
 					DelLinklist.add(link);
-				} // ÒÆ³ıÈİÁ¿²»¹»µÄÁ´Â·
-				if (link.getNature() == 1) {// ±£»¤ÊÇ1 ¹¤×÷ÊÇ0
+				} // ç§»é™¤å®¹é‡ä¸å¤Ÿçš„é“¾è·¯
+				if (link.getNature() == 1) {// ä¿æŠ¤æ˜¯1 å·¥ä½œæ˜¯0
 					DelLinklist.add(link);
-				} // ÒÆ³ıÊôĞÔ²»¶ÔµÄÁ´Â·
+				} // ç§»é™¤å±æ€§ä¸å¯¹çš„é“¾è·¯
 			}
 			for (Link nowlink : DelLinklist) {
 				if (!SumDelLinklist.contains(nowlink)) {
@@ -62,16 +62,16 @@ public class WorkingGrooming {
 			LinearRoute newRoute = new LinearRoute(null, 0, null);
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
-			// »Ö¸´iplayerÀïÃæÉ¾³ıµÄlink
+			// æ¢å¤iplayeré‡Œé¢åˆ é™¤çš„link
 			for (Link nowlink : SumDelLinklist) {
 				iplayer.addLink(nowlink);
 			}
 			SumDelLinklist.clear();
 			DelLinklist.clear();
 
-			// ´¢´ædijkstra¾­¹ıµÄÁ´Â· ²¢ÇÒ¸Ä±äÕâĞ©Á´Â·ÉÏµÄÈİÁ¿
-			if (newRoute.getLinklist().size() != 0) {// ¹¤×÷Â·¾¶Â·ÓÉ³É¹¦
-				System.out.println("********ÔÚIP²ãÕÒµ½Â·ÓÉ£¡");
+			// å‚¨å­˜dijkstraç»è¿‡çš„é“¾è·¯ å¹¶ä¸”æ”¹å˜è¿™äº›é“¾è·¯ä¸Šçš„å®¹é‡
+			if (newRoute.getLinklist().size() != 0) {// å·¥ä½œè·¯å¾„è·¯ç”±æˆåŠŸ
+				System.out.println("********åœ¨IPå±‚æ‰¾åˆ°è·¯ç”±ï¼");
 				newRoute.OutputRoute_node(newRoute);
 
 				ArrayList<Link> newrouteLinklist = new ArrayList<Link>();
@@ -87,39 +87,41 @@ public class WorkingGrooming {
 								&& link1.getNature() == 0) {
 							link1.setFlow(link1.getFlow() + nodepair.getTrafficdemand());
 							link1.setIpremainflow(link1.getSumflow()-link1.getFlow());
-							System.out.println("Á´Â· " + link1.getName() + "ÉÏÒÑ¾­Ê¹ÓÃµÄÁ÷Á¿" + link1.getFlow() + "  Á´Â·ÉÏÊ£ÓàÈİÁ¿ ="
+							System.out.println("é“¾è·¯ " + link1.getName() + "ä¸Šå·²ç»ä½¿ç”¨çš„æµé‡" + link1.getFlow() + "  é“¾è·¯ä¸Šå‰©ä½™å®¹é‡ ="
 									+ link1.getIpremainflow());
 							newrouteLinklist.add(link);
 						}
 					}
 				}
+						MyProtectionGrooming mpg=new MyProtectionGrooming();
+						mpg.myprotectiongrooming(iplayer, oplayer, nodepair,newRoute,numOfTransponder);
 			}
-
-			// ÒÔÉÏ¹¤×÷Â·ÓÉÂ·ÓÉ³É¹¦
+	
+			// ä»¥ä¸Šå·¥ä½œè·¯ç”±è·¯ç”±æˆåŠŸ
 			else {
-				System.out.println("IP²ã¹¤×÷Â·ÓÉ²»³É¹¦£¬ĞèÒªĞÂ½¨¹âÂ·");
+				System.out.println("IPå±‚å·¥ä½œè·¯ç”±ä¸æˆåŠŸï¼Œéœ€è¦æ–°å»ºå…‰è·¯");
 				Node opsrcnode = oplayer.getNodelist().get(srcnode.getName());
 				Node opdesnode = oplayer.getNodelist().get(desnode.getName());
-				// System.out.println("Ô´µã£º " + opsrcnode.getName() + " ÖÕµã£º " +
+				// System.out.println("æºç‚¹ï¼š " + opsrcnode.getName() + " ç»ˆç‚¹ï¼š " +
 				// opdesnode.getName());
 
-				// ÔÚ¹â²ãĞÂ½¨¹âÂ·µÄÊ±ºò²»ĞèÒª¿¼ÂÇÈİÁ¿µÄÎÊÌâ
+				// åœ¨å…‰å±‚æ–°å»ºå…‰è·¯çš„æ—¶å€™ä¸éœ€è¦è€ƒè™‘å®¹é‡çš„é—®é¢˜
 				LinearRoute opnewRoute = new LinearRoute(null, 0, null);
 				Dijkstra.Dijkstras(opsrcnode, opdesnode, oplayer, opnewRoute, null);
 
 				if (opnewRoute.getLinklist().size() == 0) {
-					System.out.println("¹¤×÷ÎŞÂ·¾¶");
+					System.out.println("å·¥ä½œæ— è·¯å¾„");
 				} else {
-					System.out.println("ÔÚÎïÀí²ãÂ·ÓÉ¾­¹ıµÄ½ÚµãÈçÏÂ£º------");
+					System.out.println("åœ¨ç‰©ç†å±‚è·¯ç”±ç»è¿‡çš„èŠ‚ç‚¹å¦‚ä¸‹ï¼š------");
 					opnewRoute.OutputRoute_node(opnewRoute);
 
 					int slotnum = 0;
 					int IPflow = nodepair.getTrafficdemand();
 					double X = 1;// 2000-4000 BPSK,1000-2000
-									// QBSK,500-1000£¬8QAM,0-500 16QAM
+									// QBSK,500-1000ï¼Œ8QAM,0-500 16QAM
 					double routelength = opnewRoute.getlength();
-					// System.out.println("ÎïÀíÂ·¾¶µÄ³¤¶ÈÊÇ£º"+routelength);
-					// Í¨¹ıÂ·¾¶µÄ³¤¶ÈÀ´±ä»¯µ÷ÖÆ¸ñÊ½
+					// System.out.println("ç‰©ç†è·¯å¾„çš„é•¿åº¦æ˜¯ï¼š"+routelength);
+					// é€šè¿‡è·¯å¾„çš„é•¿åº¦æ¥å˜åŒ–è°ƒåˆ¶æ ¼å¼
 					if (routelength > 2000 && routelength <= 4000) {
 						X = 12.5;
 					} else if (routelength > 1000 && routelength <= 2000) {
@@ -129,14 +131,14 @@ public class WorkingGrooming {
 					} else if (routelength > 0 && routelength <= 500) {
 						X = 50.0;
 					}
-					slotnum = (int) Math.ceil(IPflow / X);// ÏòÉÏÈ¡Õû
+					slotnum = (int) Math.ceil(IPflow / X);// å‘ä¸Šå–æ•´
 
 					opnewRoute.setSlotsnum(slotnum);
-					System.out.println("¸ÃÁ´Â·ËùĞèslotÊı£º " + slotnum);
+					System.out.println("è¯¥é“¾è·¯æ‰€éœ€slotæ•°ï¼š " + slotnum);
 					ArrayList<Integer> index_wave = new ArrayList<Integer>();
 					index_wave = spectrumallocationOneRoute(opnewRoute);
 					if (index_wave.size() == 0) {
-						System.out.println("Â·¾¶¶ÂÈû £¬²»·ÖÅäÆµÆ××ÊÔ´");
+						System.out.println("è·¯å¾„å µå¡ ï¼Œä¸åˆ†é…é¢‘è°±èµ„æº");
 					} else {
 						double length = 0;
 						double cost = 0;
@@ -147,21 +149,21 @@ public class WorkingGrooming {
 							ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 						
 							link.setMaxslot(slotnum + link.getMaxslot());
-							// System.out.println("Á´Â· " + link.getName() + "
-							// µÄ×î´óslotÊÇ£º " + link.getMaxslot()+
-							// " ¿ÉÓÃÆµÆ×´°Êı£º "+link.getSlotsindex().size());
+							// System.out.println("é“¾è·¯ " + link.getName() + "
+							// çš„æœ€å¤§slotæ˜¯ï¼š " + link.getMaxslot()+
+							// " å¯ç”¨é¢‘è°±çª—æ•°ï¼š "+link.getSlotsindex().size());
 						}
 						String name = opsrcnode.getName() + "-" + opdesnode.getName();
-						int index = iplayer.getLinklist().size();// ÒòÎªiplayerÀïÃæµÄlinkÊÇÒ»ÌõÒ»Ìõ¼ÓÉÏÈ¥µÄ
-																	// ¹ÊÕâÑùÉèÖÃindex
+						int index = iplayer.getLinklist().size();// å› ä¸ºiplayeré‡Œé¢çš„linkæ˜¯ä¸€æ¡ä¸€æ¡åŠ ä¸Šå»çš„
+																	// æ•…è¿™æ ·è®¾ç½®index
 						Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost);
 						iplayer.addLink(newlink);
 						newlink.setNature(0);
 						newlink.setFlow(nodepair.getTrafficdemand());
-						newlink.setSumflow(slotnum * X);// ¶à³öÀ´µÄflowÊÇ´ÓÕâÀï²úÉúµÄ
+						newlink.setSumflow(slotnum * X);// å¤šå‡ºæ¥çš„flowæ˜¯ä»è¿™é‡Œäº§ç”Ÿçš„
 						newlink.setIpremainflow(newlink.getSumflow()-newlink.getFlow());
-						System.out.println(newlink.getName() + " ÉÏÃæµÄÒÑÓÃflow: " + newlink.getFlow() + "    ¹²ÓĞµÄflow:  "
-								+ newlink.getSumflow() + "    Ô¤ÁôµÄflow£º  " + newlink.getIpremainflow());
+						System.out.println(newlink.getName() + " ä¸Šé¢çš„å·²ç”¨flow: " + newlink.getFlow() + "    å…±æœ‰çš„flow:  "
+								+ newlink.getSumflow() + "    é¢„ç•™çš„flowï¼š  " + newlink.getIpremainflow());
 						numOfTransponder = numOfTransponder + 2;
 						newlink.setPhysicallink(opnewRoute.getLinklist());
 					}
@@ -197,21 +199,21 @@ public class WorkingGrooming {
 		}
 		return nodepairlist;
 	}
-	private ArrayList<Integer> spectrumallocationOneRoute(LinearRoute route) {
+	public ArrayList<Integer> spectrumallocationOneRoute(LinearRoute route) {
 		ArrayList<Link> linklistOnroute = new ArrayList<Link>();
 		linklistOnroute = route.getLinklist();
 		route.OutputRoute_node(route);// debug
 		for (Link link : linklistOnroute) {
 			if (route.getSlotsnum() == 0) {
-				System.out.println("Â·¾¶ÉÏÃ»ÓĞslotĞèÒª·ÖÅä");
+				System.out.println("è·¯å¾„ä¸Šæ²¡æœ‰slotéœ€è¦åˆ†é…");
 				break;
 			}
 			link.getSlotsindex().clear();
-			// slotarrayºÍslotindexµÄÇø±ğ£¿£¿
-			for (int start = 0; start < link.getSlotsarray().size() - route.getSlotsnum(); start++) {// ²éÕÒ¿ÉÓÃslotµÄÆğµã
+			// slotarrayå’Œslotindexçš„åŒºåˆ«ï¼Ÿï¼Ÿ
+			for (int start = 0; start < link.getSlotsarray().size() - route.getSlotsnum(); start++) {// æŸ¥æ‰¾å¯ç”¨slotçš„èµ·ç‚¹
 				int flag = 0;
 				for (int num = start; num < route.getSlotsnum() + start; num++) {
-					if (link.getSlotsarray().get(num).getoccupiedreqlist().size() != 0) {// ¸Ã²¨³¤ÒÑ¾­±»Õ¼ÓÃ
+					if (link.getSlotsarray().get(num).getoccupiedreqlist().size() != 0) {// è¯¥æ³¢é•¿å·²ç»è¢«å ç”¨
 						flag = 1;
 						break;
 					}
@@ -220,7 +222,7 @@ public class WorkingGrooming {
 					link.getSlotsindex().add(start);
 				}
 			}
-		} // ÒÔÉÏËùÓĞµÄlink·ÖÅäÍê
+		} // ä»¥ä¸Šæ‰€æœ‰çš„linkåˆ†é…å®Œ
 
 		Link firstlink = linklistOnroute.get(0);
 		ArrayList<Integer> sameindex = new ArrayList<Integer>();

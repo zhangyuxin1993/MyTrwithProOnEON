@@ -58,7 +58,7 @@ public class trafficgrooming {
 				}
 			}
 			// System.out.println("********逐个输出删除的链路,共有"+tempdel_LinkList.size()+"条,依次为：");
-///*
+
 			for (int k = 0; k < tempdel_LinkList.size(); k++) {
 				System.out.println(tempdel_LinkList.get(k).getName());
 			}

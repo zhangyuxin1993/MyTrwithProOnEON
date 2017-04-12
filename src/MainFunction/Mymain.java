@@ -16,11 +16,12 @@ public class Mymain {
 		Layer oplayer = network.getLayerlist().get("Physical");
 
 		WorkingGrooming mf=new WorkingGrooming();
-		mf.WorkingGrooming(network, iplayer, oplayer);
+		mf.MyWorkingGrooming(network, iplayer, oplayer);
+		
 	}
 }
 	
 
-	
+	//写到在光层建立工作光路之后加入保护
 
 
