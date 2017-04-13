@@ -52,10 +52,13 @@ public class LinearRoute extends Subgraph {
 		if(newroute.getNodelist().size()==0){
 			System.out.println("no path to the desnode");
 		}
-		else{			  
-		      for(Node node:newroute.getNodelist()){		    	   
-		    	       System.out.print(node.getName()+"-");
-		      }	      
+		else{	
+			for(int n=0;n<newroute.getNodelist().size()-1;n++){
+				Node node=newroute.getNodelist().get(n);
+				System.out.print(node.getName()+"-");
+			}	    	   
+		    	System.out.println(newroute.getNodelist().get(newroute.getNodelist().size()-1).getName());
+		     	      
 		}
 	}
 	//public ArrayList<Link> getRoute_linklist() {ø……æ£¨∑µªÿlinklist

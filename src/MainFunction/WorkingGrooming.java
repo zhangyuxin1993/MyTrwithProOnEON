@@ -15,8 +15,8 @@ import resource.ResourceOnLink;
 import subgraph.LinearRoute;
 
 public class WorkingGrooming {
-	
-	public void MyWorkingGrooming( Network network, Layer iplayer, Layer oplayer) {
+
+	public void MyWorkingGrooming(Network network, Layer iplayer, Layer oplayer) {
 		RouteSearching Dijkstra = new RouteSearching();
 		int numOfTransponder = 0;
 
@@ -40,10 +40,10 @@ public class WorkingGrooming {
 			Iterator<String> linkitor = linklist.keySet().iterator();
 			while (linkitor.hasNext()) {
 				Link link = (Link) (linklist.get(linkitor.next()));
-				System.out.println("链路名字： " + link.getName());
+//				System.out.println("链路名字： " + link.getName());
 				if (link.getSumflow() - link.getFlow() < nodepair.getTrafficdemand()) {
-					System.out.println("link上的总流量：" + link.getSumflow());
-					System.out.println("link上的已使用流量：" + link.getFlow());
+//					System.out.println("link上的总流量：" + link.getSumflow());
+//					System.out.println("link上的已使用流量：" + link.getFlow());
 					DelLinklist.add(link);
 				} // 移除容量不够的链路
 				if (link.getNature() == 1) {// 保护是1 工作是0
@@ -86,17 +86,18 @@ public class WorkingGrooming {
 								&& link.getNodeB().getName().equals(link1.getNodeB().getName())
 								&& link1.getNature() == 0) {
 							link1.setFlow(link1.getFlow() + nodepair.getTrafficdemand());
-							link1.setIpremainflow(link1.getSumflow()-link1.getFlow());
+							link1.setIpremainflow(link1.getSumflow() - link1.getFlow());
 							System.out.println("链路 " + link1.getName() + "上已经使用的流量" + link1.getFlow() + "  链路上剩余容量 ="
 									+ link1.getIpremainflow());
 							newrouteLinklist.add(link);
 						}
 					}
 				}
-						MyProtectionGrooming mpg=new MyProtectionGrooming();
-						mpg.myprotectiongrooming(iplayer, oplayer, nodepair,newRoute,numOfTransponder);
+				boolean flag = true;
+				MyProtectionGrooming mpg = new MyProtectionGrooming();
+				mpg.myprotectiongrooming(iplayer, oplayer, nodepair, newRoute, numOfTransponder, flag);
 			}
-	
+
 			// 以上工作路由路由成功
 			else {
 				System.out.println("IP层工作路由不成功，需要新建光路");
@@ -147,7 +148,7 @@ public class WorkingGrooming {
 							cost = cost + link.getCost();
 							Request request = null;
 							ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
-						
+
 							link.setMaxslot(slotnum + link.getMaxslot());
 							// System.out.println("链路 " + link.getName() + "
 							// 的最大slot是： " + link.getMaxslot()+
@@ -156,21 +157,27 @@ public class WorkingGrooming {
 						String name = opsrcnode.getName() + "-" + opdesnode.getName();
 						int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的
 																	// 故这样设置index
-						Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost);
+						Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost,0);
 						iplayer.addLink(newlink);
 						newlink.setNature(0);
 						newlink.setFlow(nodepair.getTrafficdemand());
 						newlink.setSumflow(slotnum * X);// 多出来的flow是从这里产生的
-						newlink.setIpremainflow(newlink.getSumflow()-newlink.getFlow());
-						System.out.println(newlink.getName() + " 上面的已用flow: " + newlink.getFlow() + "    共有的flow:  "
+						newlink.setIpremainflow(newlink.getSumflow() - newlink.getFlow());
+						
+						System.out.println("新建的工作光路 "+newlink.getName() + " 上面的已用flow: " + newlink.getFlow() + "    共有的flow:  "
 								+ newlink.getSumflow() + "    预留的flow：  " + newlink.getIpremainflow());
 						numOfTransponder = numOfTransponder + 2;
 						newlink.setPhysicallink(opnewRoute.getLinklist());
+					
+						boolean flag2 = false;
+						MyProtectionGrooming mpg = new MyProtectionGrooming();
+						mpg.myprotectiongrooming(iplayer, oplayer, nodepair, opnewRoute, numOfTransponder, flag2);
 					}
 				}
 			}
 		}
 	}
+
 	public static ArrayList<NodePair> Rankflow(Layer IPlayer) {
 		ArrayList<NodePair> nodepairlist = new ArrayList<NodePair>(2000);
 		HashMap<String, NodePair> map3 = IPlayer.getNodepairlist();
@@ -199,6 +206,7 @@ public class WorkingGrooming {
 		}
 		return nodepairlist;
 	}
+
 	public ArrayList<Integer> spectrumallocationOneRoute(LinearRoute route) {
 		ArrayList<Link> linklistOnroute = new ArrayList<Link>();
 		linklistOnroute = route.getLinklist();
@@ -248,4 +256,3 @@ public class WorkingGrooming {
 		return sameindex;
 	}
 }
- 

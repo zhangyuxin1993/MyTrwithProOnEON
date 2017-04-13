@@ -130,7 +130,7 @@ public class Link extends CommonObject{
 	}
 	
 	public Link(String name, int index, String comments, Layer associatedLayer,
-			Node nodeA, Node nodeB, double length, double cost) {
+			Node nodeA, Node nodeB, double length, double cost, int nature) {
 		super(name, index, comments);
 		this.associatedLayer = associatedLayer;
 		this.nodeA = nodeA;
@@ -141,6 +141,7 @@ public class Link extends CommonObject{
 		this.slotsindex=new ArrayList();
 		
 		this.slotsarray=new ArrayList<Slot>();
+		this.nature=nature;
 		//System.out.println("size="+slotsarray.size());
 		for(int i = 0; i < Constant.F; i ++){
 			Slot slot=new Slot();

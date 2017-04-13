@@ -16,34 +16,63 @@ import subgraph.LinearRoute;
 public class MyProtectionGrooming {
 
 	public void myprotectiongrooming(Layer iplayer, Layer oplayer, NodePair nodepair, LinearRoute route,
-			int numOfTransponder) {
+			int numOfTransponder, boolean flag) {// flag=true表示保护IP层建立的工作路径
+													// flag=flase表示光层建立的工作路径
 		RouteSearching Dijkstra = new RouteSearching();
+		boolean delflag = false;
 
-		System.out.println("节点对："+nodepair.getName());
+		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
 		ArrayList<Link> DelLinkList = new ArrayList<Link>();
 		ArrayList<Link> SumDelLinkList = new ArrayList<Link>();
 		Node srcnode = nodepair.getSrcNode();
 		Node desnode = nodepair.getDesNode();
-
+		System.out.println("IP层的链路条数： "+iplayer.getLinklist().size());
 		HashMap<String, Link> linklist = iplayer.getLinklist();
 		Iterator<String> linkitor = linklist.keySet().iterator();
 		while (linkitor.hasNext()) {
 			Link link = (Link) (linklist.get(linkitor.next()));
+			System.out.println("当前链路：" + link.getName());
 			if (link.getNature() == 0) {// 删去属性为工作的链路
 				DelLinkList.add(link);
+				continue;
 			}
 			if (link.getSumflow() - link.getFlow() < nodepair.getTrafficdemand()) {// 删去流量不够的链路
 				DelLinkList.add(link);
+				continue;
 			}
 			/*
 			 * 在IP层保护路径与工作路径对应光层的链路不能重合 故要在ip层路由保护时应先删除 工作路由对应的
 			 */
+			delflag = false;
 			for (Link LinkOnRoute : route.getLinklist()) {// 取出工作路由中的链路
-				for (Link LinkOnPhy : LinkOnRoute.getPhysicallink()) {// 取出某一工作链路上对应的物理链路
-					for (Link LinkInIPlayer : link.getPhysicallink()) {
-						if (LinkOnPhy.getName().equals(LinkInIPlayer.getName())) {// 这里可不可以不加getname??
-							DelLinkList.add(link);
+				if (delflag)
+					break;
+				System.out.println("工作路径上的链路： " + LinkOnRoute.getName());
+				if (flag) {// flag为true则表示保护 IP层建立的工作路径
+					for (Link LinkOnPhy : LinkOnRoute.getPhysicallink()) {// 取出某一工作链路上对应的物理链路
+						if (delflag)
+							break;
+						for (Link LinkInIPlayer : link.getPhysicallink()) {
+							if (LinkOnPhy.getName().equals(LinkInIPlayer.getName())) {// 这里可不可以不加getname??
+								DelLinkList.add(link);
+								delflag = true;
+							}
+							if (delflag)
+								break;
 						}
+
+					}
+				} else {// flag为false则表示保护 光层建立的工作路径
+					for (Link LinkInIPlayer : link.getPhysicallink()) {
+						if (delflag)
+							break;
+						System.out.println("IP层的link对应的物理层的链路：  " + LinkInIPlayer.getName());
+						if (LinkOnRoute.getName().equals(LinkInIPlayer.getName())) {// link上两个节点位置会不会影响？？
+							DelLinkList.add(link);
+							delflag = true;
+						}
+						if (delflag)
+							break;
 					}
 				}
 			}
@@ -74,15 +103,30 @@ public class MyProtectionGrooming {
 			}
 		} else {
 			ArrayList<Link> opDelLink = new ArrayList<Link>();
-			System.out.println("保护路由需要在光层新建");
+			System.out.println("保护路由在IP层不能路由，需要在光层新建");
 			// 删除工作路由经过的所有物理链路
 			for (Link LinkOnRoute : route.getLinklist()) {// 取出工作路由中的链路
-				for (Link LinkOnPhy : LinkOnRoute.getPhysicallink()) {// 取出某一工作链路上对应的物理链路
+				System.out.println("物理层上的工作路径链路："+LinkOnRoute.getName());
+				if (flag) {
+					for (Link LinkOnPhy : LinkOnRoute.getPhysicallink()) {// 取出某一工作链路上对应的物理链路
+						HashMap<String, Link> oplinklist = oplayer.getLinklist();
+						Iterator<String> oplinkitor = oplinklist.keySet().iterator();
+						while (oplinkitor.hasNext()) {
+							Link oplink = (Link) (oplinklist.get(oplinkitor.next()));
+							System.out.println("物理层链路遍历："+oplink.getName());
+							if (oplink.getName().equals(LinkOnPhy.getName())) {
+								opDelLink.add(oplink);
+								break;
+							}
+						}
+					}
+				} else {
 					HashMap<String, Link> oplinklist = oplayer.getLinklist();
 					Iterator<String> oplinkitor = oplinklist.keySet().iterator();
 					while (oplinkitor.hasNext()) {
 						Link oplink = (Link) (oplinklist.get(oplinkitor.next()));
-						if (oplink.getName().equals(LinkOnPhy.getName())) {
+						System.out.println("物理层链路遍历："+oplink.getName());
+						if (oplink.getName().equals(LinkOnRoute.getName())) {
 							opDelLink.add(oplink);
 							break;
 						}
@@ -105,9 +149,9 @@ public class MyProtectionGrooming {
 			} // 恢复oplayer里面的link
 			opDelLink.clear();
 			if (opPrtectRoute.getLinklist().size() == 0) {
-				System.out.println("无保护路径 ");
+				System.out.println("保护路由光层无法建立");
 			} else {
-				System.out.println("新建的保护路径为:");
+				System.out.println("新建的光层保护路径为:");
 				opPrtectRoute.OutputRoute_node(opPrtectRoute);
 				int slotnum = 0;
 				int IPflow = nodepair.getTrafficdemand();
@@ -151,7 +195,7 @@ public class MyProtectionGrooming {
 					String name = opsrcnode.getName() + "-" + opdesnode.getName();
 					int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的
 																// 故这样设置index
-					Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost);
+					Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost,1);
 					iplayer.addLink(newlink);
 					newlink.setNature(1);
 					newlink.setFlow(nodepair.getTrafficdemand());
