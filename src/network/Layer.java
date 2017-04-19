@@ -265,7 +265,7 @@ public class Layer extends CommonObject{
 						}
 							
 						
-						Link newlink = new Link(name,index,"",this,nodeA,nodeB,length,cost,nature);
+						Link newlink = new Link(name,index,"",this,nodeA,nodeB,length,cost);
 						this.addLink(newlink);
 						//update the neighbor node list
 						//nodeA.addNeiNode(nodeB);
@@ -305,7 +305,7 @@ public class Layer extends CommonObject{
 		Iterator<String> iter1 = map.keySet().iterator();
 		while (iter1.hasNext()){
 			Link link1=(Link)(map.get(iter1.next()));
-			Link link2=new Link(link1.getName(),link1.getIndex(),"",this,link1.getNodeA(),link1.getNodeB(),link1.getLength(),link1.getCost(),nature);
+			Link link2=new Link(link1.getName(),link1.getIndex(),"",this,link1.getNodeA(),link1.getNodeB(),link1.getLength(),link1.getCost());
 			this.addLink(link2);
 		}
 	}

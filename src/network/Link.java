@@ -3,6 +3,8 @@ package network;
 import java.util.ArrayList;
 
 import network.NodePair;
+import subgraph.Cycle;
+import subgraph.LinearRoute;
 import general.CommonObject;
 import general.Constant;
 import general.Slot;
@@ -21,7 +23,15 @@ public class Link extends CommonObject{
 	private double ipremainflow=0;
     private int nature;//所属工作或者保护的属性: true为工作 false为保护
 	private int maxslot;//最大使用slot
+	private ArrayList<VirtualLink> virtuallinklist = null;
 	
+	public ArrayList<VirtualLink> getVirtualLinkList() {
+		return virtuallinklist;	
+	}
+	
+	public void setVirtualLinkList(ArrayList<VirtualLink> virtuallinklist){
+		this.virtuallinklist.addAll(virtuallinklist);
+	}
 	public int getMaxslot() {
 		return maxslot;
 	}
@@ -130,7 +140,7 @@ public class Link extends CommonObject{
 	}
 	
 	public Link(String name, int index, String comments, Layer associatedLayer,
-			Node nodeA, Node nodeB, double length, double cost, int nature) {
+			Node nodeA, Node nodeB, double length, double cost) {
 		super(name, index, comments);
 		this.associatedLayer = associatedLayer;
 		this.nodeA = nodeA;
@@ -149,6 +159,8 @@ public class Link extends CommonObject{
 		}
 		for(int k=0;k<Constant.WAVE_PRE_FIBER;k++)
 			this.wavestatus[k]= Constant.FREE;
+		
+		this.virtuallinklist = new ArrayList<VirtualLink>();
 	}
   
 	

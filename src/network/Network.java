@@ -117,7 +117,7 @@ public class Network extends CommonObject{
 						double length = Double.parseDouble(data[3]);
 						double cost = Double.parseDouble(data[4]);
 						int index = layer.getLinklist().size();
-						Link newlink = new Link(name,index,"",layer,nodeA,nodeB,length,cost,nature);
+						Link newlink = new Link(name,index,"",layer,nodeA,nodeB,length,cost);
 						layer.addLink(newlink);
 						//update the neighbor node list
 						//nodeA.addNeiNode(nodeB);
