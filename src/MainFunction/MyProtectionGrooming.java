@@ -109,7 +109,24 @@ public class MyProtectionGrooming {
 //			 System.out.println("删除的IP层链路为："+link.getName());
 			iplayer.removeLink(link.getName());
 		}
-//以上为判断ip层中的链路那些需要删除
+   //以上为判断ip层中的链路那些需要删除
+		int mincost=10000;
+		int Dijlength=0;
+		HashMap<String, Link> Dijlinklist = iplayer.getLinklist();
+		Iterator<String> Dijlinkitor = Dijlinklist.keySet().iterator();
+		while (Dijlinkitor.hasNext()) {
+			Link Dijlink = (Link) (Dijlinklist.get(Dijlinkitor.next()));
+			for(VirtualLink vlink:Dijlink.getVirtualLinkList()){
+				System.out.println(vlink.getSrcnode()+"   "+vlink.getDesnode());
+				if(vlink.getcost()<mincost){
+					mincost=vlink.getcost();
+					Dijlength=vlink.getlength();
+				}
+			}
+			Dijlink.setCost(mincost);
+			Dijlink.setLength(Dijlength);
+		}
+	 
 		LinearRoute newRoute = new LinearRoute(null, 0, null);
 		Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);// 在iplayer里面找寻最短保护路径
 

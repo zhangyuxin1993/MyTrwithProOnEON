@@ -10,6 +10,8 @@ public class VirtualLink {
 	private double usedcapacity = 0;
 	private int nature = 2;
 	private int maxslot=0;
+	private int cost=0;
+	private int length=0;
 	private ArrayList<Link> physicallink=new ArrayList<Link>();
 	
 	public VirtualLink(String srcnode,String desnode,int nature,int restcapacity) {
@@ -18,8 +20,19 @@ public class VirtualLink {
 		this.desnode = desnode;
 		this.nature = nature;
 	}
+	public void setcost(int  cost) {
+		this.cost=cost;
+	}
+	public int getcost() {
+		return cost;
+	}
 	
-	
+	public void setlength(int  length) {
+		this.length=length;
+	}
+	public int getlength() {
+		return length;
+	}
 	public void setPhysicallink(ArrayList<Link> physicallink) {
 		this.physicallink.addAll(physicallink);
 	}

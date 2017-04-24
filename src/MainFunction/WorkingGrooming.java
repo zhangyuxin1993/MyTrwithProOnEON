@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.sound.midi.SysexMessage;
+
 import demand.Request;
 import graphalgorithms.RouteSearching;
 import network.Layer;
@@ -80,6 +82,22 @@ public class WorkingGrooming {
 				iplayer.removeLink(link.getName());
 			}
 			
+			int mincost=10000;
+			int length=0;
+			HashMap<String, Link> Dijlinklist = iplayer.getLinklist();
+			Iterator<String> Dijlinkitor = Dijlinklist.keySet().iterator();
+			while (Dijlinkitor.hasNext()) {
+				Link Dijlink = (Link) (Dijlinklist.get(Dijlinkitor.next()));
+				for(VirtualLink vlink:Dijlink.getVirtualLinkList()){
+					System.out.println(vlink.getSrcnode()+"   "+vlink.getDesnode());
+					if(vlink.getcost()<mincost){
+						mincost=vlink.getcost();
+						length=vlink.getlength();
+					}
+				}
+				Dijlink.setCost(mincost);
+				Dijlink.setLength(length);
+			}
 			LinearRoute newRoute = new LinearRoute(null, 0, null);
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
