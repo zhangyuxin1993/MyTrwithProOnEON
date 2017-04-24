@@ -235,11 +235,11 @@ public class WorkingGrooming {
 					if (index_wave.size() == 0) {
 						System.out.println("路径堵塞 ，不分配频谱资源");
 					} else {
-						double length = 0;
+						double length1 = 0;
 						double cost = 0;
 
 						for (Link link : opnewRoute.getLinklist()) {// 物理层的link
-							length = length + link.getLength();
+							length1 = length1 + link.getLength();
 							cost = cost + link.getCost();
 							Request request = null;
 							ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
@@ -251,7 +251,7 @@ public class WorkingGrooming {
 						String name = opsrcnode.getName() + "-" + opdesnode.getName();
 						int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的
 																	// 故这样设置index
-						Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length, cost);
+						Link newlink = new Link(name, index, null, iplayer, srcnode, desnode, length1, cost);
 						iplayer.addLink(newlink);
 
 						VirtualLink Vlink = new VirtualLink(srcnode.getName(), desnode.getName(), 0, 0);
