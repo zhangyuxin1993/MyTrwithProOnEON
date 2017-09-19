@@ -39,13 +39,12 @@ public class IPWorkingGrooming {
 			while (linkitor.hasNext()) {
 				Link Mlink = (Link) (linklist.get(linkitor.next()));
 							
-//				System.out.println("IP层上的链路：" + Mlink.getName());
+				System.out.println("IP层上的链路：" + Mlink.getName());
 
 				VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
 				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtual
 															// link
-//					System.out.println("虚拟链路：" + Vlink.getSrcnode() + "-" + Vlink.getDesnode()
-//							+ "   nature=" + Vlink.getNature());
+					System.out.println("虚拟链路：" + Vlink.getSrcnode() + "-" + Vlink.getDesnode()+ "   nature=" + Vlink.getNature());
 					if (Vlink.getNature() == 1) {// 工作是0 保护是1
 						DelVirtualLinklist.add(Vlink);
 						continue;
@@ -55,44 +54,48 @@ public class IPWorkingGrooming {
 						continue;
 					}
 				}
-				for (VirtualLink nowlink : DelVirtualLinklist) {
-//					System.out.println(Mlink.getName()+" 上删除的虚拟链路为："+ nowlink.getSrcnode()+"  "+nowlink.getDesnode());
-					Mlink.getVirtualLinkList().remove(nowlink);
-				}
+				
 				for (VirtualLink nowlink : DelVirtualLinklist) { //  统计所有删除的虚拟链路
 					if (!SumDelVirtualLinklist.contains(nowlink)) {
 						SumDelVirtualLinklist.add(nowlink);
 					}
-				}		
+				}
+				
+				for (VirtualLink nowlink : SumDelVirtualLinklist) {
+					System.out.println(Mlink.getName()+" 上删除的虚拟链路为："+ nowlink.getSrcnode()+"  "+nowlink.getDesnode());
+					Mlink.getVirtualLinkList().remove(nowlink);
+				}
+				
 				DelVirtualLinklist.clear();
+	
 				
 				if (Mlink.getVirtualLinkList().size() == 0)
 					DelIPLinklist.add(Mlink);
 			}
+			
 			for (Link link : DelIPLinklist) {
-//				System.out.println("删除的IP层链路为："+link.getName());
+				System.out.println("删除的IP层链路为："+link.getName());
 				iplayer.removeLink(link.getName());
 			}
+//         因为一条虚拟链路可能会对应多条物理链路 所以这里使用路径最短的物理链路（也可以改成剩余容量最少的链路）			
+//			HashMap<String, Link> Dijlinklist = iplayer.getLinklist();
+//			Iterator<String> Dijlinkitor = Dijlinklist.keySet().iterator();
+//			while (Dijlinkitor.hasNext()) {
+//				double mincost=10000;
+//				double length=0;
+//				Link Dijlink = (Link) (Dijlinklist.get(Dijlinkitor.next()));
+//				for(VirtualLink vlink:Dijlink.getVirtualLinkList()){
+////					System.out.println(vlink.getSrcnode()+"   "+vlink.getDesnode());
+//					if(vlink.getcost()<mincost){
+//						mincost=vlink.getcost();
+//						length=vlink.getlength();
+//					}
+//				}
+//				Dijlink.setCost(mincost);
+//				Dijlink.setLength(length);
+//				System.out.println("!!!!!!!!改变长度的链路： "+Dijlink.getName()+"   长度为："+Dijlink.getLength()+"    cost:  "+Dijlink.getCost());
+//			}
 			
-			
-			HashMap<String, Link> Dijlinklist = iplayer.getLinklist();
-			Iterator<String> Dijlinkitor = Dijlinklist.keySet().iterator();
-			while (Dijlinkitor.hasNext()) {
-				double mincost=10000;
-				double length=0;
-				Link Dijlink = (Link) (Dijlinklist.get(Dijlinkitor.next()));
-				for(VirtualLink vlink:Dijlink.getVirtualLinkList()){
-//					System.out.println(vlink.getSrcnode()+"   "+vlink.getDesnode());
-					if(vlink.getcost()<mincost){
-						mincost=vlink.getcost();
-						length=vlink.getlength();
-					}
-				}
-				Dijlink.setCost(mincost);
-				Dijlink.setLength(length);
-				System.out.println("!!!!!!!!改变长度的链路： "+Dijlink.getName()+"   长度为："+Dijlink.getLength()+"    cost:  "+Dijlink.getCost());
-			}
-//			LinearRoute newRoute = new LinearRoute(null, 0, null);
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
 			// 恢复iplayer里面删除的link
@@ -103,13 +106,13 @@ public class IPWorkingGrooming {
 
 			// 储存dijkstra经过的链路 并且改变这些链路上的容量
 			if (newRoute.getLinklist().size() != 0) {// 工作路径路由成功
-				System.out.println("********在IP层找到路由！");
+				System.out.print("********在IP层找到路由:");
 				newRoute.OutputRoute_node(newRoute);
 				routeFlag=true;
 				
 				for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 					Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
-//					System.out.println("光层路由上的链路："+link.getName());
+					System.out.println("光层路由上的链路："+link.getName());
 					/*
 					 * 如果路由成功 则需要找到IP层上的link对应的虚拟链路 改变其容量
 					 */
@@ -159,12 +162,8 @@ public class IPWorkingGrooming {
 					}
 				}
 				SumDelVirtualLinklist.clear();
-
-				
-//				 MyProtectionGrooming mpg = new MyProtectionGrooming();
-//				 mpg.myprotectiongrooming(iplayer, oplayer, nodepair,newRoute, numOfTransponder, true);
-				
 			}
+			
 			for(VirtualLink link:SumDelVirtualLinklist){
 //				System.out.println(link.getSrcnode()+"-"+link.getDesnode());
 				HashMap<String, Link> linklist2 = iplayer.getLinklist();

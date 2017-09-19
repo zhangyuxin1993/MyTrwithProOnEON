@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import general.Constant;
 import network.Layer;
 import network.Link;
 import network.Network;
@@ -15,12 +16,12 @@ public class Mymain {
 	public static void main(String[] args) {
 		int numOfTransponder = 0;
 	
-		
+//		产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
 		Network network = new Network("ip over EON", 0, null);
-		network.readPhysicalTopology("G:/Topology/5.csv");
-		network.copyNodes();//
+		network.readPhysicalTopology("G:/Topology/68modifylength.csv");
+		network.copyNodes();
 		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
 
 		Layer iplayer = network.getLayerlist().get("Layer0");
@@ -40,31 +41,31 @@ public class Mymain {
 //			先在IP层路由工作
 			IPWorkingGrooming ipwg = new IPWorkingGrooming();
 			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer,numOfTransponder,ipWorkRoute);//在ip层工作路由
-			
-			if(iproutingFlag){//ip层工作路由成功 建立保护
-				ipProGrooming ipprog=new ipProGrooming();
-				ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true);
-				
-				if(!ipproFlag){//在ip层保护路由受阻 则在光层路由保护
-					opProGrooming opg=new opProGrooming();
-					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true);
-				}
-				
-			}
+
+//			if(iproutingFlag){//ip层工作路由成功 建立保护
+//				ipProGrooming ipprog=new ipProGrooming();
+//				ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true);
+//				
+//				if(!ipproFlag){//在ip层保护路由受阻 则在光层路由保护
+//					opProGrooming opg=new opProGrooming();
+//					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true);
+//				}
+//				
+//			}
 			
 			//ip层工作路由不成功 在光层路由工作 
 			if (!iproutingFlag) {
 				opWorkingGrooming opwg=new opWorkingGrooming();
 				opworkFlag=opwg.opWorkingGrooming(nodepair, iplayer, oplayer,opWorkRoute,numOfTransponder);
-				if(opworkFlag){//在光层成功建立工作路径
-					ipProGrooming ipprog=new ipProGrooming();
-					ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false);
-			
-					if(!ipproFlag){//在ip层保护路由受阻 则在光层路由保护
-						opProGrooming opg=new opProGrooming();
-						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false);
-					}
-				}
+//				if(opworkFlag){//在光层成功建立工作路径
+//					ipProGrooming ipprog=new ipProGrooming();
+//					ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false);
+//			
+//					if(!ipproFlag){//在ip层保护路由受阻 则在光层路由保护
+//						opProGrooming opg=new opProGrooming();
+//						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false);
+//					}
+//				}
 				
 			}
 		}
@@ -104,27 +105,32 @@ public class Mymain {
 		return nodepairlist;
 	}
 	
-	public ArrayList<Integer> spectrumallocationOneRoute(LinearRoute route) {
+	public ArrayList<Integer> spectrumallocationOneRoute(Boolean routeflag,LinearRoute route,ArrayList<Link> linklist,int slotnum) {
 		ArrayList<Link> linklistOnroute = new ArrayList<Link>();
-		linklistOnroute = route.getLinklist();
+		if(routeflag){			
+			linklistOnroute = route.getLinklist();
+		}
+		else{
+			linklistOnroute=linklist;
+		}
 //		route.OutputRoute_node(route);// debug
 		for (Link link : linklistOnroute) {
-			if (route.getSlotsnum() == 0) {
-				System.out.println("路径上没有slot需要分配");
-				break;
-			}
+//			if (route.getSlotsnum() == 0) {
+//				System.out.println("路径上没有slot需要分配");
+//				break;
+//			}
 			link.getSlotsindex().clear();
 			// slotarray和slotindex的区别？？
-			for (int start = 0; start < link.getSlotsarray().size() - route.getSlotsnum(); start++) {// 查找可用slot的起点
+			for (int start = 0; start < link.getSlotsarray().size() - slotnum; start++) {
 				int flag = 0;
-				for (int num = start; num < route.getSlotsnum() + start; num++) {
+				for (int num = start; num <slotnum + start; num++) {
 					if (link.getSlotsarray().get(num).getoccupiedreqlist().size() != 0) {// 该波长已经被占用
 						flag = 1;
 						break;
 					}
 				}
 				if (flag == 0) {
-					link.getSlotsindex().add(start);
+					link.getSlotsindex().add(start);// 查找可用slot的起点
 				}
 			}
 		} // 以上所有的link分配完
@@ -134,7 +140,6 @@ public class Mymain {
 		sameindex.clear();
 
 		for (int s = 0; s < firstlink.getSlotsindex().size(); s++) {
-
 			int index = firstlink.getSlotsindex().get(s);
 			int flag = 1;
 
@@ -147,13 +152,16 @@ public class Mymain {
 				}
 			}
 			if (flag == 1) {
-				sameindex.add(index);
+				sameindex.add(index); //挑选出该路径上所有link共同的slot start数
 			}
 		}
 	 //测试频谱分配问题
-//		for (Link link : linklistOnroute) {
-//				System.out.println("链路：  "+link.getName()+"    "+link.getSlotsindex().size());	
-//			}
+		for (Link link : linklistOnroute) {
+			System.out.println("");
+			System.out.println("测试频谱分配：");
+				System.out.println("链路：  "+link.getName()+"    "+link.getSlotsindex().size());	
+			}
+//		for(int m:sameindex) System.out.print(m+"");
 		return sameindex;
 	}
 }

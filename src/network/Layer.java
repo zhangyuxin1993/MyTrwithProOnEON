@@ -338,7 +338,7 @@ public class Layer extends CommonObject{
 		} 		
 	}
 	/**
-	 * find a node based on two nodes
+	 * find a link based on two nodes
 	 */
 	public Link findLink(Node nodeA, Node nodeB){
 		String name;
