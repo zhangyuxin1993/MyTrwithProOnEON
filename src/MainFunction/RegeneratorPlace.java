@@ -14,9 +14,12 @@ import subgraph.LinearRoute;
 
 public class RegeneratorPlace {
 	public int newFS=0;
+	static int totalregNum=0;
+	
 	public boolean regeneratorplace(int IPflow,double routelength,LinearRoute newRoute,Layer oplayer,Layer ipLayer){
+//		/*
 		//第二种方法先判断一条路径最少使用的再生器的个数 然后穷尽所有的情况来选择再生器 放置的位置
-		 
+//		int  totalregNum=Mymain.totalregNum;
 		int minRegNum=(int) Math.floor(routelength/4000);//最少的再生器的个数
 		int internode=newRoute.getNodelist().size()-2;
 		int FStotal=0,n=0;
@@ -144,14 +147,16 @@ public class RegeneratorPlace {
 			System.out.print("再生器放置成功并且RSA,放置的再生器个数为"+ finalRoute.getregnum()+"  位置为：");
 			for(int p=0;p<finalRoute.getregnode().size();p++){
 				System.out.print(finalRoute.getregnode().get(p)+"     ");
+				totalregNum=totalregNum+finalRoute.getregnum();
+				System.out.println("一共需要再生器个数："+totalregNum);
 			}
 		}
-		
 		else  System.out.println("放置再生器不成功改路径被堵塞");
 		return success;
+//		*/
 		/*
 		 * 第一部分是通过距离来决定在哪里放置再生器 
-		 */
+//		 */
 		/*
 		double length=0;
 		int n=0; 
@@ -179,10 +184,12 @@ public class RegeneratorPlace {
 				linklist.add(link);
 				if(n==newRoute.getNodelist().size()-1)
 					partworkflag=modifylinkcapacity(IPflow,length, linklist, oplayer,ipLayer);//为目的节点前的剩余链路进行RSA
+				    totalregNum++;
 			}
 			if(length>4000)  {
 				length=length-link.getLength();
 				partworkflag=modifylinkcapacity(IPflow,length, linklist, oplayer,ipLayer);//此时在n点放置再生器
+				totalregNum++;
 				length=0;
 				RSAflag=true;
 				linklist.clear();
@@ -190,6 +197,7 @@ public class RegeneratorPlace {
 			if(!partworkflag&&RSAflag) break;
 		}while(n!=newRoute.getNodelist().size()-1);  
 		}
+		System.out.println("一共需要的再生器个数为："+totalregNum);
 		if(partworkflag)  opworkflag=true;
 		return opworkflag;
 */

@@ -13,10 +13,10 @@ import network.NodePair;
 import subgraph.LinearRoute;
 
 public class Mymain {
-
-	public static void main(String[] args) {
+	   public static void main(String[] args) {
 		int numOfTransponder = 0;
-	
+		HashMap<String, NodePair> Readnodepairlist=new HashMap<String, NodePair>();
+	   ArrayList<NodePair> nodepairlist=new ArrayList<>();
 //		产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
@@ -24,30 +24,39 @@ public class Mymain {
 		network.readPhysicalTopology("G:/Topology/10.csv");
 		network.copyNodes();
 		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
+//		**(现在随机产生demand 已经注释)
 
 		Layer iplayer = network.getLayerlist().get("Layer0");
 		Layer oplayer = network.getLayerlist().get("Physical");
-
+		ReadDemand rd=new ReadDemand();
+		nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
+		for(NodePair nodepair:nodepairlist){
+			Readnodepairlist.put(nodepair.getName()	, nodepair);
+		}
+		
+		iplayer.setNodepairlist(Readnodepairlist);
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
-
+		
+ 
 		for (int n = 0; n < demandlist.size(); n++) {
 			boolean iproutingFlag = false;
 			boolean ipproFlag = false;
 			boolean opworkFlag = false;
 			
-//			NodePair nodepair = demandlist.get(n);
+			NodePair nodepair = demandlist.get(n);
 			//test
-			NodePair nodepair = new NodePair(null, 0, null, iplayer, null, null);
-			 HashMap<String,NodePair>map2=iplayer.getNodepairlist();
-		     Iterator<String>iter2=map2.keySet().iterator();
-		       while(iter2.hasNext()){
-		    	   NodePair nodepair2=(NodePair)(map2.get(iter2.next()));
-			      if(nodepair2.getSrcNode().getName().equals("N2")&&nodepair2.getDesNode().getName().equals("N5"))  
-		    	    nodepair = nodepair2;
-		       }
+//			NodePair nodepair = new NodePair(null, 0, null, iplayer, null, null);
+//			 HashMap<String,NodePair>map2=iplayer.getNodepairlist();
+//		     Iterator<String>iter2=map2.keySet().iterator();
+//		       while(iter2.hasNext()){
+//		    	   NodePair nodepair2=(NodePair)(map2.get(iter2.next()));
+//			      if(nodepair2.getSrcNode().getName().equals("N2")&&nodepair2.getDesNode().getName().equals("N5"))  
+//		    	    nodepair = nodepair2;
+//		       }
 			System.out.println();
 			System.out.println();
 			System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+	 
 //			先在IP层路由工作
 			IPWorkingGrooming ipwg = new IPWorkingGrooming();
 			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer,numOfTransponder,ipWorkRoute);//在ip层工作路由
@@ -66,7 +75,7 @@ public class Mymain {
 			//ip层工作路由不成功 在光层路由工作 
 			if (!iproutingFlag) {
 				opWorkingGrooming opwg=new opWorkingGrooming();
-				opworkFlag=opwg.opWorkingGrooming(nodepair, iplayer, oplayer,opWorkRoute,numOfTransponder);
+				opworkFlag=opwg.opWorkingGrooming(nodepair, iplayer, oplayer,opWorkRoute);
 //				if(opworkFlag){//在光层成功建立工作路径
 //					ipProGrooming ipprog=new ipProGrooming();
 //					ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false);
@@ -78,14 +87,9 @@ public class Mymain {
 //				}
 				
 			}
+		 
 		}
-
-		
-		// WorkingGrooming mf=new WorkingGrooming();
-		// mf.MyWorkingGrooming(network, iplayer, oplayer);
-
 	}
-
 	public static ArrayList<NodePair> Rankflow(Layer IPlayer) {
 		ArrayList<NodePair> nodepairlist = new ArrayList<NodePair>(2000);
 		HashMap<String, NodePair> map3 = IPlayer.getNodepairlist();

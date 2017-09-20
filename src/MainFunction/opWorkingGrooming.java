@@ -14,22 +14,12 @@ import subgraph.LinearRoute;
 
 public class opWorkingGrooming {
 	
-	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute,int numOfTransponder) {
+	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute) {
 		RouteSearching Dijkstra = new RouteSearching();
 		boolean opworkflag=false;
 		Node srcnode = nodepair.getSrcNode();
 		Node desnode = nodepair.getDesNode();
  
-		
-		//debug
-//		HashMap<String, Link> linklist2 = iplayer.getLinklist();
-//		Iterator<String> linkitor2 = linklist2.keySet().iterator();
-//		while (linkitor2.hasNext()) {
-//			Link link1 = (Link) (linklist2.get(linkitor2.next()));// IPlayer里面的link
-//			System.out.println("IP LINK:"+link1.getName()+"链路上面的虚拟链路数："+link1.getVirtualLinkList().size());
-//		 
-//		}
-		 
 		System.out.println("IP层工作路由不成功，需要新建光路");
 		Node opsrcnode = oplayer.getNodelist().get(srcnode.getName());
 		Node opdesnode = oplayer.getNodelist().get(desnode.getName());
@@ -111,9 +101,7 @@ public class opWorkingGrooming {
 				Vlink.setPhysicallink(opnewRoute.getLinklist());	
 				
 				if(findflag){//如果在IP层中已经找到该链路
-//				System.out.println(finlink.getVirtualLinkList().size());
 				finlink.getVirtualLinkList().add(Vlink);
-//				System.out.println(finlink.getVirtualLinkList().size());
 				System.out.println("IP层已存在的链路 " + finlink.getName() + " 其对应的虚拟链路上面的已用flow: "
 						+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
 						+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
@@ -132,17 +120,6 @@ public class opWorkingGrooming {
 //				numOfTransponder = numOfTransponder + 2;
 			
 			}
-				
-				//debug
-//				HashMap<String, Link> linklist3 = iplayer.getLinklist();
-//				Iterator<String> linkitor3 = linklist3.keySet().iterator();
-//				while (linkitor3.hasNext()) {
-//					Link link1 = (Link) (linklist3.get(linkitor3.next()));// IPlayer里面的link
-//					System.out.println("IP LINK:"+link1.getName()+"链路上面的虚拟链路数："+link1.getVirtualLinkList().size());
-//					for(VirtualLink link:link1.getVirtualLinkList()){
-//						System.out.println(link.getSrcnode()+" "+link.getDesnode());
-//					}
-//				}
 			}
 			if(routelength>4000){
 				RegeneratorPlace  regplace=new RegeneratorPlace();
