@@ -8,6 +8,7 @@ import general.Constant;
 import network.Layer;
 import network.Link;
 import network.Network;
+import network.Node;
 import network.NodePair;
 import subgraph.LinearRoute;
 
@@ -20,7 +21,7 @@ public class Mymain {
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
 		Network network = new Network("ip over EON", 0, null);
-		network.readPhysicalTopology("G:/Topology/68modifylength.csv");
+		network.readPhysicalTopology("G:/Topology/10.csv");
 		network.copyNodes();
 		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
 
@@ -34,7 +35,16 @@ public class Mymain {
 			boolean ipproFlag = false;
 			boolean opworkFlag = false;
 			
-			NodePair nodepair = demandlist.get(n);
+//			NodePair nodepair = demandlist.get(n);
+			//test
+			NodePair nodepair = new NodePair(null, 0, null, iplayer, null, null);
+			 HashMap<String,NodePair>map2=iplayer.getNodepairlist();
+		     Iterator<String>iter2=map2.keySet().iterator();
+		       while(iter2.hasNext()){
+		    	   NodePair nodepair2=(NodePair)(map2.get(iter2.next()));
+			      if(nodepair2.getSrcNode().getName().equals("N2")&&nodepair2.getDesNode().getName().equals("N5"))  
+		    	    nodepair = nodepair2;
+		       }
 			System.out.println();
 			System.out.println();
 			System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
@@ -156,12 +166,11 @@ public class Mymain {
 			}
 		}
 	 //测试频谱分配问题
-		for (Link link : linklistOnroute) {
-			System.out.println("");
-			System.out.println("测试频谱分配：");
-				System.out.println("链路：  "+link.getName()+"    "+link.getSlotsindex().size());	
-			}
-//		for(int m:sameindex) System.out.print(m+"");
+//		for (Link link : linklistOnroute) {
+//			System.out.println("");
+//			System.out.println("测试频谱分配：");
+//				System.out.println("链路：  "+link.getName()+"    "+link.getSlotsindex().size());	
+//			}
 		return sameindex;
 	}
 }

@@ -70,9 +70,7 @@ public class RouteSearching {
 					}
 				}							
 			}
-			
 		}
-		
 		//find the node with the lowest cost from the visited node list
 		currentNode = this.getLowestCostNode(visitedNodeList);
 		//System.out.println("lowest: "+currentNode.getName());
@@ -138,12 +136,9 @@ public class RouteSearching {
 										node.setParentNode(currentNode);						
 									}
 								}
-								
 							}
 						}
-						
 					}
-					
 				}				
 				//find the node with the lowest cost from the visited node list
 				currentNode = this.getLowestCostNode(visitedNodeList);

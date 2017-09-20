@@ -111,9 +111,9 @@ public class opWorkingGrooming {
 				Vlink.setPhysicallink(opnewRoute.getLinklist());	
 				
 				if(findflag){//如果在IP层中已经找到该链路
-				System.out.println(finlink.getVirtualLinkList().size());
+//				System.out.println(finlink.getVirtualLinkList().size());
 				finlink.getVirtualLinkList().add(Vlink);
-				System.out.println(finlink.getVirtualLinkList().size());
+//				System.out.println(finlink.getVirtualLinkList().size());
 				System.out.println("IP层已存在的链路 " + finlink.getName() + " 其对应的虚拟链路上面的已用flow: "
 						+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
 						+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
@@ -129,8 +129,6 @@ public class opWorkingGrooming {
 					System.out.println("*********工作链路在光层新建的链路：  "+createlink.getName()+"  上的虚拟链路条数： "+ createlink.getVirtualLinkList().size());
 				
 				}
-				
-				
 //				numOfTransponder = numOfTransponder + 2;
 			
 			}
@@ -151,6 +149,8 @@ public class opWorkingGrooming {
 				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer);
 			}
 		}
+		if(opworkflag) System.out.println("在光层成功路由并且RSA");
+		if(!opworkflag) System.out.println("在光层路由失败 改业务阻塞");
 		return opworkflag;
 	}
 	}
