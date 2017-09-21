@@ -14,7 +14,7 @@ import subgraph.LinearRoute;
 
 public class opWorkingGrooming {
 	
-	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute) {
+	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute,ArrayList<WorkandProtectRoute> wprlist) {
 		RouteSearching Dijkstra = new RouteSearching();
 		boolean opworkflag=false;
 		Node srcnode = nodepair.getSrcNode();
@@ -126,7 +126,14 @@ public class opWorkingGrooming {
 				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer);
 			}
 		}
-		if(opworkflag) System.out.println("在光层成功路由并且RSA");
+		if(opworkflag) {
+			System.out.println("在光层成功路由并且RSA");
+			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
+			ArrayList<Link> totallink=new ArrayList<>();
+			totallink=opnewRoute.getLinklist();
+			wpr.setworklinklist(totallink);
+			wprlist.add(wpr);
+		}
 		if(!opworkflag) System.out.println("在光层路由失败 改业务阻塞");
 		return opworkflag;
 	}

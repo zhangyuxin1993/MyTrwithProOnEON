@@ -17,6 +17,7 @@ public class Mymain {
 		int numOfTransponder = 0;
 		HashMap<String, NodePair> Readnodepairlist=new HashMap<String, NodePair>();
 	   ArrayList<NodePair> nodepairlist=new ArrayList<>();
+	   ArrayList<WorkandProtectRoute> wprlist= new ArrayList<>();
 //		产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
@@ -28,15 +29,16 @@ public class Mymain {
 
 		Layer iplayer = network.getLayerlist().get("Layer0");
 		Layer oplayer = network.getLayerlist().get("Physical");
+		
 		ReadDemand rd=new ReadDemand();
 		nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
 		for(NodePair nodepair:nodepairlist){
 			Readnodepairlist.put(nodepair.getName()	, nodepair);
 		}
-		
 		iplayer.setNodepairlist(Readnodepairlist);
-		ArrayList<NodePair> demandlist = Rankflow(iplayer);
 		
+		
+		ArrayList<NodePair> demandlist = Rankflow(iplayer);
  
 		for (int n = 0; n < demandlist.size(); n++) {
 			boolean iproutingFlag = false;
@@ -56,11 +58,11 @@ public class Mymain {
 			System.out.println();
 			System.out.println();
 			System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
-	 
+			
 //			先在IP层路由工作
 			IPWorkingGrooming ipwg = new IPWorkingGrooming();
-			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer,numOfTransponder,ipWorkRoute);//在ip层工作路由
-
+			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer,numOfTransponder,ipWorkRoute,wprlist);//在ip层工作路由
+		 
 //			if(iproutingFlag){//ip层工作路由成功 建立保护
 //				ipProGrooming ipprog=new ipProGrooming();
 //				ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true);
@@ -75,7 +77,8 @@ public class Mymain {
 			//ip层工作路由不成功 在光层路由工作 
 			if (!iproutingFlag) {
 				opWorkingGrooming opwg=new opWorkingGrooming();
-				opworkFlag=opwg.opWorkingGrooming(nodepair, iplayer, oplayer,opWorkRoute);
+				opworkFlag=opwg.opWorkingGrooming(nodepair, iplayer, oplayer,opWorkRoute,wprlist);
+				
 //				if(opworkFlag){//在光层成功建立工作路径
 //					ipProGrooming ipprog=new ipProGrooming();
 //					ipproFlag=ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false);
@@ -88,6 +91,15 @@ public class Mymain {
 				
 			}
 		 
+		}
+		System.out.println();
+		System.out.println();
+		for(WorkandProtectRoute wpr:wprlist){
+			System.out.println("节点对为："+wpr.getdemand().getName());
+			for(Link link:wpr.getworklinklist()){
+				System.out.print(link.getName()+"     ");
+				System.out.println();
+			}
 		}
 	}
 	public static ArrayList<NodePair> Rankflow(Layer IPlayer) {

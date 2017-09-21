@@ -15,7 +15,7 @@ import subgraph.LinearRoute;
 
 public class IPWorkingGrooming {
 	
-	public boolean ipWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,int numOfTransponder,LinearRoute newRoute) {
+	public boolean ipWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,int numOfTransponder,LinearRoute newRoute, ArrayList<WorkandProtectRoute> wprlist) {
 		boolean routeFlag=false;
 		RouteSearching Dijkstra = new RouteSearching();
 		ArrayList<VirtualLink> DelVirtualLinklist = new ArrayList<VirtualLink>();
@@ -68,7 +68,8 @@ public class IPWorkingGrooming {
 			}
 			//以上为第一部分===删除IP层上容量不够的链路
 			
-//         因为一条IP链路可能会对应多条虚拟链路 所以这里使用剩余容量最少的路径 一条IP链路上进留下剩余容量最少的链路 其余的虚拟链路均删除	
+//         因为一条IP链路可能会对应多条虚拟链路 所以这里使用剩余容量最少的路径 一条IP链路上进留下剩余容量最少的链路 
+//			其余的虚拟链路均删除	
 		   ArrayList<VirtualLink> DelhighcapVlink=new ArrayList<>();
 			HashMap<String, Link> Dijlinklist = iplayer.getLinklist();
 			Iterator<String> Dijlinkitor = Dijlinklist.keySet().iterator();
@@ -79,7 +80,6 @@ public class IPWorkingGrooming {
 //					System.out.println(vlink.getSrcnode()+"   "+vlink.getDesnode());
 					if(vlink.getRestcapacity()<minrescapacity){
 						minrescapacity=vlink.getRestcapacity();
-//						length=vlink.getlength();
 					}
 				}//找出一条IP链路上所有虚拟链路中剩余容量最少的数量
 				
@@ -91,10 +91,10 @@ public class IPWorkingGrooming {
 				for(VirtualLink vlink:DelhighcapVlink){
 					Dijlink.getVirtualLinkList().remove(vlink);
 				}//将所有剩余容量大于最小剩余容量的链路全部放入集合 并删除
-		
-				System.out.println("链路 "+Dijlink.getName()+"   上虚拟链路的个数为"+Dijlink.getVirtualLinkList().size());
 			}
 			
+			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
+			ArrayList<Link> totallink=new ArrayList<>();
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
 			// 恢复iplayer里面删除的link
@@ -117,13 +117,18 @@ public class IPWorkingGrooming {
 						Link link1 = (Link) (linklist2.get(linkitor2.next()));// IPlayer里面的link
 						if(link1.getNodeA().getName().equals(link.getNodeA().getName())&&link1.getNodeB().getName().equals(link.getNodeB().getName())){			
 						//在IP层找到该路径 修改虚拟链路容量的值此时每条IP连路上只有一条虚拟链路
-							VirtualLink Vlink=link1.getVirtualLinkList().get(0);
+								VirtualLink Vlink=link1.getVirtualLinkList().get(0);
 								Vlink.setUsedcapacity(Vlink.getUsedcapacity() + nodepair.getTrafficdemand());
 								Vlink.setRestcapacity(Vlink.getFullcapacity() - Vlink.getUsedcapacity());
 								System.out.println("IP层链路 "+ link1.getName()+"上虚拟链路剩余容量为："+ Vlink.getRestcapacity());
-							}
+								for(Link worklink:Vlink.getPhysicallink()){//将业务虚拟链路上对应的物理链路全部放在totallink中
+									totallink.add(worklink);
+								}
+						}
 						}
 					}
+				wpr.setworklinklist(totallink);
+				wprlist.add(wpr);
 			}
 				//恢复链路上对应的虚拟链路
 				for(VirtualLink link:SumDelVirtualLinklist){//恢复因为容量不够删除的虚拟链路
