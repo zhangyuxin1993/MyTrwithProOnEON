@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import network.Link;
 import subgraph.LinearRoute;
 
-public class RouteAndRegPlace {
+public class RouteAndRegPlace {//一条业务的路由 以及路由上reg个数 新使用的FS数 再生器的位置 以及工作还是保护
 	private LinearRoute route = new LinearRoute(null, 0, null);
 	private int regnum = 0;
 	private int newFSnum=0;

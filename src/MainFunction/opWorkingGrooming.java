@@ -19,7 +19,8 @@ public class opWorkingGrooming {
 		boolean opworkflag=false;
 		Node srcnode = nodepair.getSrcNode();
 		Node desnode = nodepair.getDesNode();
- 
+		double routelength = 0;
+		
 		System.out.println("IP层工作路由不成功，需要新建光路");
 		Node opsrcnode = oplayer.getNodelist().get(srcnode.getName());
 		Node opdesnode = oplayer.getNodelist().get(desnode.getName());
@@ -39,7 +40,10 @@ public class opWorkingGrooming {
 			int IPflow = nodepair.getTrafficdemand();
 			double X = 1;// 2000-4000 BPSK,1000-2000
 							// QBSK,500-1000，8QAM,0-500 16QAM
-			double routelength = opnewRoute.getlength();
+			
+			for(Link link:opnewRoute.getLinklist()){
+				routelength=routelength+link.getLength();
+			}
 			// System.out.println("物理路径的长度是："+routelength);
 			// 通过路径的长度来变化调制格式 并且判断再生器 的使用
 
@@ -102,7 +106,7 @@ public class opWorkingGrooming {
 				
 				if(findflag){//如果在IP层中已经找到该链路
 				finlink.getVirtualLinkList().add(Vlink);
-				System.out.println("IP层已存在的链路 " + finlink.getName() + " 其对应的虚拟链路上面的已用flow: "
+				System.out.println("IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
 						+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
 						+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
 						+"   "+"虚拟链路cost： "+ Vlink.getcost());
@@ -110,7 +114,7 @@ public class opWorkingGrooming {
 				}
 				else{
 					createlink.getVirtualLinkList().add(Vlink);
-					System.out.println("IP层上新建链路 " + createlink.getName() + " 其对应的虚拟链路上面的已用flow: "
+					System.out.println("IP层上新建链路 " + createlink.getName() + " 加入新的工作虚拟链路 上面的已用flow: "
 							+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
 							+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
 							+"   "+"虚拟链路cost： "+ Vlink.getcost());
@@ -126,13 +130,15 @@ public class opWorkingGrooming {
 				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer);
 			}
 		}
-		if(opworkflag) {
+		if(opworkflag){
+//				&&routelength<=4000) {
 			System.out.println("在光层成功路由并且RSA");
 			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
 			totallink=opnewRoute.getLinklist();
 			wpr.setworklinklist(totallink);
 			wprlist.add(wpr);
+		
 		}
 		if(!opworkflag) System.out.println("在光层路由失败 改业务阻塞");
 		return opworkflag;

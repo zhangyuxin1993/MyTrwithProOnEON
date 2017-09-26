@@ -132,7 +132,7 @@ public class IPWorkingGrooming {
 			}
 				//恢复链路上对应的虚拟链路
 				for(VirtualLink link:SumDelVirtualLinklist){//恢复因为容量不够删除的虚拟链路
-					System.out.println("删除容量不足的虚拟链路： "+link.getRestcapacity());
+					System.out.println("删除容量不足或属性不对的虚拟链路： "+link.getRestcapacity());
 					HashMap<String, Link> linklist2 = iplayer.getLinklist();
 					Iterator<String> linkitor2 = linklist2.keySet().iterator();
 					while (linkitor2.hasNext()) {

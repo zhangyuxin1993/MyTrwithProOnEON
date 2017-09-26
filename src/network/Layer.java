@@ -329,7 +329,7 @@ public class Layer extends CommonObject{
 						NodePair nodepair = new NodePair(name, index, "", this,
 								node1, node2);
 						TrafficDemand trfdem=new TrafficDemand();  //节点对之间产生流量
-//						nodepair.setTrafficdemand(trfdem.generateTrafficDemand());
+						nodepair.setTrafficdemand(trfdem.generateTrafficDemand());
 						this.addNodepair(nodepair);
 					}
 		    	}
