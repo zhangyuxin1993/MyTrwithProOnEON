@@ -16,7 +16,7 @@ public class Node extends CommonObject{
 	private int hop_from_src = 100000000; //used in search algorithm to get the number of hops from the src node
 	private int status = Constant.UNVISITED; //not visited yet
 	private Node parentNode = null;//parent node of the current node
- 
+	private int regnum=0; //表示节点上再生器的个数
 	
 	public Node(String name, int index, String comments, Layer associatedLayer,	int x, int y) {
 		super(name, index, comments);
@@ -31,6 +31,13 @@ public class Node extends CommonObject{
 	}
 	public void setX(int x) {
 		this.x = x;
+	}
+	
+	public int getregnum() {
+		return regnum;
+	}
+	public void setregnum(int regnum) {
+		this.regnum = regnum;
 	}
 	
 	public Node getParentNode() {

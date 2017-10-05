@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import general.file_out_put;
 import graphalgorithms.RouteSearching;
 import network.Layer;
 import network.Link;
@@ -19,27 +20,32 @@ public class ipProGrooming {
 		RouteSearching Dijkstra = new RouteSearching();
 		boolean ipproflag = false;
 		Test t = new Test();
+		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+		file_out_put file_io=new file_out_put();
+		
 		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
+		file_io.filewrite2(OutFileName,"节点对：" + nodepair.getName() + "   flag=" + flag);
 		ArrayList<VirtualLink> DelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<VirtualLink> SumDelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<Link> DelIPLinkList = new ArrayList<Link>();
 		Node srcnode = nodepair.getSrcNode();
 		Node desnode = nodepair.getDesNode();
 		System.out.println("IP层的链路条数： " + iplayer.getLinklist().size());
-
+		file_io.filewrite2(OutFileName,"IP层的链路条数： " + iplayer.getLinklist().size());
+		
 		//test
-		for(WorkandProtectRoute wprpro:wprlist){
-			System.out.println(wprpro.getdemand().getName());
-			for(VirtualLink vprolink:wprpro.getprovirtuallinklist()){
-				System.out.println(vprolink.getSrcnode()+"  "+vprolink.getDesnode());
-			}
-			
-		}
+//		for(WorkandProtectRoute wprpro:wprlist){
+//			System.out.println(wprpro.getdemand().getName());
+//			for(VirtualLink vprolink:wprpro.getprovirtuallinklist()){
+//				System.out.println(vprolink.getSrcnode()+"  "+vprolink.getDesnode());
+//			}
+//		}
+		
 		HashMap<String, Link> testlinklist = iplayer.getLinklist();
 		Iterator<String> testlinkitor = testlinklist.keySet().iterator();
 		while (testlinkitor.hasNext()) {// 第一部分 第一步
 			Link link = (Link) (testlinklist.get(testlinkitor.next()));// IP层上的链路
-			System.out.println(link.getName());
+//			System.out.println(link.getName());
 		}
 
 		HashMap<String, Link> linklist = iplayer.getLinklist();
@@ -48,13 +54,13 @@ public class ipProGrooming {
 			Link link = (Link) (linklist.get(linkitor.next()));// IP层上的链路
 			for (VirtualLink Vlink : link.getVirtualLinkList()) { // IP层上链路对应的虚拟链路
 				if (Vlink.getNature() == 0) {// 0为工作
-					System.out.println("因为属性不同删除的链路：" + link.getName());
+//					System.out.println("因为属性不同删除的链路：" + link.getName());
 					DelLinkList.add(Vlink);
 					continue;
 				}
 				if (Vlink.getRestcapacity() < nodepair.getTrafficdemand()) {// 删去流量不够的链路
 					DelLinkList.add(Vlink);
-					System.out.println("因为容量不够删除的链路：" + link.getName());
+//					System.out.println("因为容量不够删除的链路：" + link.getName());
 					continue;
 				}
 			}
@@ -70,7 +76,7 @@ public class ipProGrooming {
 				for (Link phylink : Vlink.getPhysicallink()) {
 					if (nowdemand.getworklinklist().contains(phylink)) {
 						DelLinkList.add(Vlink);
-						System.out.println("与当前业务相交而删除的虚拟链路 " + link.getName());
+//						System.out.println("与当前业务相交而删除的虚拟链路 " + link.getName());
 					}
 				}
 			}
@@ -86,24 +92,26 @@ public class ipProGrooming {
 			if (wpr.getdemand().equals(nodepair)) {
 				continue;
 			}
-			System.out.println("当前业务 ");
-			for (Link link1 : nowdemand.getworklinklist()) {
-				System.out.print(link1.getName() + "  ");
-			}
-			System.out.println();
-			System.out.println("之前建立的业务 " + wpr.getdemand().getName());
-
-			for (Link link1 : wpr.getworklinklist()) {
-				System.out.print(link1.getName() + "  ");
-			}
-			System.out.println();
+		
 			int cross = t.linklistcompare(wpr.getworklinklist(), nowdemand.getworklinklist());// 两个工作业务相交
 																								// 删去之前建立业务的保护链路
 			if (cross == 1) {
+//				System.out.println("当前业务 ");
+//				for (Link link1 : nowdemand.getworklinklist()) {
+//					System.out.print(link1.getName() + "  ");
+//				}
+//				System.out.println();
+//				System.out.println("之前建立的业务 " + wpr.getdemand().getName());
+//
+//				for (Link link1 : wpr.getworklinklist()) {
+//					System.out.print(link1.getName() + "  ");
+//				}
+//				System.out.println();
+				
 				for (VirtualLink vlink : wpr.getprovirtuallinklist()) {
 					if (!DelLinkList.contains(vlink)) {
-						System.out.println(
-								"删除与当前业务的工作链路相交的业务的保护路径对应的虚拟链路" + vlink.getSrcnode() + "  " + vlink.getDesnode());
+//						System.out.println(
+//								"删除与当前业务的工作链路相交的业务的保护路径对应的虚拟链路" + vlink.getSrcnode() + "  " + vlink.getDesnode());
 						DelLinkList.add(vlink);
 					}
 				}
@@ -119,8 +127,8 @@ public class ipProGrooming {
 			Iterator<String> itor = list.keySet().iterator();
 			while (itor.hasNext()) {// 第一部分 第一步
 				Link link = (Link) (list.get(itor.next()));// IP层上的链路
-				System.out.println("虚拟链路："+dellink2.getSrcnode()+"-"+dellink2.getDesnode());
-				System.out.println("IP层链路："+link.getName());
+//				System.out.println("虚拟链路："+dellink2.getSrcnode()+"-"+dellink2.getDesnode());
+//				System.out.println("IP层链路："+link.getName());
 				if (link.getNodeA().getName().equals(dellink2.getSrcnode())
 						&& link.getNodeB().getName().equals(dellink2.getDesnode())) {// 找到虚拟链路对应的IP层链路
 					link.getVirtualLinkList().remove(dellink2);// 删除对应的虚拟链路
@@ -139,7 +147,7 @@ public class ipProGrooming {
 		// 找出所有需要删除的虚拟链路
 
 		for (Link link : DelIPLinkList) {
-			System.out.println("删除的IP层链路为：" + link.getName());
+//			System.out.println("删除的IP层链路为：" + link.getName());
 			iplayer.removeLink(link.getName());
 		}
 		// 以上为判断ip层中的链路那些需要删除
@@ -175,6 +183,8 @@ public class ipProGrooming {
 			Link link = (Link) (linklistt.get(linkitorr.next()));
 			System.out.println("剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
 					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
+			file_io.filewrite2(OutFileName,"剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
+					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
 		}
 
 		LinearRoute newRoute = new LinearRoute(null, 0, null);
@@ -188,17 +198,17 @@ public class ipProGrooming {
 		if (newRoute.getNodelist().size() != 0) {
 			ipproflag = true;
 			System.out.print("**************保护路由在IP层上路由成功  ");
+			file_io.filewrite_without(OutFileName,"**************保护路由在IP层上路由成功  ");
 			newRoute.OutputRoute_node(newRoute);
 			ArrayList<Link> totallink = new ArrayList<>();
 			for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 				Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
 				System.out.println("光层路由上的链路：" + link.getName());
+				file_io.filewrite2(OutFileName,"光层路由上的链路：" + link.getName());
 				/*
 				 * 如果路由成功 则需要找到IP层上的link对应的虚拟链路 改变其容量
 				 */
 
-				boolean delflag_pro = false;
-				double minCapacity = 100000;
 				HashMap<String, Link> linklist2 = iplayer.getLinklist();
 				Iterator<String> linkitor2 = linklist2.keySet().iterator();
 				while (linkitor2.hasNext()) {
@@ -206,6 +216,7 @@ public class ipProGrooming {
 					if (link1.getNodeA().getName().equals(link.getNodeA().getName())
 							&& link1.getNodeB().getName().equals(link.getNodeB().getName())) {
 						System.out.println("找到路由经过的链路： " + link1.getName());
+						file_io.filewrite2(OutFileName,"找到路由经过的链路： " + link1.getName());
 						VirtualLink Vlink = link1.getVirtualLinkList().get(0);
 						// System.out.println(Vlink.getSrcnode() + " " +
 						// Vlink.getDesnode() + " "
@@ -242,7 +253,7 @@ public class ipProGrooming {
 		SumDelLinkList.clear();
 
 		for (VirtualLink link : DelhighcapVlink) {// 恢复因为容量过剩删除的虚拟链路
-			System.out.println("删除容量过剩的虚拟链路： " + link.getRestcapacity());
+//			System.out.println("删除容量过剩的虚拟链路： " + link.getRestcapacity());
 			// System.out.println(link.getSrcnode()+"-"+link.getDesnode());
 			HashMap<String, Link> linklist2 = iplayer.getLinklist();
 			Iterator<String> linkitor2 = linklist2.keySet().iterator();

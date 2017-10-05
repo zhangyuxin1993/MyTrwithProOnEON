@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import general.file_out_put;
 import graphalgorithms.RouteSearching;
 import network.Layer;
 import network.Link;
@@ -17,6 +18,8 @@ public class IPWorkingGrooming {
 	
 	public boolean ipWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,int numOfTransponder,LinearRoute newRoute, ArrayList<WorkandProtectRoute> wprlist) {
 		boolean routeFlag=false;
+		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+		file_out_put file_io=new file_out_put();
 		RouteSearching Dijkstra = new RouteSearching();
 		ArrayList<VirtualLink> DelVirtualLinklist = new ArrayList<VirtualLink>();
 		ArrayList<VirtualLink> SumDelVirtualLinklist = new ArrayList<VirtualLink>();
@@ -28,6 +31,7 @@ public class IPWorkingGrooming {
 			Node desnode = nodepair.getDesNode();
 	
 			System.out.println("IP层上的链路条数为：" +  iplayer.getLinklist().size());
+			file_io.filewrite2(OutFileName,"IP层上的链路条数为：" +  iplayer.getLinklist().size());
 			HashMap<String, Link> linklist = iplayer.getLinklist();
 			Iterator<String> linkitor = linklist.keySet().iterator();
 			while (linkitor.hasNext()) {
@@ -35,8 +39,8 @@ public class IPWorkingGrooming {
 				VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
 				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtual
 															// link
-					System.out.println("IP层上链路"+Mlink.getName()+"    对应的虚拟链路：" + Vlink.getSrcnode() + "-" + Vlink.getDesnode()+ "   nature=" + Vlink.getNature()+
-							"    该虚拟链路上对应的剩余容量为："+Vlink.getRestcapacity());
+//					System.out.println("IP层上链路"+Mlink.getName()+"    对应的虚拟链路：" + Vlink.getSrcnode() + "-" + Vlink.getDesnode()+ "   nature=" + Vlink.getNature()+
+//							"    该虚拟链路上对应的剩余容量为："+Vlink.getRestcapacity());
 					if (Vlink.getNature() == 1) {// 工作是0 保护是1
 						DelVirtualLinklist.add(Vlink);
 						continue;
@@ -63,7 +67,7 @@ public class IPWorkingGrooming {
 			}
 			
 			for (Link link : DelIPLinklist) {
-				System.out.println("删除的IP层链路为："+link.getName());
+//				System.out.println("删除的IP层链路为："+link.getName());
 				iplayer.removeLink(link.getName());
 			}
 			//以上为第一部分===删除IP层上容量不够的链路
@@ -106,11 +110,13 @@ public class IPWorkingGrooming {
 			// 储存dijkstra经过的链路 并且改变这些链路上的容量
 			if (newRoute.getLinklist().size() != 0) {// 工作路径路由成功
 				System.out.print("part2==在IP层找到路由:");
+				file_io.filewrite_without(OutFileName,"part2==在IP层找到路由:");
 				newRoute.OutputRoute_node(newRoute);
 				routeFlag=true;
 				for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 					Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
 					System.out.println("ip层上路由链路："+link.getName());
+					file_io.filewrite2(OutFileName,"ip层上路由链路："+link.getName());
 					HashMap<String, Link> linklist2 = iplayer.getLinklist();
 					Iterator<String> linkitor2 = linklist2.keySet().iterator();
 					while (linkitor2.hasNext()) {
@@ -120,7 +126,7 @@ public class IPWorkingGrooming {
 								VirtualLink Vlink=link1.getVirtualLinkList().get(0);
 								Vlink.setUsedcapacity(Vlink.getUsedcapacity() + nodepair.getTrafficdemand());
 								Vlink.setRestcapacity(Vlink.getFullcapacity() - Vlink.getUsedcapacity());
-								System.out.println("IP层链路 "+ link1.getName()+"上虚拟链路剩余容量为："+ Vlink.getRestcapacity());
+//								System.out.println("IP层链路 "+ link1.getName()+"上虚拟链路剩余容量为："+ Vlink.getRestcapacity());
 								for(Link worklink:Vlink.getPhysicallink()){//将业务虚拟链路上对应的物理链路全部放在totallink中
 									totallink.add(worklink);
 								}
@@ -132,7 +138,7 @@ public class IPWorkingGrooming {
 			}
 				//恢复链路上对应的虚拟链路
 				for(VirtualLink link:SumDelVirtualLinklist){//恢复因为容量不够删除的虚拟链路
-					System.out.println("删除容量不足或属性不对的虚拟链路： "+link.getRestcapacity());
+//					System.out.println("删除容量不足或属性不对的虚拟链路： "+link.getRestcapacity());
 					HashMap<String, Link> linklist2 = iplayer.getLinklist();
 					Iterator<String> linkitor2 = linklist2.keySet().iterator();
 					while (linkitor2.hasNext()) {
@@ -145,7 +151,7 @@ public class IPWorkingGrooming {
 				SumDelVirtualLinklist.clear();
 				
 				for(VirtualLink link:DelhighcapVlink){//恢复因为容量过剩删除的虚拟链路
-					System.out.println("删除容量过剩的虚拟链路： "+link.getRestcapacity());
+//					System.out.println("删除容量过剩的虚拟链路： "+link.getRestcapacity());
 //					System.out.println(link.getSrcnode()+"-"+link.getDesnode());
 					HashMap<String, Link> linklist2 = iplayer.getLinklist();
 					Iterator<String> linkitor2 = linklist2.keySet().iterator();
@@ -159,8 +165,14 @@ public class IPWorkingGrooming {
 				DelhighcapVlink.clear();
 			
 			
-			if(routeFlag) System.out.println("在IP层成功路由");
-			if(!routeFlag) System.out.println("IP层路由失败");
+			if(routeFlag) {
+				System.out.println("在IP层成功路由");
+				file_io.filewrite2(OutFileName,"在IP层成功路由");
+			}
+			if(!routeFlag){ 
+				System.out.println("IP层路由失败");
+				file_io.filewrite2(OutFileName,"IP层路由失败");
+			}
 		return routeFlag;
 	}
 }

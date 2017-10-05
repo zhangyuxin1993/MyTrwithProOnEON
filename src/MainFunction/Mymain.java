@@ -1,10 +1,12 @@
 ﻿package MainFunction;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import general.Constant;
+import general.file_out_put;
 import graphalgorithms.RouteSearching;
 import network.Layer;
 import network.Link;
@@ -14,17 +16,19 @@ import network.NodePair;
 import subgraph.LinearRoute;
 
 public class Mymain {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
 		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
 		ArrayList<NodePair> nodepairlist = new ArrayList<>();
 		ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
+		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+		file_out_put file_io=new file_out_put();
 		// 产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
 		Network network = new Network("ip over EON", 0, null);
-		network.readPhysicalTopology("G:/Topology/10.csv");
+		network.readPhysicalTopology("G:/Topology/NSFNET.csv");
 		network.copyNodes();
 		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
 		// **(现在随机产生demand 已经注释)
@@ -32,13 +36,13 @@ public class Mymain {
 		Layer iplayer = network.getLayerlist().get("Layer0");
 		Layer oplayer = network.getLayerlist().get("Physical");
 		
-		ReadDemand rd=new ReadDemand();
-		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
-		 for(NodePair nodepair:nodepairlist){
-			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
-		 Readnodepairlist.put(nodepair.getName() , nodepair);
-		 }
-		 iplayer.setNodepairlist(Readnodepairlist);
+//		ReadDemand rd=new ReadDemand();
+//		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
+//		 for(NodePair nodepair:nodepairlist){
+//			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
+//		 Readnodepairlist.put(nodepair.getName() , nodepair);
+//		 }
+//		 iplayer.setNodepairlist(Readnodepairlist);
 
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
 
@@ -61,6 +65,8 @@ public class Mymain {
 			System.out.println();
 			System.out.println();
 			System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+			file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+			
 			// 先在IP层路由工作
 			IPWorkingGrooming ipwg = new IPWorkingGrooming();
 			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer, numOfTransponder, ipWorkRoute, wprlist);// 在ip层工作路由
@@ -92,29 +98,67 @@ public class Mymain {
 			}
 			System.out.println();
 			System.out.println();
+			file_io.filewrite2(OutFileName, "");
+			file_io.filewrite2(OutFileName, "");
 			System.out.println("业务个数：" + wprlist.size());
+			file_io.filewrite2(OutFileName, "业务个数：" + wprlist.size());
 			for (WorkandProtectRoute wpr : wprlist) {
 				System.out.println("业务：" + wpr.getdemand().getName());
+				file_io.filewrite2(OutFileName, "业务：" + wpr.getdemand().getName());
 				System.out.print("工作路径：" );
+				file_io.filewrite_without(OutFileName, "工作路径：");
 				for (Link link : wpr.getworklinklist()) {
 					System.out.print(link.getName() + "     ");
+					file_io.filewrite_without(OutFileName, link.getName() + "     ");
 				}
 				System.out.println();
+				file_io.filewrite2(OutFileName, "");
 				System.out.print("保护路径：" );
+				file_io.filewrite_without(OutFileName,"保护路径：");
 				for (Link link : wpr.getprolinklist()) {
 					System.out.print(link.getName() + "     ");
+					file_io.filewrite_without(OutFileName,link.getName() + "     ");
 				}
 				System.out.println();
+				file_io.filewrite2(OutFileName, "");
 				System.out.print("放置共享再生器节点：" );
-				for (Node node : wpr.getsharenodelist()) {
-					System.out.print(node.getName() + "     ");
+				file_io.filewrite_without(OutFileName,"放置共享再生器节点：");
+				for (Regenerator reg : wpr.getsharereglist()) {
+					System.out.print(reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+"   ");
+					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+"   ");
 				}
 				System.out.println();
+				file_io.filewrite2(OutFileName, "");
 				System.out.print("放置新再生器节点：" );
-				for (Node node : wpr.getnewregnodelist()) {
-					System.out.print(node.getName() + "     ");
+				file_io.filewrite_without(OutFileName,"放置新再生器节点：");
+				for (Regenerator reg : wpr.getnewreglist()) {
+					System.out.print(reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   ");
+					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   ");
 				}
 				System.out.println();
+				file_io.filewrite2(OutFileName, "");
+//				System.out.println("hashmap的大小："+wpr.getregthinglist().size());
+				if(wpr.getregthinglist()!=null){
+					for(int t:wpr.getregthinglist().keySet()){
+						System.out.println("hashmap里面的键 "+t+" 对应的节点为："+wpr.getregthinglist().get(t).getnode().getName());
+						file_io.filewrite2(OutFileName, "hashmap里面的键 "+t+" 对应的节点为："+wpr.getregthinglist().get(t).getnode().getName());
+					}
+					System.out.println();
+					file_io.filewrite2(OutFileName, "");
+				}
+				else{
+					System.out.println("该业务保护路径不需要再生器");
+					file_io.filewrite2(OutFileName, "该业务保护路径不需要再生器");
+				}
+				System.out.println();
+				file_io.filewrite2(OutFileName, "");
+			}
+			HashMap<String, Node> testmap2 = oplayer.getNodelist();
+			Iterator<String> testiter2 = testmap2.keySet().iterator();
+			while (testiter2.hasNext()) {
+				Node node = (Node) (testmap2.get(testiter2.next()));
+				System.out.println(node.getName()+"上面再生器的个数："+node.getregnum());
+				file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
 			}
 		}
 

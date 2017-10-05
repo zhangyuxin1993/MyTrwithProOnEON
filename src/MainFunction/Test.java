@@ -206,21 +206,21 @@ public class Test {
 		return D_value;
 	}
 
-	public void check(Layer iplayer) {
-		ArrayList<VirtualLink> VirtualLinklist = new ArrayList<>();
-		HashMap<String, Link> linklist = iplayer.getLinklist();
-		Iterator<String> linkitor = linklist.keySet().iterator();
-		while (linkitor.hasNext()) {
-			Link Mlink = (Link) (linklist.get(linkitor.next()));
-			VirtualLinklist = Mlink.getVirtualLinkList();// 取出IP层上的链路对应的虚拟链路
-															// 新建一个list使其本身的虚拟链路不改变
-			for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtual
-				// link
-				System.out.println(
-						"IP层上链路" + Mlink.getName() + "    对应的虚拟链路：" + Vlink.getSrcnode() + "-" + Vlink.getDesnode()
-								+ "   nature=" + Vlink.getNature() + "    该虚拟链路上对应的剩余容量为：" + Vlink.getRestcapacity());
-
-			}
-		}
-	}
+//	public void check(Layer iplayer) {
+//		ArrayList<VirtualLink> VirtualLinklist = new ArrayList<>();
+//		HashMap<String, Link> linklist = iplayer.getLinklist();
+//		Iterator<String> linkitor = linklist.keySet().iterator();
+//		while (linkitor.hasNext()) {
+//			Link Mlink = (Link) (linklist.get(linkitor.next()));
+//			VirtualLinklist = Mlink.getVirtualLinkList();// 取出IP层上的链路对应的虚拟链路
+//															// 新建一个list使其本身的虚拟链路不改变
+//			for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtual
+//				// link
+//				System.out.println(
+//						"IP层上链路" + Mlink.getName() + "    对应的虚拟链路：" + Vlink.getSrcnode() + "-" + Vlink.getDesnode()
+//								+ "   nature=" + Vlink.getNature() + "    该虚拟链路上对应的剩余容量为：" + Vlink.getRestcapacity());
+//
+//			}
+//		}
+//	}
 }

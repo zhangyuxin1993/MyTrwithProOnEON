@@ -42,8 +42,8 @@ public class LinearRoute extends Subgraph {
 		}
 		else{ 
 		      for(Node node:newroute.getNodelist()){		    	       
-			           System.out.println(node.getName());			        
-			           file.filewrite(write_name,node.getName());			          			           
+			           System.out.println(node.getName()+"  ");			        
+			           file.filewrite(write_name,node.getName()+"   ");			          			           
 		      }		     
 		}		
 	}
