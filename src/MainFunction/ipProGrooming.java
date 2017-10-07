@@ -14,13 +14,14 @@ import network.VirtualLink;
 import subgraph.LinearRoute;
 
 public class ipProGrooming {
+	String OutFileName =Mymain.OutFileName;
 	public boolean ipprotectiongrooming(Layer iplayer, Layer oplayer, NodePair nodepair, LinearRoute route,
 			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist) {// flag=true表示保护IP层建立的工作路径
 		// flag=flase表示光层建立的工作路径
 		RouteSearching Dijkstra = new RouteSearching();
 		boolean ipproflag = false;
 		Test t = new Test();
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
 		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
@@ -203,8 +204,8 @@ public class ipProGrooming {
 			ArrayList<Link> totallink = new ArrayList<>();
 			for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 				Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
-				System.out.println("光层路由上的链路：" + link.getName());
-				file_io.filewrite2(OutFileName,"光层路由上的链路：" + link.getName());
+				System.out.println("IP路由上的链路：" + link.getName());
+				file_io.filewrite2(OutFileName,"IP路由上的链路：" + link.getName());
 				/*
 				 * 如果路由成功 则需要找到IP层上的link对应的虚拟链路 改变其容量
 				 */

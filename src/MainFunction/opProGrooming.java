@@ -17,6 +17,7 @@ import resource.ResourceOnLink;
 import subgraph.LinearRoute;
 
 public class opProGrooming {// 光层路由保护
+	String OutFileName =Mymain.OutFileName;
 	public boolean opprotectiongrooming(Layer iplayer, Layer oplayer, NodePair nodepair, LinearRoute route,
 			int numOfTransponder, boolean flag,ArrayList<WorkandProtectRoute> wprlist) throws IOException {// flag=true表示保护IP层建立的工作路径
 													// flag=flase表示光层建立的工作路径
@@ -25,7 +26,7 @@ public class opProGrooming {// 光层路由保护
 		Node desnode = nodepair.getDesNode();
 		boolean success=false;
 		double routelength = 0;
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		ArrayList<VirtualLink> provirtuallinklist=new ArrayList<>();
 		HashMap<Link, Integer> FSuseOnlink=new  HashMap<Link, Integer>();

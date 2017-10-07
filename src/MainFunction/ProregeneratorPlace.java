@@ -15,9 +15,9 @@ import resource.ResourceOnLink;
 import subgraph.LinearRoute;
 
 public class ProregeneratorPlace {
-
+	String OutFileName =Mymain.OutFileName;
 	static int totalregNum = 0;
-
+	
 	public boolean proregeneratorplace(NodePair nodepair, LinearRoute newRoute, ArrayList<WorkandProtectRoute> wprlist,
 			double routelength, Layer oplayer, Layer ipLayer, int IPflow) {
 		WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
@@ -31,7 +31,7 @@ public class ProregeneratorPlace {
 		ArrayList<Regenerator> addreglist=new ArrayList<>();
 		ArrayList<RouteAndRegPlace> regplaceoption = new ArrayList<>();
 		ProregeneratorPlace rgp = new ProregeneratorPlace();
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
 		// part1 找到该保护链路上面已存在的共享再生器
@@ -67,8 +67,6 @@ public class ProregeneratorPlace {
 									if (already < newregg) {// 说明新增加的reg共享的保护链路比较多
 										removereglist.add(alreadyReg);
 										addreglist.add(newreg);
-//										sharereglist.remove(alreadyReg);
-//										sharereglist.add(newreg);
 									}
 								}
 								for(Regenerator remoReg:removereglist){
@@ -102,13 +100,17 @@ public class ProregeneratorPlace {
 		file_io.filewrite2(OutFileName, "");
 		System.out.println("可共享再生器的个数：" + ShareReg.size() + "需要的最少再生器个数：" + minRegNum);
 		file_io.filewrite2(OutFileName, "可共享再生器的个数：" + ShareReg.size() + "需要的最少再生器个数：" + minRegNum);
+		file_io.filewrite2(OutFileName, "可共享再生器的位置：");
+		for(int a:ShareReg)  file_io.filewrite_without(OutFileName,a +"  ");
+		file_io.filewrite2(OutFileName, "   ");
+		
 		if (ShareReg.size() <= minRegNum) {
 			for (int s = minRegNum; s <= internode; s++) {
 				if (regplaceoption.size()!=0)
 					break;
-				passflag = false;
 				Test nOfm = new Test(s, internode); // 在所有中间节点中随机选取m个点来放置再生器
 				while (nOfm.hasNext()) {
+					passflag=false;
 					int[] set = nOfm.next(); // 随机产生的再生器放置位置
 					for (int num : ShareReg) {
 						for (int k = 0; k < set.length; k++) {
@@ -123,7 +125,7 @@ public class ProregeneratorPlace {
 							break;
 					}
 					if (passflag)
-						break;// 已有的共享再生器 已经内定所以所有产生的可能性中要包含这些再生器
+						continue;// 已有的共享再生器 已经内定所以所有产生的可能性中要包含这些再生器
 
 					// 给定再生器节点之后进行RSA 产生option选项的路径
 					partworkflag = rgp.RSAunderSet(set, newRoute, oplayer, ipLayer, IPflow, regplaceoption, wprlist,nodepair);
@@ -136,11 +138,11 @@ public class ProregeneratorPlace {
 			for (int s = minRegNum; s <= internode; s++) {
 				if (regplaceoption.size()!=0)
 					break;
-				passflag = false;
 				Test nOfm = new Test(s, internode); // 在所有中间节点中随机选取m个点来放置再生器
 				while (nOfm.hasNext()) {
+					passflag = false;
 					int[] set = nOfm.next(); // 随机产生的再生器放置位置
-					if (s <= ShareReg.size()) {
+					if (s <= ShareReg.size()) { //此时再生器必须从可共享的再生器里面选择
 						for (int p = 0; p < set.length; p++) {
 							int p1 = set[p];
 							if (!ShareReg.contains(p1)) {
@@ -149,7 +151,7 @@ public class ProregeneratorPlace {
 							}
 						}
 						if (passflag)
-							break;
+							continue;
 					}
 					if (s > ShareReg.size()) {
 						for (int num : ShareReg) {
@@ -165,11 +167,10 @@ public class ProregeneratorPlace {
 								break;
 						}
 						if (passflag)
-							break;
+							continue;
 					} // 以上主要为了产生set
 						// 给定再生器节点之后进行RSA
-					partworkflag = rgp.RSAunderSet(set, newRoute, oplayer, ipLayer, IPflow, regplaceoption, wprlist,
-							nodepair);
+					partworkflag = rgp.RSAunderSet(set, newRoute, oplayer, ipLayer, IPflow, regplaceoption, wprlist,nodepair);
 				}
 			}
 		}
@@ -212,7 +213,7 @@ public class ProregeneratorPlace {
 			boolean workOrproflag, ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
 		// 判断某一段transparent链路是否能够成功RSA 并且记录新使用的FS数量
 		// workOrproflag=true的时候表示是工作 false的时候表示保护
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		nodepair.setSlotsnum(0);
 		double X = 1;
@@ -236,6 +237,7 @@ public class ProregeneratorPlace {
 				X = 50.0;
 			}
 			slotnum = (int) Math.ceil(IPflow / X);// 向上取整
+			file_io.filewrite2(OutFileName,"每段链路所需的slot数为： "+slotnum);
 			// System.out.println("该链路所需slot数： " + slotnum);
 
 			WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
@@ -334,7 +336,7 @@ public class ProregeneratorPlace {
 
 	public void FinalRouteRSA(NodePair nodepair, RouteAndRegPlace finalRoute, Layer oplayer, Layer ipLayer, int IPflow,
 			ArrayList<WorkandProtectRoute> wprlist, ArrayList<VirtualLink> provirtuallinklist,ArrayList<Integer> ShareReg, ArrayList<Regenerator> sharereglist) {
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		ArrayList<Link> alllinklist = new ArrayList<>();
 		ArrayList<Regenerator> regthinglist = new ArrayList<>();
@@ -424,21 +426,17 @@ public class ProregeneratorPlace {
 			Layer iplayer, ArrayList<VirtualLink> provirtuallinklist, ArrayList<WorkandProtectRoute> wprlist,
 			NodePair nodepair,HashMap<Link, Integer> setFSuseOnlink) {
 		double X = 1;
-		int slotnum = 0;
-		boolean opworkflag = false;
+		int slotnum = 0,shareFS=0;
+		boolean opworkflag = false,shareFlag=true;
 		Mymain spa = new Mymain();
 		ArrayList<Link> removeLinklist=new ArrayList<>();
 		HashMap<Link, Integer> FSuseOnlink = new HashMap<>();
 		Node srcnode = new Node(null, 0, null, iplayer, 0, 0);
 		Node desnode = new Node(null, 0, null, iplayer, 0, 0);
 		Test t = new Test();
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
-//		if (routelength > 4000) {
-//			System.out.println("链路过长无法RSA");
-//		}
-//		if (routelength < 4000) {
-			if (routelength > 2000 && routelength <= 4000) {
+
+		if (routelength > 2000 && routelength <= 4000) {
 				X = 12.5;
 			} else if (routelength > 1000 && routelength <= 2000) {
 				X = 25.0;
@@ -487,16 +485,21 @@ public class ProregeneratorPlace {
 						}
 					}//找出之前所有可共享业务中 使用的最大FS
 					linklistOnly.add(link);
+					if(shareFS>max){//找出该linklist中可以共享的FS的最小值
+						shareFS=max;
+					}
 								if (max < slotnum) {//如果max>slotnum那么则不需要重新RSA
 									int newFS = slotnum - max;
 									index_wave = spa.spectrumallocationOneRoute(false, null, linklistOnly, newFS);
 									ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), newFS);
+									
 									link.setMaxslot(newFS + link.getMaxslot());
 									setFSuseOnlink.put(link, newFS);
 									// System.out.println("链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数：
 									// "+link.getSlotsindex().size());
 								}
 					if(max==0){
+						shareFlag=false; //只要该linklist中有一条链路不能共享 那么则将该标志位至0
 						index_wave = spa.spectrumallocationOneRoute(false, null, linklistOnly, slotnum);
 						ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 						link.setMaxslot(slotnum + link.getMaxslot());
@@ -505,8 +508,30 @@ public class ProregeneratorPlace {
 					if(max>=slotnum){
 						setFSuseOnlink.put(link, 0);
 					}
+					
 				}
-
+//首先取出linklist里面的前两个链路和最后两个链路
+				Node startnode=new Node(null, 0, null, iplayer, 0, 0);
+				Node endnode=new Node(null, 0, null, iplayer, 0, 0);
+				if(linklist.size()!=1){
+					Link link1=linklist.get(0);  Link link2=linklist.get(1);
+					Link link3=linklist.get(linklist.size()-2);  Link link4=linklist.get(linklist.size()-1);
+					Node nodeA=link1.getNodeA(); Node nodeB=link1.getNodeB();
+					Node nodeC=link4.getNodeA(); Node nodeD=link4.getNodeB();
+					file_io.filewrite2(OutFileName,"取出的链路为"+link1.getName()+"  "+link2.getName()+"   "+link3.getName()+"  "+link4.getName());
+					
+					if(link2.getNodeA().equals(nodeA)||link2.getNodeB().equals(nodeA)) startnode=nodeB;
+					if(link2.getNodeA().equals(nodeB)||link2.getNodeB().equals(nodeB)) startnode=nodeA;//找到起始端点
+					if(link3.getNodeA().equals(nodeC)||link3.getNodeB().equals(nodeC)) endnode=nodeD;
+					if(link3.getNodeA().equals(nodeD)||link3.getNodeB().equals(nodeD)) endnode=nodeC;//找到终止端点
+					file_io.filewrite2(OutFileName,"找到的节点："+startnode.getName()+"  "+endnode.getName());
+				}
+				if(linklist.size()==1){
+					startnode=linklist.get(0).getNodeA();
+					endnode=linklist.get(0).getNodeB();
+				}
+				
+	
 	for(int num = 0;num<iplayer.getNodelist().size()-1;num++){// 在IP层中寻找transparent链路的两端
 		boolean srcflag = false, desflag = false;
 		// System.out.println(iplayer.getNodelist()..get(0).getName());
@@ -514,11 +539,11 @@ public class ProregeneratorPlace {
 		Iterator<String> iter = map.keySet().iterator();
 		while (iter.hasNext()) {
 			Node node = (Node) (map.get(iter.next()));
-			if (node.getName().equals(linklist.get(0).getNodeA().getName())) {
+			if (node.getName().equals(startnode.getName())) {
 				srcnode = node;
 				srcflag = true;
 			}
-			if (node.getName().equals(linklist.get(linklist.size() - 1).getNodeB().getName())) {
+			if (node.getName().equals(endnode.getName())) {
 				desnode = node;
 				desflag = true;
 			}
@@ -527,12 +552,21 @@ public class ProregeneratorPlace {
 			break;
 	}
 
-	String name = srcnode.getName() + "-" + desnode.getName();
+	
 	int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的故这样设置index
 
+	file_io.filewrite2(OutFileName,"src的节点度:"+srcnode.getIndex()+"  des节点度："+desnode.getIndex());
+	if(srcnode.getIndex()>desnode.getIndex()){
+		Node internode=srcnode;
+		srcnode=desnode;
+		desnode=internode;
+	}
+	String name = srcnode.getName() + "-" + desnode.getName();
+//	file_io.filewrite2(OutFileName,"此时的原节点为:"+srcnode.getName()+"  终结点为"+desnode.getName());
 	Link finlink = iplayer.findLink(srcnode, desnode);
 	Link createlink = new Link(null, 0, null, iplayer, null, null, 0, 0);
-	boolean findflag = false;try
+	boolean findflag = false;
+	try
 	{
 		System.out.println(finlink.getName());
 		file_io.filewrite2(OutFileName,finlink.getName());
@@ -541,19 +575,31 @@ public class ProregeneratorPlace {
 	{
 		System.out.println("IP 层没有该链路需要新建链路");
 		file_io.filewrite2(OutFileName,"IP 层没有该链路需要新建链路");
+		file_io.filewrite2(OutFileName,"此时的原节点为:"+srcnode.getName()+"  终结点为"+desnode.getName());
 		createlink = new Link(name, index, null, iplayer, srcnode, desnode, length1, cost);
 		iplayer.addLink(createlink);
 	}
-
+	
 	VirtualLink Vlink = new VirtualLink(srcnode.getName(), desnode.getName(), 1,0);
-	Vlink.setnature(1);Vlink.setUsedcapacity(Vlink.getUsedcapacity()+IPflow);Vlink.setFullcapacity(slotnum*X);// 多出来的flow是从这里产生的
-	Vlink.setRestcapacity(Vlink.getFullcapacity()-Vlink.getUsedcapacity());Vlink.setlength(length1);Vlink.setcost(cost);Vlink.setPhysicallink(linklist);provirtuallinklist.add(Vlink);
+	if(!shareFlag||shareFS<=slotnum){//表示该linklist中有链路不能共享FS或者均可以共享时共享的FS小于需要的FS
+		Vlink.setnature(1);
+		Vlink.setUsedcapacity(Vlink.getUsedcapacity()+IPflow);
+		Vlink.setFullcapacity(slotnum*X);// 多出来的flow是从这里产生的
+		Vlink.setRestcapacity(Vlink.getFullcapacity()-Vlink.getUsedcapacity());Vlink.setlength(length1);
+		Vlink.setcost(cost);Vlink.setPhysicallink(linklist);provirtuallinklist.add(Vlink);
+	}
+	if(shareFS>slotnum){//表示该linklist中有链路不能共享FS或者均可以共享时共享的FS小于需要的FS
+		Vlink.setnature(1);
+		Vlink.setUsedcapacity(Vlink.getUsedcapacity()+IPflow);
+		Vlink.setFullcapacity(shareFS*X);// 多出来的flow是从这里产生的
+		Vlink.setRestcapacity(Vlink.getFullcapacity()-Vlink.getUsedcapacity());Vlink.setlength(length1);
+		Vlink.setcost(cost);Vlink.setPhysicallink(linklist);provirtuallinklist.add(Vlink);
+	}
+	
 	
 	if(findflag)
 	{// 如果在IP层中已经找到该链路
-		// System.out.println(finlink.getVirtualLinkList().size());
 		finlink.getVirtualLinkList().add(Vlink);
-		// System.out.println(finlink.getVirtualLinkList().size());
 		System.out.println("IP层已存在的链路 " + finlink.getName() + "\n " + "    预留的flow：  " + Vlink.getRestcapacity());
 		System.out.println("工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： " + finlink.getVirtualLinkList().size());
 		file_io.filewrite2(OutFileName,"IP层已存在的链路 " + finlink.getName() + "\n " + "    预留的flow：  " + Vlink.getRestcapacity());
@@ -561,7 +607,6 @@ public class ProregeneratorPlace {
 	}else
 	{
 		createlink.getVirtualLinkList().add(Vlink);
-		// System.out.println(createlink.getVirtualLinkList().size());
 		System.out.println("IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
 		System.out.println("工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： " + createlink.getVirtualLinkList().size());
 		file_io.filewrite2(OutFileName,"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
@@ -571,6 +616,7 @@ public class ProregeneratorPlace {
 return opworkflag;
 }
 
+	
 	public RouteAndRegPlace optionRouteSelect(ArrayList<RouteAndRegPlace> regplaceoption,
 			ArrayList<WorkandProtectRoute> wprlist) {
 		RouteAndRegPlace finalRoute = new RouteAndRegPlace(null, 1);
@@ -624,7 +670,7 @@ return opworkflag;
 			ArrayList<RouteAndRegPlace> regplaceoption, ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
 		boolean partworkflag = false, RSAflag = false, regflag = false;
 		double length = 0;
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		ArrayList<Link> linklist = new ArrayList<>();
 		int FStotal = 0, n = 0;

@@ -16,7 +16,7 @@ import resource.ResourceOnLink;
 import subgraph.LinearRoute;
 
 public class opWorkingGrooming {
-	
+	String OutFileName =Mymain.OutFileName;
 	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute,ArrayList<WorkandProtectRoute> wprlist) throws IOException {
 		RouteSearching Dijkstra = new RouteSearching();
 		boolean opworkflag=false;
@@ -24,7 +24,7 @@ public class opWorkingGrooming {
 		Node desnode = nodepair.getDesNode();
 		double routelength = 0;
 		LinearRoute route_out=new LinearRoute(null, 0, null);
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
 		

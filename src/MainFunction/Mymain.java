@@ -16,19 +16,20 @@ import network.NodePair;
 import subgraph.LinearRoute;
 
 public class Mymain {
+	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 	public static void main(String[] args) throws IOException {
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
 		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
 		ArrayList<NodePair> nodepairlist = new ArrayList<>();
 		ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		// 产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
 		Network network = new Network("ip over EON", 0, null);
-		network.readPhysicalTopology("G:/Topology/NSFNET.csv");
+		network.readPhysicalTopology("D:/zyx/Topology/NSFNET.csv");
 		network.copyNodes();
 		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
 		// **(现在随机产生demand 已经注释)
@@ -64,6 +65,8 @@ public class Mymain {
 			
 			System.out.println();
 			System.out.println();
+			file_io.filewrite2(OutFileName, "");
+			file_io.filewrite2(OutFileName, "");
 			System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
 			file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
 			
@@ -160,8 +163,15 @@ public class Mymain {
 				System.out.println(node.getName()+"上面再生器的个数："+node.getregnum());
 				file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
 			}
+			
+			HashMap<String, Link> testmap3 = oplayer.getLinklist();
+			Iterator<String> testiter3 = testmap3.keySet().iterator();
+			while (testiter3.hasNext()) {
+				Link link = (Link) (testmap3.get(testiter3.next()));
+				file_io.filewrite2(OutFileName, "链路 "+link.getName()+"上面max slot为"+link.getMaxslot()+"slotarray的大小"+link.getSlotsarray().size());
+			}
 		}
-
+		System.out.println("Finish");
 	}
 
 	public static ArrayList<NodePair> Rankflow(Layer IPlayer) {
@@ -201,12 +211,7 @@ public class Mymain {
 		} else {
 			linklistOnroute = linklist;
 		}
-		// route.OutputRoute_node(route);// debug
 		for (Link link : linklistOnroute) {
-			// if (route.getSlotsnum() == 0) {
-			// System.out.println("路径上没有slot需要分配");
-			// break;
-			// }
 			link.getSlotsindex().clear();
 			// slotarray和slotindex的区别？？
 			for (int start = 0; start < link.getSlotsarray().size() - slotnum; start++) {

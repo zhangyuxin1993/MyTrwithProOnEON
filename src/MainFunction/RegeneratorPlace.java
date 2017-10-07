@@ -17,13 +17,13 @@ import subgraph.LinearRoute;
 public class RegeneratorPlace {
 	public int newFS = 0;
 	static int totalregNum = 0;
-
+	String OutFileName =Mymain.OutFileName;
 	public boolean regeneratorplace(int IPflow, double routelength, LinearRoute newRoute, Layer oplayer,
 			Layer ipLayer,ArrayList<WorkandProtectRoute> wprlist,NodePair nodepair) {
 		// /*
 		// 第二种方法先判断一条路径最少使用的再生器的个数 然后穷尽所有的情况来选择再生器 放置的位置
 		// int totalregNum=Mymain.totalregNum;
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		int minRegNum = (int) Math.floor(routelength / 4000);// 最少的再生器的个数
 		int internode = newRoute.getNodelist().size() - 2;
@@ -135,14 +135,14 @@ public class RegeneratorPlace {
 		System.out.println();
 		if (success) {
 			System.out.print("再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
-			file_io.filewrite2(OutFileName,"再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
+			file_io.filewrite_without(OutFileName,"再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
 			for (int p = 0; p < finalRoute.getregnode().size(); p++) {
 				System.out.print(finalRoute.getregnode().get(p) + "     ");
-				file_io.filewrite2(OutFileName,finalRoute.getregnode().get(p) + "     ");
-				totalregNum = totalregNum + finalRoute.getregnum();
-				System.out.println("工作路径一共需要再生器个数：" + totalregNum);
-				file_io.filewrite2(OutFileName,"工作路径一共需要再生器个数：" + totalregNum);
+				file_io.filewrite_without(OutFileName,finalRoute.getregnode().get(p) + "     ");
 			}
+			totalregNum = totalregNum + finalRoute.getregnum();
+			System.out.println("工作路径一共需要再生器个数：" + totalregNum);
+			file_io.filewrite2(OutFileName,"工作路径一共需要再生器个数：" + totalregNum);
 		} else{
 			System.out.println("放置再生器不成功改路径被堵塞");
 			file_io.filewrite2(OutFileName,"放置再生器不成功改路径被堵塞");
@@ -188,7 +188,7 @@ public class RegeneratorPlace {
 		double length2 = 0;
 		boolean regflag2 = false;
 		ArrayList<Link> linklist2 = new ArrayList<>();
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
 		for (int i = 0; i < finalRoute.getregnum() + 1; i++) {
@@ -204,12 +204,6 @@ public class RegeneratorPlace {
 				linklist2.add(link);
 				count = count + 1;
 				if (!regflag2) {// 未到达最后一段路径的RSA
-//					if (count != finalRoute.getregnode().get(i)) {
-//						if (count == finalRoute.getRoute().getNodelist().size() - 1) {
-//							modifylinkcapacity(IPflow, length2, linklist2, oplayer, ipLayer);// 为目的节点前的剩余链路进行RSA
-//							linklist2.clear();
-//						}
-//					}
 					if (count == finalRoute.getregnode().get(i)) {
 						modifylinkcapacity(IPflow, length2, linklist2, oplayer, ipLayer);// 此时在n点放置再生器
 						length2 = 0;
@@ -232,7 +226,7 @@ public class RegeneratorPlace {
 		// workOrproflag=true的时候表示是工作 false的时候表示保护
 		double X = 1;
 		int slotnum = 0;
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		boolean opworkflag = false;
 		if (routelength > 4000) {
@@ -299,7 +293,6 @@ public class RegeneratorPlace {
 		double X = 1;
 		int slotnum = 0;
 		boolean opworkflag = false;
-		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		Node srcnode = new Node(null, 0, null, iplayer, 0, 0);
 		Node desnode = new Node(null, 0, null, iplayer, 0, 0);
@@ -342,6 +335,26 @@ public class RegeneratorPlace {
 					// "+link.getSlotsindex().size());
 				}
 
+				Node startnode=new Node(null, 0, null, iplayer, 0, 0);
+				Node endnode=new Node(null, 0, null, iplayer, 0, 0);
+				if(linklist.size()!=1){
+					Link link1=linklist.get(0);  Link link2=linklist.get(1);
+					Link link3=linklist.get(linklist.size()-2);  Link link4=linklist.get(linklist.size()-1);
+					Node nodeA=link1.getNodeA(); Node nodeB=link1.getNodeB();
+					Node nodeC=link4.getNodeA(); Node nodeD=link4.getNodeB();
+					file_io.filewrite2(OutFileName,"取出的链路为"+link1.getName()+"  "+link2.getName()+"   "+link3.getName()+"  "+link4.getName());
+					
+					if(link2.getNodeA().equals(nodeA)||link2.getNodeB().equals(nodeA)) startnode=nodeB;
+					if(link2.getNodeA().equals(nodeB)||link2.getNodeB().equals(nodeB)) startnode=nodeA;//找到起始端点
+					if(link3.getNodeA().equals(nodeC)||link3.getNodeB().equals(nodeC)) endnode=nodeD;
+					if(link3.getNodeA().equals(nodeD)||link3.getNodeB().equals(nodeD)) endnode=nodeC;//找到终止端点
+					file_io.filewrite2(OutFileName,"找到的节点："+startnode.getName()+"  "+endnode.getName());
+				}
+				if(linklist.size()==1){
+					startnode=linklist.get(0).getNodeA();
+					endnode=linklist.get(0).getNodeB();
+				}
+				
 				for (int num = 0; num < iplayer.getNodelist().size() - 1; num++) {// 在IP层中寻找transparent链路的两端
 					boolean srcflag = false, desflag = false;
 					// System.out.println(iplayer.getNodelist()..get(0).getName());
@@ -350,11 +363,11 @@ public class RegeneratorPlace {
 					while (iter.hasNext()) {
 						Node node = (Node) (map.get(iter.next()));
 
-						if (node.getName().equals(linklist.get(0).getNodeA().getName())) {
+						if (node.getName().equals(startnode.getName())) {
 							srcnode = node;
 							srcflag = true;
 						}
-						if (node.getName().equals(linklist.get(linklist.size() - 1).getNodeB().getName())) {
+						if (node.getName().equals(endnode.getName())) {
 							desnode = node;
 							desflag = true;
 						}
@@ -362,7 +375,13 @@ public class RegeneratorPlace {
 					if (srcflag && desflag)
 						break;
 				}
-
+				file_io.filewrite2(OutFileName,"src的节点度:"+srcnode.getIndex()+"  des节点度："+desnode.getIndex());
+				if(srcnode.getIndex()>desnode.getIndex()){
+					Node internode=srcnode;
+					srcnode=desnode;
+					desnode=internode;
+				}
+				file_io.filewrite2(OutFileName,"此时的原节点为:"+srcnode.getName()+"  终结点为"+desnode.getName());
 				String name = srcnode.getName() + "-" + desnode.getName();
 				int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的故这样设置index
 
@@ -376,6 +395,7 @@ public class RegeneratorPlace {
 				} catch (java.lang.NullPointerException ex) {
 					System.out.println("IP 层没有该链路需要新建链路");
 					file_io.filewrite2(OutFileName,"IP 层没有该链路需要新建链路");
+					file_io.filewrite2(OutFileName,"建立的新链路为:"+srcnode.getName()+" "+desnode.getName());
 					createlink = new Link(name, index, null, iplayer, srcnode, desnode, length1, cost);
 					iplayer.addLink(createlink);
 				}
