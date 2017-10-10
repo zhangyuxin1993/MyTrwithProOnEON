@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import demand.Request;
 import general.file_out_put;
 import graphalgorithms.RouteSearching;
 import network.Layer;
@@ -110,6 +111,7 @@ public class IPWorkingGrooming {
 			}
 			
 			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
+			Request re=new Request(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
@@ -145,6 +147,7 @@ public class IPWorkingGrooming {
 						}
 						}
 					}
+				wpr.setrequest(re);
 				wpr.setworklinklist(totallink);
 				wprlist.add(wpr);
 			}

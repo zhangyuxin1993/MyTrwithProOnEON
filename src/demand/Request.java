@@ -44,7 +44,10 @@ public class Request {
 		this.rollist_w = new ArrayList<ResourceOnLink>();
 		//this.rollist_p= new ArrayList<ResourceOnLink>();
 	}
-	
+		public Request(NodePair nodepair){ 
+		this.setNodepair(nodepair);
+	}
+		
 	public void spectrumrelease_working(){
 		for(ResourceOnLink rol : this.rollist_w){
 			rol.resoucerelease();

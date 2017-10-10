@@ -72,13 +72,13 @@ public class RegeneratorPlace {
 						if (!regflag) {// 未到达最后一段路径的RSA
 							if (n != set[i]) {
 								if (n == newRoute.getNodelist().size() - 1) {
-									partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, true, wprlist, nodepair);// 为目的节点前的剩余链路进行RSA
+									partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 为目的节点前的剩余链路进行RSA
 									FStotal = FStotal + newFS;
 								}
 							}
 							if (n == set[i]) {
 								// length=length-link.getLength();
-								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, true, wprlist, nodepair);// 此时在n点放置再生器
+								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 此时在n点放置再生器
 								FStotal = FStotal + newFS;
 								length = 0;
 								RSAflag = true;
@@ -87,7 +87,7 @@ public class RegeneratorPlace {
 							}
 						}
 						if (n == newRoute.getNodelist().size() - 1) {
-							partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, true, wprlist, nodepair);// 此时在n点放置再生器
+							partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 此时在n点放置再生器
 							FStotal = FStotal + newFS;
 						}
 						if (!partworkflag && RSAflag)
@@ -140,9 +140,11 @@ public class RegeneratorPlace {
 				System.out.print(finalRoute.getregnode().get(p) + "     ");
 				file_io.filewrite_without(OutFileName,finalRoute.getregnode().get(p) + "     ");
 			}
+			System.out.println();
 			totalregNum = totalregNum + finalRoute.getregnum();
-			System.out.println("工作路径一共需要再生器个数：" + totalregNum);
-			file_io.filewrite2(OutFileName,"工作路径一共需要再生器个数：" + totalregNum);
+			System.out.println("*******工作路径一共需要再生器个数：" + totalregNum);
+			file_io.filewrite2(OutFileName,"");
+			file_io.filewrite2(OutFileName,"******工作路径一共需要再生器个数：" + totalregNum);
 		} else{
 			System.out.println("放置再生器不成功改路径被堵塞");
 			file_io.filewrite2(OutFileName,"放置再生器不成功改路径被堵塞");
@@ -198,8 +200,10 @@ public class RegeneratorPlace {
 				Node nodeA = finalRoute.getRoute().getNodelist().get(count);
 				Node nodeB = finalRoute.getRoute().getNodelist().get(count + 1);
 				Link link = oplayer.findLink(nodeA, nodeB);
-				System.out.println("找到的链路名字：" + link.getName());
-				file_io.filewrite2(OutFileName,"找到的链路名字：" + link.getName());
+				System.out.println();
+				file_io.filewrite2(OutFileName,"");
+				System.out.println("新建工作链路RSA：" + link.getName());
+				file_io.filewrite2(OutFileName,"新建工作链路RSA：" + link.getName());
 				length2 = length2 + link.getLength();
 				linklist2.add(link);
 				count = count + 1;
@@ -221,12 +225,11 @@ public class RegeneratorPlace {
 	}
 
 	public Boolean vertify(int IPflow, double routelength, ArrayList<Link> linklist, Layer oplayer, Layer iplayer,
-			boolean workOrproflag, ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
+			 ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
 	//判断某一段transparent链路是否能够成功RSA 并且记录新使用的FS数量
-		// workOrproflag=true的时候表示是工作 false的时候表示保护
+ 
 		double X = 1;
 		int slotnum = 0;
-//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		boolean opworkflag = false;
 		if (routelength > 4000) {
@@ -244,35 +247,12 @@ public class RegeneratorPlace {
 				X = 50.0;
 			}
 			slotnum = (int) Math.ceil(IPflow / X);// 向上取整
-//			System.out.println("该链路所需slot数： " + slotnum);
+			System.out.println("该链路所需slot数： " + slotnum);
 
-			WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
 			Test t = new Test();
 			
-				newFS = slotnum * linklist.size();
-				if (!workOrproflag) {// 此时建立保护再生器链路
-				for (WorkandProtectRoute wpr : wprlist) {
-					if (wpr.getdemand().equals(nodepair)) {
-						nowdemand = wpr;
-						continue;
-					}
-				}
-
-				for (Link nowlink : linklist) {
-					for (WorkandProtectRoute wpr : wprlist) {
-						if (wpr.getdemand().equals(nodepair)) {
-							continue;
-						}
-						if (wpr.getworklinklist().contains(nowlink)) {
-							int cross = t.linklistcompare(wpr.getworklinklist(), nowdemand.getworklinklist());
-							if (cross == 0) {// 两条工作链路相交表示保护路径FS不可以共享
-								newFS=newFS-slotnum; //如果某一条链路上的频谱可以共享 则需要在减去这段FS
-								break;
-							}
-						}
-					}
-				}
-			}
+			newFS = slotnum * linklist.size();
+	 
 			ArrayList<Integer> index_wave = new ArrayList<Integer>();
 			Mymain spa = new Mymain();
 			index_wave = spa.spectrumallocationOneRoute(false, null, linklist, slotnum);
@@ -281,15 +261,14 @@ public class RegeneratorPlace {
 				file_io.filewrite2(OutFileName,"路径堵塞 ，不分配频谱资源");
 			} else {
 				opworkflag = true;
-				System.out.println("可以进行RSA");
+				System.out.println("可以进行RSA ");
 				file_io.filewrite2(OutFileName,"可以进行RSA");
 			}
 		}
 		return opworkflag;
 	}
 
-	public boolean modifylinkcapacity(int IPflow, double routelength, ArrayList<Link> linklist, Layer oplayer,
-			Layer iplayer) {
+	public boolean modifylinkcapacity(int IPflow, double routelength, ArrayList<Link> linklist, Layer oplayer,Layer iplayer) {
 		double X = 1;
 		int slotnum = 0;
 		boolean opworkflag = false;
@@ -330,9 +309,9 @@ public class RegeneratorPlace {
 					Request request = null;
 					ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 					link.setMaxslot(slotnum + link.getMaxslot());
-					// System.out.println("链路 " + link.getName() + "的最大slot是： "
-					// + link.getMaxslot()+" 可用频谱窗数：
-					// "+link.getSlotsindex().size());
+					 System.out.println();
+					 System.out.println("链路 " + link.getName() + "的最大slot是： "+ link.getMaxslot()+" 可用频谱窗数："
+					+link.getSlotsindex().size());
 				}
 
 				Node startnode=new Node(null, 0, null, iplayer, 0, 0);
@@ -375,13 +354,13 @@ public class RegeneratorPlace {
 					if (srcflag && desflag)
 						break;
 				}
-				file_io.filewrite2(OutFileName,"src的节点度:"+srcnode.getIndex()+"  des节点度："+desnode.getIndex());
+//				file_io.filewrite2(OutFileName,"src的节点度:"+srcnode.getIndex()+"  des节点度："+desnode.getIndex());
 				if(srcnode.getIndex()>desnode.getIndex()){
 					Node internode=srcnode;
 					srcnode=desnode;
 					desnode=internode;
 				}
-				file_io.filewrite2(OutFileName,"此时的原节点为:"+srcnode.getName()+"  终结点为"+desnode.getName());
+//				file_io.filewrite2(OutFileName,"此时的原节点为:"+srcnode.getName()+"  终结点为"+desnode.getName());
 				String name = srcnode.getName() + "-" + desnode.getName();
 				int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的故这样设置index
 

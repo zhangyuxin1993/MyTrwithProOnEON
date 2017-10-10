@@ -25,6 +25,7 @@ public class ipProGrooming {
 		file_out_put file_io=new file_out_put();
 		
 		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
+		file_io.filewrite2(OutFileName,"  ");
 		file_io.filewrite2(OutFileName,"节点对：" + nodepair.getName() + "   flag=" + flag);
 		ArrayList<VirtualLink> DelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<VirtualLink> SumDelLinkList = new ArrayList<VirtualLink>();

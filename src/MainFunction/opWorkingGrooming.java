@@ -43,10 +43,11 @@ public class opWorkingGrooming {
 			System.out.println("工作无路径");
 			file_io.filewrite2(OutFileName,"工作无路径");
 		} else {
-			System.out.print("在物理层路由为：------");
-			file_io.filewrite_without(OutFileName,"在物理层路由为：------");
+			System.out.print("在物理层路由为：");
+			file_io.filewrite_without(OutFileName,"在物理层路由为：");
 			opnewRoute.OutputRoute_node(opnewRoute);
 			route_out.OutputRoute_node(opnewRoute, OutFileName);
+			System.out.println(); file_io.filewrite2(OutFileName,"");
 			
 			int slotnum = 0;
 			int IPflow = nodepair.getTrafficdemand();
@@ -72,8 +73,8 @@ public class opWorkingGrooming {
 			slotnum = (int) Math.ceil(IPflow / X);// 向上取整
 
 			opnewRoute.setSlotsnum(slotnum);
-			System.out.println("该链路所需slot数： " + slotnum);
-			file_io.filewrite2(OutFileName,"该链路所需slot数： " + slotnum);
+			System.out.println("不需要再生器 该链路所需slot数： " + slotnum);
+			file_io.filewrite2(OutFileName,"不需要再生器 该链路所需slot数： " + slotnum);
 			ArrayList<Integer> index_wave = new ArrayList<Integer>();
 			Mymain spa=new Mymain();
 			index_wave = spa.spectrumallocationOneRoute(true,opnewRoute,null,slotnum);
@@ -91,8 +92,10 @@ public class opWorkingGrooming {
 					Request request = null;
 					ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 					link.setMaxslot(slotnum + link.getMaxslot());
-					// System.out.println("链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
+					 System.out.println("物理层为链路分配容量后，链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
+					 file_io.filewrite2(OutFileName,"物理层为链路分配容量后，链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
 				} // 改变物理层上的链路容量 以便于下一次新建时分配slot
+			
 				String name = opsrcnode.getName() + "-" + opdesnode.getName();
 				int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的
 															// 故这样设置index
@@ -101,12 +104,12 @@ public class opWorkingGrooming {
 				Link createlink = new Link(null, 0, null, iplayer, null, null, 0, 0);
 				boolean findflag=false;
 				try{
-					System.out.println("IP层中找到链路"+finlink.getName());
-					file_io.filewrite2(OutFileName,"IP层中找到链路"+finlink.getName());
+					System.out.println("IP层中找到工作链路"+finlink.getName());
+					file_io.filewrite2(OutFileName,"IP层中找到工作链路"+finlink.getName());
 					findflag=true;
 				}catch(java.lang.NullPointerException ex){
-					System.out.println("IP 层没有该链路需要新建链路");
-					file_io.filewrite2(OutFileName,"IP 层没有该链路需要新建链路");
+					System.out.println("IP 层没有该工作链路需要新建链路");
+					file_io.filewrite2(OutFileName,"IP 层没有该工作链路需要新建链路");
 					createlink = new Link(name, index, null, iplayer, srcnode, desnode, length1, cost);
 					iplayer.addLink(createlink);
 				}
@@ -130,8 +133,8 @@ public class opWorkingGrooming {
 						+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
 						+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
 						+"   "+"虚拟链路cost： "+ Vlink.getcost());
-				System.out.println("*********工作链路在光层新建的链路：  "+finlink.getName()+"  上的虚拟链路条数： "+ finlink.getVirtualLinkList().size());
-				file_io.filewrite2(OutFileName,"*********工作链路在光层新建的链路：  "+finlink.getName()+"  上的虚拟链路条数： "+ finlink.getVirtualLinkList().size());
+				System.out.println("工作链路在光层新建的链路：  "+finlink.getName()+"  上的虚拟链路条数： "+ finlink.getVirtualLinkList().size());
+				file_io.filewrite2(OutFileName,"工作链路在光层新建的链路：  "+finlink.getName()+"  上的虚拟链路条数： "+ finlink.getVirtualLinkList().size());
 				}
 				else{
 					createlink.getVirtualLinkList().add(Vlink);
@@ -159,8 +162,10 @@ public class opWorkingGrooming {
 			System.out.println("在光层成功路由并且RSA");
 			file_io.filewrite2(OutFileName,"在光层成功路由并且RSA");
 			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
+			Request re=new Request(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
 			totallink=opnewRoute.getLinklist();
+			wpr.setrequest(re);
 			wpr.setworklinklist(totallink);
 			wprlist.add(wpr);
 		

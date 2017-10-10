@@ -37,12 +37,12 @@ public class LinearRoute extends Subgraph {
 	public void OutputRoute_node(LinearRoute newroute,String write_name) throws IOException{//Êä³ö½Úµã
 		file_out_put file=new file_out_put();
 		if(newroute.getNodelist().size()==0){
-			System.out.println("no path to the desnode");
+//			System.out.println("no path to the desnode");
 			file.filewrite(write_name,"no path to the desnode");
 		}
 		else{ 
 		      for(Node node:newroute.getNodelist()){		    	       
-			           System.out.println(node.getName()+"  ");			        
+//			           System.out.println(node.getName()+"  ");			        
 			           file.filewrite(write_name,node.getName()+"   ");			          			           
 		      }		     
 		}		

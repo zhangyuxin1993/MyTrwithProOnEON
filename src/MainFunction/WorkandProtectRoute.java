@@ -3,6 +3,7 @@ package MainFunction;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import demand.Request;
 import network.Link;
 import network.NodePair;
 import network.VirtualLink;
@@ -16,21 +17,30 @@ public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生
 	private HashMap<Integer, Regenerator> regthinglist=null; 
 	private ArrayList<Regenerator> Regneratorlist=new ArrayList<Regenerator>();
 	private LinearRoute proroute=new LinearRoute(null, 0, null);
-	private HashMap<Link, Integer> FSuseOnlink=null;
+//	private HashMap<Link, ArrayList<Integer>> SlotindexUseOnlink=null;
+	private ArrayList<FSshareOnlink> FSoneachLink=null;
 	 private ArrayList<Regenerator> newreglist=new ArrayList<Regenerator>();
 	 private ArrayList<Regenerator> sharereglist=new ArrayList<Regenerator>();
-	
+	 private Request request=new Request(demand);
 	 
 	public WorkandProtectRoute(NodePair demand) {
 		super();
 		this.demand = demand;
 	}
 	
-	public void setFSuseOnlink(HashMap<Link, Integer> FSuseOnlink) {
-		this.FSuseOnlink=FSuseOnlink;
+	public void setrequest(Request  request) {
+		this.request=request;
 	}
-	public HashMap<Link, Integer> getFSuseOnlink() {
-		return FSuseOnlink;
+	public Request getrequest() {
+		return request;
+	}
+	
+	
+	public void setFSoneachLink(ArrayList<FSshareOnlink> FSoneachLink) {
+		this.FSoneachLink=FSoneachLink;
+	}
+	public ArrayList<FSshareOnlink> getFSoneachLink() {
+		return FSoneachLink;
 	}
 	
 	public void setproroute(LinearRoute  proroute) {
@@ -96,4 +106,6 @@ public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生
 	public NodePair getdemand() {
 		return demand;
 	}
+
+ 
 }
