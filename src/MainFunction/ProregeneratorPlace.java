@@ -89,6 +89,7 @@ public class ProregeneratorPlace {
 										sharereglist.remove(remoReg);
 									}
 									for (Regenerator addReg : addreglist) {
+										if(!sharereglist.contains(addReg))
 										sharereglist.add(addReg);
 									}
 									
