@@ -143,12 +143,16 @@ public class opProGrooming {// 光层路由保护
 						cost = cost + link.getCost();
 						ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 						link.setMaxslot(slotnum + link.getMaxslot());
-						 System.out.println("链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
-							for(int m=index_wave.get(0);m<slotnum;m++){
+//						 System.out.println("链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
+							int m=index_wave.get(0);
+						 for(int n=0;n<slotnum;n++){
 								index_wave1.add(m);
+//								System.out.print(m);
+								file_io.filewrite_without(OutFileName, m+"  ");
+								m++;
 							}
 							FSshareOnlink fsonLink = new FSshareOnlink(link, index_wave1);
-						 FSuseOnlink.add(fsonLink);
+						    FSuseOnlink.add(fsonLink);
 					}
 	 
 					String name = opsrcnode.getName() + "-" + opdesnode.getName();
@@ -179,7 +183,7 @@ public class opProGrooming {// 光层路由保护
 					// numOfTransponder = numOfTransponder + 2;
 
 					if (findflag) {// 如果在IP层中已经找到该链路
-						System.out.println("虚拟链路条数：" + finlink.getVirtualLinkList().size());
+//						System.out.println("虚拟链路条数：" + finlink.getVirtualLinkList().size());
 						file_io.filewrite2(OutFileName, "虚拟链路条数：" + finlink.getVirtualLinkList().size());
 						finlink.getVirtualLinkList().add(Vlink);
 						System.out.println("IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
@@ -260,7 +264,8 @@ public class opProGrooming {// 光层路由保护
 			for (WorkandProtectRoute wpr : wprlist) {
 				if (wpr.getdemand().equals(nodePair))
 					continue;
-				System.out.println("此时的节点对为 "+wpr.getdemand().getName()+" 此时的link 为"+ link.getName());
+//				System.out.println("此时的节点对为 "+wpr.getdemand().getName()+" 此时的link 为"+ link.getName());
+//				file_io.filewrite2(OutFileName,"此时的节点对为 "+wpr.getdemand().getName()+" 此时的link 为"+ link.getName());
 				if (wpr.getprolinklist().contains(link)) {
 					int cross = t.linklistcompare(nowwpr.getworklinklist(), wpr.getworklinklist());
 					if (cross == 0) {// 表示该链路上面的FS可以共享
@@ -269,8 +274,8 @@ public class opProGrooming {// 光层路由保护
 							if(FSOnoneLink.getlink().equals(link)){
 								for (int share : FSOnoneLink.getslotIndex()) {
 									if(!shareslotIndex.contains(share))
-									System.out.println("可以共享的FS 为 "+share);
-									file_io.filewrite2(OutFileName,"可以共享的FS 为 "+share);
+//									System.out.println("可以共享的FS 为 "+share);
+//									file_io.filewrite2(OutFileName,"可以共享的FS 为 "+share);
 									shareslotIndex.add(share);
 								}
 							}
@@ -282,8 +287,8 @@ public class opProGrooming {// 光层路由保护
 							if(FSOnoneLink.getlink().equals(link)){
 								for (int NOshare : FSOnoneLink.getslotIndex()) {
 									if(!NoShareslotIndex.contains(NOshare)){
-										System.out.println("不可以共享的FS 为 "+NOshare);
-										file_io.filewrite2(OutFileName,"不可以共享的FS 为 "+NOshare);
+//										System.out.println("不可以共享的FS 为 "+NOshare);
+//										file_io.filewrite2(OutFileName,"不可以共享的FS 为 "+NOshare);
 										NoShareslotIndex.add(NOshare);
 									}
 								}
@@ -297,18 +302,20 @@ public class opProGrooming {// 光层路由保护
 						NoShareWPR.put(wpr, NoShareslotIndex);
 				}
 			} // 对每一段link上面的可共享和不可共享FS进行统计保存
-			file_io.filewrite2(OutFileName,"");
-			file_io.filewrite2(OutFileName,"FS移除测试");
+//			file_io.filewrite2(OutFileName,"");
+//			file_io.filewrite2(OutFileName,"FS移除测试");
 			for (WorkandProtectRoute wpr : wprlist) {
+				RemoveslotIndex.clear();
 				if (shareslotWPR.keySet().contains(wpr)) {
 					
 					for (int re : shareslotWPR.get(wpr)) {// 取出可以共享的FS
-						file_io.filewrite2(OutFileName,"可以共享的FS "+re);
+//						file_io.filewrite2(OutFileName," ");
+//						file_io.filewrite2(OutFileName,"可以共享的FS "+re);
 						for (WorkandProtectRoute comwpr : wprlist) {
-							file_io.filewrite2(OutFileName,"用来比较的WPR "+comwpr.getdemand().getName());
+//							file_io.filewrite2(OutFileName,"用来比较的WPR "+comwpr.getdemand().getName());
 							if (NoShareWPR.keySet().contains(comwpr)) {
 								if (NoShareWPR.get(comwpr).contains(re)) {// 说明该FS在其他业务上是不可以共享的
-									file_io.filewrite2(OutFileName,"该FS不可以共享 "+re);
+//									file_io.filewrite2(OutFileName,"该FS不可以共享 "+re);
 									if (!RemoveslotIndex.contains(re)){
 										RemoveslotIndex.add(re);
 										break;
@@ -318,17 +325,28 @@ public class opProGrooming {// 光层路由保护
 						}
 					}
 					//test
-					for (int remove : RemoveslotIndex) {
-						file_io.filewrite_without(OutFileName,"要移除的FS为 "+remove+"   ");
-					}
 					
+					for (int remove : RemoveslotIndex) {
+						file_io.filewrite_without(OutFileName,"需要移除的FS为 "+remove+"   ");
+					}
+					file_io.filewrite2(OutFileName,"");
 					for(int share:shareslotWPR.get(wpr)){
 						file_io.filewrite_without(OutFileName,"可以共享的FS为 "+share+"   ");
 					}
+					file_io.filewrite2(OutFileName,"");
 					if(RemoveslotIndex.size()!=0&&RemoveslotIndex!=null){
 						for (int remove : RemoveslotIndex) {
-							file_io.filewrite2(OutFileName,"要移除的FS为 "+remove);
-							shareslotWPR.get(wpr).remove(remove);
+							
+//							file_io.filewrite2(OutFileName,"可以共享的FS数目还剩  "+shareslotWPR.get(wpr).size());
+//							for(int last:shareslotWPR.get(wpr)){
+//								file_io.filewrite_without(OutFileName,last+"   ");
+//							}
+//							file_io.filewrite2(OutFileName,"");
+							int index=shareslotWPR.get(wpr).indexOf(remove);
+//							file_io.filewrite2(OutFileName," "+remove);
+//							file_io.filewrite2(OutFileName,"需要移除的链路index为 "+index);
+							shareslotWPR.get(wpr).remove(index);
+//							file_io.filewrite2(OutFileName,"已经移除的FS为 "+remove);
 						} // 将每个WPR上面不可以共享的FS去掉
 					}
 					FSshareOnlink fsol = new FSshareOnlink(link,shareslotIndex);
@@ -343,7 +361,7 @@ public class opProGrooming {// 光层路由保护
 						for (int release : shareslotWPR.get(wpr)) {// 释放可共享资源
 							Request request = wpr.getrequest();
 //							System.out.println("可共享链路的业务为  "+request.getNodepair().getName()+"  可共享的链路为："+link.getName()+"  链路上的FS为："+release);//test);
-							file_io.filewrite2(OutFileName,"可共享链路的业务为  "+request.getNodepair().getName()+"  可共享的链路为："+link.getName()+"  链路上的FS为："+release);//test
+//							file_io.filewrite2(OutFileName,"可共享链路的业务为  "+request.getNodepair().getName()+"  可共享的链路为："+link.getName()+"  链路上的FS为："+release);//test
 //							test
 							
 //							System.out.println("该链路上的request个数  "+link.getSlotsarray().get(release).getoccupiedreqlist().size());
@@ -363,18 +381,16 @@ public class opProGrooming {// 光层路由保护
 //							}
 //							System.out.println("释放之后占用该链路该FS的节点对的个数 "+link.getSlotsarray().get(release).getoccupiedreqlist().size() );
 //							file_io.filewrite2(OutFileName,"释放之后占用该链路该FS的节点对的个数 "+link.getSlotsarray().get(release).getoccupiedreqlist().size() );
-							if (link.getSlotsarray().get(release).getoccupiedreqlist().size() == 0)  {
-								file_io.filewrite2(OutFileName,"链路"+link.getName()+"上slot"+release+"已被释放");
-								System.out.println("链路"+link.getName()+"上slot"+release+"已被释放");
-							}
+//							if (link.getSlotsarray().get(release).getoccupiedreqlist().size() == 0)  {
+//								file_io.filewrite2(OutFileName,"链路"+link.getName()+"上slot"+release+"已被释放");
+//								System.out.println("链路"+link.getName()+"上slot"+release+"已被释放");
+//							}
 						}
 					}
 				}
 			}
 		} // 每一段link上面的FS均释放完毕
 	
-
-		
 		// link上面可以共享的资源释放完毕 之后进行RSA
 		ArrayList<Integer> index_wave = new ArrayList<Integer>();
 		Mymain mm = new Mymain();
@@ -398,20 +414,20 @@ public class opProGrooming {// 光层路由保护
 			}
 			newFS=newFS+slotnum-share;
 		}
-		file_io.filewrite2(OutFileName,"");
-		file_io.filewrite2(OutFileName,"恢复占用之后");
+//		file_io.filewrite2(OutFileName,"");
+//		file_io.filewrite2(OutFileName,"恢复占用之后");
 		for(Link link:linklist){
 			for(int n=0;n<link.getSlotsarray().size();n++){
 				if (link.getSlotsarray().get(n).getoccupiedreqlist().size() != 0){//说明该FS有占用
-					System.out.println("链路"+link.getName()+"上FS "+n+" 已被 "+link.getSlotsarray().get(n).getoccupiedreqlist().size()+"  个业务占用");
-					file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n+" 已被 "+link.getSlotsarray().get(n).getoccupiedreqlist().size()+"  个业务占用");
+//					System.out.println("链路"+link.getName()+"上FS "+n+" 已被 "+link.getSlotsarray().get(n).getoccupiedreqlist().size()+"  个业务占用");
+//					file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n+" 已被 "+link.getSlotsarray().get(n).getoccupiedreqlist().size()+"  个业务占用");
 					
-					for(Request re:link.getSlotsarray().get(n).getoccupiedreqlist()){
-						if(re!=null){
-							System.out.println("链路"+link.getName()+"上FS "+n+" 已被业务占用"+re.getNodepair().getName());
-							file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n+" 已被业务 "+re.getNodepair().getName()+"占用");
-						}
-					}
+//					for(Request re:link.getSlotsarray().get(n).getoccupiedreqlist()){
+//						if(re!=null){
+//							System.out.println("链路"+link.getName()+"上FS "+n+" 已被业务占用"+re.getNodepair().getName());
+//							file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n+" 已被业务 "+re.getNodepair().getName()+"占用");
+//						}
+//					}
 				}
 			}
 		}

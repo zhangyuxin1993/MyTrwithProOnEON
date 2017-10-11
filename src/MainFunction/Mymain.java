@@ -38,13 +38,13 @@ public class Mymain {
 		Layer iplayer = network.getLayerlist().get("Layer0");
 		Layer oplayer = network.getLayerlist().get("Physical");
 		
-//		ReadDemand rd=new ReadDemand();
-//		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
-//		 for(NodePair nodepair:nodepairlist){
-//			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
-//		 Readnodepairlist.put(nodepair.getName() , nodepair);
-//		 }
-//		 iplayer.setNodepairlist(Readnodepairlist);
+		ReadDemand rd=new ReadDemand();
+		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
+		 for(NodePair nodepair:nodepairlist){
+			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
+		 Readnodepairlist.put(nodepair.getName() , nodepair);
+		 }
+		 iplayer.setNodepairlist(Readnodepairlist);
 
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
 
@@ -98,73 +98,79 @@ public class Mymain {
 			System.out.println("业务个数：" + wprlist.size());
 			file_io.filewrite2(OutFileName, "业务个数：" + wprlist.size());
 			
+			int demandnum=0;
 			for (WorkandProtectRoute wpr : wprlist) {
-				System.out.println("业务：" + wpr.getdemand().getName());
-				file_io.filewrite2(OutFileName, "业务：" + wpr.getdemand().getName());
-				System.out.print("工作路径：" );
+				demandnum++;
+//				System.out.println("业务：" + demandnum+"  "+wpr.getdemand().getName());
+				file_io.filewrite2(OutFileName, "业务：" + demandnum+"  "+wpr.getdemand().getName());
+//				System.out.print("工作路径：" );
 				file_io.filewrite_without(OutFileName, "工作路径：");
 				for (Link link : wpr.getworklinklist()) {
-					System.out.print(link.getName() + "     ");
+//					System.out.print(link.getName() + "     ");
 					file_io.filewrite_without(OutFileName, link.getName() + "     ");
 				}
 				
-				System.out.println();
+//				System.out.println();
 				file_io.filewrite2(OutFileName, "");
-				System.out.print("保护路径：" );
+//				System.out.print("保护路径：" );
 				file_io.filewrite_without(OutFileName,"保护路径：");
 				for (Link link : wpr.getprolinklist()) {
-					System.out.print(link.getName() + "     ");
+//					System.out.print(link.getName() + "     ");
 					file_io.filewrite_without(OutFileName,link.getName() + "     ");
 				}
 				
-				System.out.println();
+//				System.out.println();
 				file_io.filewrite2(OutFileName, "");
-				System.out.print("放置共享再生器节点：" );
+//				System.out.print("放置共享再生器节点：" );
 				file_io.filewrite_without(OutFileName,"放置共享再生器节点：");
 				for (Regenerator reg : wpr.getsharereglist()) {
 					System.out.print(reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+"   ");
 					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+"   ");
 				}
 				
-				System.out.println();
+//				System.out.println();
 				file_io.filewrite2(OutFileName, "");
-				System.out.print("放置新再生器节点：" );
+//				System.out.print("放置新再生器节点：" );
 				file_io.filewrite_without(OutFileName,"放置新再生器节点：");
 				for (Regenerator reg : wpr.getnewreglist()) {
-					System.out.print(reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   ");
+//					System.out.print(reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   ");
 					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   ");
 				}
 				
-				System.out.println();
+//				System.out.println();
 				file_io.filewrite2(OutFileName, "");
 //				System.out.println("hashmap的大小："+wpr.getregthinglist().size());
 				if(wpr.getregthinglist()!=null){
 					for(int t:wpr.getregthinglist().keySet()){
-						System.out.println("hashmap里面的键 "+t+" 对应的节点为："+wpr.getregthinglist().get(t).getnode().getName());
+//						System.out.println("hashmap里面的键 "+t+" 对应的节点为："+wpr.getregthinglist().get(t).getnode().getName());
 						file_io.filewrite2(OutFileName, "hashmap里面的键 "+t+" 对应的节点为："+wpr.getregthinglist().get(t).getnode().getName());
 					}
-					System.out.println();
+//					System.out.println();
 					file_io.filewrite2(OutFileName, "");
 				}
 				else{
-					System.out.println("该业务保护路径不需要再生器");
+//					System.out.println("该业务保护路径不需要再生器");
 					file_io.filewrite2(OutFileName, "该业务保护路径不需要再生器");
 				}
-				System.out.println();
+//				System.out.println();
 				file_io.filewrite2(OutFileName, "");
 		
 				ArrayList<FSshareOnlink> FSassignOneachLink=wpr.getFSoneachLink();
 				file_io.filewrite2(OutFileName, "此时的request为"+ wpr.getrequest().getNodepair().getName()+"分配保护路径FS如下");
-				
-				for(FSshareOnlink fsassignoneachlink: FSassignOneachLink){
-					System.out.print("链路"+fsassignoneachlink.getlink().getName()+"上分配的FS为");
-					file_io.filewrite_without(OutFileName, "链路"+fsassignoneachlink.getlink().getName()+"上分配的FS为");
+
+				if(FSassignOneachLink!=null){
+				for(FSshareOnlink fsassignoneachlink: FSassignOneachLink){//这里有问题
+					file_io.filewrite_without(OutFileName, "链路"+fsassignoneachlink.getlink().getName()+"上分配的FS为   ");
 					for(int fs:fsassignoneachlink.getslotIndex()){
-						file_io.filewrite_without(OutFileName, fs);
+						file_io.filewrite_without(OutFileName, fs+"   ");
 					}
 					file_io.filewrite2(OutFileName, "");
 				}
+			}
 				file_io.filewrite2(OutFileName, "");
+				if(FSassignOneachLink==null){
+					file_io.filewrite2(OutFileName, "该保护路径在IP层grooming成功");
+				}
 			}
 		
 			file_io.filewrite2(OutFileName, "");
@@ -172,33 +178,33 @@ public class Mymain {
 			Iterator<String> testiter2 = testmap2.keySet().iterator();
 			while (testiter2.hasNext()) {
 				Node node = (Node) (testmap2.get(testiter2.next()));
-				System.out.println(node.getName()+"上面再生器的个数："+node.getregnum());
+//				System.out.println(node.getName()+"上面再生器的个数："+node.getregnum());
 				file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
 			}
 			
-			file_io.filewrite2(OutFileName, "");
-			HashMap<String, Link> testmap3 = oplayer.getLinklist();
-			Iterator<String> testiter3 = testmap3.keySet().iterator();
-			while (testiter3.hasNext()) {
-				file_io.filewrite2(OutFileName,"");
-				Link link = (Link) (testmap3.get(testiter3.next()));
-				for(int n1=0;n1<link.getSlotsarray().size();n1++){
-					if (link.getSlotsarray().get(n1).getoccupiedreqlist().size() != 0){//说明该FS有占用
-						
-							System.out.println("链路"+link.getName()+"上FS "+n1+" 已被 "+link.getSlotsarray().get(n1).getoccupiedreqlist().size()+"  个业务占用");
-							file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n1+" 已被 "+link.getSlotsarray().get(n1).getoccupiedreqlist().size()+"  个业务占用");
-							
-							for(Request re:link.getSlotsarray().get(n1).getoccupiedreqlist()){
-								if(re!=null){
-								System.out.println("链路"+link.getName()+"上FS "+n1+" 已被业务占用"+re.getNodepair().getName());
-								file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n1+" 已被业务 "+re.getNodepair().getName()+"占用");
-							}
-						}
-					}
-//				System.out.println("链路 "+link.getName()+"上面max slot为"+link.getMaxslot());
-//				file_io.filewrite2(OutFileName, "链路 "+link.getName()+"上面max slot为"+link.getMaxslot());
-			}
-		}
+//			file_io.filewrite2(OutFileName, "");
+//			HashMap<String, Link> testmap3 = oplayer.getLinklist();
+//			Iterator<String> testiter3 = testmap3.keySet().iterator();
+//			while (testiter3.hasNext()) {
+//				file_io.filewrite2(OutFileName,"");
+//				Link link = (Link) (testmap3.get(testiter3.next()));
+//				for(int n1=0;n1<link.getSlotsarray().size();n1++){
+//					if (link.getSlotsarray().get(n1).getoccupiedreqlist().size() != 0){//说明该FS有占用
+//						
+//							System.out.println("链路"+link.getName()+"上FS "+n1+" 已被 "+link.getSlotsarray().get(n1).getoccupiedreqlist().size()+"  个业务占用");
+//							file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n1+" 已被 "+link.getSlotsarray().get(n1).getoccupiedreqlist().size()+"  个业务占用");
+//							
+//							for(Request re:link.getSlotsarray().get(n1).getoccupiedreqlist()){
+//								if(re!=null){
+//								System.out.println("链路"+link.getName()+"上FS "+n1+" 已被业务占用"+re.getNodepair().getName());
+//								file_io.filewrite2(OutFileName,"链路"+link.getName()+"上FS "+n1+" 已被业务 "+re.getNodepair().getName()+"占用");
+//							}
+//						}
+//					}
+////				System.out.println("链路 "+link.getName()+"上面max slot为"+link.getMaxslot());
+////				file_io.filewrite2(OutFileName, "链路 "+link.getName()+"上面max slot为"+link.getMaxslot());
+//			}
+//		}
 		}
 		System.out.println("Finish");
 	}

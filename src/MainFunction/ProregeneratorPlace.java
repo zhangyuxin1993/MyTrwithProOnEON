@@ -304,6 +304,8 @@ public class ProregeneratorPlace {
 			index_wave = opg.FSassignOnlink(linklist, wprlist, nodepair, slotnum,oplayer);// 在考虑共享的情况下分配频谱
 			if (index_wave.size() != 0) {
 				opworkflag = true;
+				System.out.println("可以RSA,start为 "+index_wave.get(0));
+				file_io.filewrite2(OutFileName, "可以RSA,start为 "+index_wave.get(0));
 			} else {
 				System.out.println("频谱不够无法RSA");
 				file_io.filewrite2(OutFileName, "频谱不够无法RSA");
@@ -448,11 +450,14 @@ public class ProregeneratorPlace {
 			link.setMaxslot(slotnum + link.getMaxslot());
 			file_io.filewrite_without(OutFileName, "!!!request为 "+request.getNodepair().getName());
 			System.out.print("这段链路上分配的FS为 ");
-			file_io.filewrite_without(OutFileName, "这段链路上分配的FS为 ");
-			for(int m=index_wave.get(0);m<slotnum;m++){
+			file_io.filewrite_without(OutFileName, "这段链路上分配的FS为 "+"   index起始"+index_wave.get(0)+"  "+slotnum);
+			file_io.filewrite2(OutFileName,"");
+			int m=index_wave.get(0);
+			for(int n=0;n<slotnum;n++){
 				index_wave1.add(m);
 				System.out.print(m);
-				file_io.filewrite_without(OutFileName, m);
+				file_io.filewrite_without(OutFileName, m+"  ");
+				m++;
 			}
 			System.out.println();
 			file_io.filewrite2(OutFileName, " ");

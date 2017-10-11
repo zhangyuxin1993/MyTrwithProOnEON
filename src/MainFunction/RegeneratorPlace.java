@@ -303,6 +303,9 @@ public class RegeneratorPlace {
 				opworkflag = true;
 				double length1 = 0;
 				double cost = 0;
+				file_io.filewrite2(OutFileName,"");
+				file_io.filewrite2(OutFileName,"工作链路放置再生器时在光层分配频谱：");
+				file_io.filewrite2(OutFileName,"FS起始值："+index_wave.get(0)+"  长度"+slotnum);
 				for (Link link : linklist) {// 物理层的link
 					length1 = length1 + link.getLength();
 					cost = cost + link.getCost();

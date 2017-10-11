@@ -32,8 +32,8 @@ public class ipProGrooming {
 		ArrayList<Link> DelIPLinkList = new ArrayList<Link>();
 		Node srcnode = nodepair.getSrcNode();
 		Node desnode = nodepair.getDesNode();
-		System.out.println("IP层的链路条数： " + iplayer.getLinklist().size());
-		file_io.filewrite2(OutFileName,"IP层的链路条数： " + iplayer.getLinklist().size());
+//		System.out.println("IP层的链路条数： " + iplayer.getLinklist().size());
+//		file_io.filewrite2(OutFileName,"IP层的链路条数： " + iplayer.getLinklist().size());
 		
 		//test
 //		for(WorkandProtectRoute wprpro:wprlist){
@@ -43,12 +43,12 @@ public class ipProGrooming {
 //			}
 //		}
 		
-		HashMap<String, Link> testlinklist = iplayer.getLinklist();
-		Iterator<String> testlinkitor = testlinklist.keySet().iterator();
-		while (testlinkitor.hasNext()) {// 第一部分 第一步
-			Link link = (Link) (testlinklist.get(testlinkitor.next()));// IP层上的链路
+//		HashMap<String, Link> testlinklist = iplayer.getLinklist();
+//		Iterator<String> testlinkitor = testlinklist.keySet().iterator();
+//		while (testlinkitor.hasNext()) {// 第一部分 第一步
+//			Link link = (Link) (testlinklist.get(testlinkitor.next()));// IP层上的链路
 //			System.out.println(link.getName());
-		}
+//		}
 
 		HashMap<String, Link> linklist = iplayer.getLinklist();
 		Iterator<String> linkitor = linklist.keySet().iterator();
@@ -66,6 +66,7 @@ public class ipProGrooming {
 					continue;
 				}
 			}
+			
 			WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
 
 			for (WorkandProtectRoute wpr : wprlist) {
@@ -83,6 +84,7 @@ public class ipProGrooming {
 				}
 			}
 		}
+		
 		WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
 		// 删除与当前业务的工作链路相交的业务的保护路径对应的虚拟链路
 		for (WorkandProtectRoute wpr : wprlist) {
@@ -95,8 +97,7 @@ public class ipProGrooming {
 				continue;
 			}
 		
-			int cross = t.linklistcompare(wpr.getworklinklist(), nowdemand.getworklinklist());// 两个工作业务相交
-																								// 删去之前建立业务的保护链路
+			int cross = t.linklistcompare(wpr.getworklinklist(), nowdemand.getworklinklist());// 两个工作业务相交删去之前建立业务的保护链路
 			if (cross == 1) {
 //				System.out.println("当前业务 ");
 //				for (Link link1 : nowdemand.getworklinklist()) {

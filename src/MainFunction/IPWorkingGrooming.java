@@ -31,19 +31,19 @@ public class IPWorkingGrooming {
 			Node srcnode = nodepair.getSrcNode();
 			Node desnode = nodepair.getDesNode();
 	
-			System.out.println("IP层上的链路条数为：" +  iplayer.getLinklist().size());
-			file_io.filewrite2(OutFileName,"IP层上的链路条数为：" +  iplayer.getLinklist().size());
 			//test
-			HashMap<String, Link> linklisttest = iplayer.getLinklist();
-			Iterator<String> linkitortest = linklisttest.keySet().iterator();
-			while (linkitortest.hasNext()) {
-				Link Mlink = (Link) (linklisttest.get(linkitortest.next()));
-				file_io.filewrite2(OutFileName,"IP层上的链路为：" +  Mlink.getName());
-				VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
-				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtua
-				file_io.filewrite2(OutFileName,"该IP链路上的虚拟链路为：" +  Vlink.getSrcnode()+"-"+Vlink.getDesnode()+"   性质为："+Vlink.getNature());
-				}
-			}
+//			System.out.println("IP层上的链路条数为：" +  iplayer.getLinklist().size());
+//			file_io.filewrite2(OutFileName,"IP层上的链路条数为：" +  iplayer.getLinklist().size());
+//			HashMap<String, Link> linklisttest = iplayer.getLinklist();
+//			Iterator<String> linkitortest = linklisttest.keySet().iterator();
+//			while (linkitortest.hasNext()) {
+//				Link Mlink = (Link) (linklisttest.get(linkitortest.next()));
+//				file_io.filewrite2(OutFileName,"IP层上的链路为：" +  Mlink.getName());
+//				VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
+//				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtua
+//				file_io.filewrite2(OutFileName,"该IP链路上的虚拟链路为：" +  Vlink.getSrcnode()+"-"+Vlink.getDesnode()+"   性质为："+Vlink.getNature());
+//				}
+//			}
 			
 			HashMap<String, Link> linklist = iplayer.getLinklist();
 			Iterator<String> linkitor = linklist.keySet().iterator();
@@ -124,7 +124,7 @@ public class IPWorkingGrooming {
 			// 储存dijkstra经过的链路 并且改变这些链路上的容量
 			if (newRoute.getLinklist().size() != 0) {// 工作路径路由成功
 				System.out.print("part2==在IP层找到路由:");
-				file_io.filewrite_without(OutFileName,"part2==在IP层找到路由:");
+				file_io.filewrite_without(OutFileName,"part2==工作路径在IP层找到路由:");
 				newRoute.OutputRoute_node(newRoute);
 				routeFlag=true;
 				for (int c = 0; c < newRoute.getLinklist().size(); c++) {

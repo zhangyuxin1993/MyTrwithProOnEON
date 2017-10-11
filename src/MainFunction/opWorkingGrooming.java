@@ -82,6 +82,9 @@ public class opWorkingGrooming {
 				System.out.println("路径堵塞 ，不分配频谱资源");
 				file_io.filewrite2(OutFileName,"路径堵塞 ，不分配频谱资源");
 			} else {
+				file_io.filewrite2(OutFileName,"");
+				file_io.filewrite2(OutFileName,"工作链路不需要再生器时在光层分配频谱：");
+				file_io.filewrite2(OutFileName,"FS起始值："+index_wave.get(0)+"  长度"+slotnum);
 				opworkflag=true;
 				double length1 = 0;
 				double cost = 0;
