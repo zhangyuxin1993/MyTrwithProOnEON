@@ -38,8 +38,8 @@ public class ProregeneratorPlace {
 			if (nowwpr.getdemand().equals(nodepair))
 				nowdemand = nowwpr;
 		}
-
 		for (WorkandProtectRoute wpr : wprlist) {// 在已存在的业务中 找出新业务上已存在的共享再生器
+		
 			for (Regenerator newreg : wpr.getnewreglist()) {// 只看该链路上有没有新建的再生器
 				Node node = newreg.getnode();
 				if (newRoute.getNodelist().contains(node)) {// 如果之前的业务在某一节点上已经放置了再生器
@@ -47,44 +47,62 @@ public class ProregeneratorPlace {
 					// 判断该业务与新业务可否共享再生器（两个业务的工作链路对应的物理链路是否交叉）
 					int already = 0, newregg = 0;
 					int cross = t.linklistcompare(nowdemand.getworklinklist(), wpr.getworklinklist());
-					if (cross == 0) {
-						int po = t.nodeindexofroute(node, newRoute);// 保存新链路上可以共享的再生器的位置
-						if (po != 0 && po != newRoute.getNodelist().size() - 1) {// 判断新链路上已存在的再生器是否在链路的两端
-							if (comnodelist.contains(node)) {// 说明该节点上已存在可共享的再生器
-																// 此时需要选择用哪个共享再生器
-								for (Regenerator alreadyReg : sharereglist) {
-									if (alreadyReg.getnode().equals(node)) {// 此时alreadyReg表示共享列表中已存在的reg
-										for (WorkandProtectRoute comwpr : wprlist) {// 一下比较哪个再生器使用的多
-											if (comwpr.getRegeneratorlist().contains(alreadyReg)) {
-												already++;
-											}
-											if (comwpr.getRegeneratorlist().contains(newreg)) {
-												newregg++;
+					if (cross == 0) {//首先判断了这个新产生的再生器是否可以共享
+						//fix
+						boolean noshareFlag=false;
+						for (WorkandProtectRoute comwpr : wprlist) {
+							if(wpr.getdemand().equals(comwpr.getdemand())) continue;
+							for (Regenerator haveshareReg : comwpr.getsharereglist()) {
+								if(haveshareReg.equals(newreg)){//其他业务上曾经共享该再生器
+									file_io.filewrite2(OutFileName, "已有业务"+comwpr.getdemand().getName()+"共享该再生器,"+
+								haveshareReg.getnode().getName()+"上的第"+haveshareReg.getindex()+"个再生器");
+								 
+								int cross_second = t.linklistcompare(nowdemand.getworklinklist(), comwpr.getworklinklist());
+								if(cross_second==1){
+									noshareFlag=true;
+									break;
+								}
+								}
+							}
+						}
+						if(!noshareFlag){//表示该再生器在业务上也可以共享
+							int po = t.nodeindexofroute(node, newRoute);// 保存新链路上可以共享的再生器的位置
+							if (po != 0 && po != newRoute.getNodelist().size() - 1) {// 判断新链路上已存在的再生器是否在链路的两端
+								if (comnodelist.contains(node)) {// 说明该节点上已存在可共享的再生器  此时需要选择用哪个共享再生器
+									for (Regenerator alreadyReg : sharereglist) {
+										if (alreadyReg.getnode().equals(node)) {// 此时alreadyReg表示共享列表中已存在的reg
+											for (WorkandProtectRoute comwpr : wprlist) {// 一下比较哪个再生器使用的多
+												if (comwpr.getRegeneratorlist().contains(alreadyReg)) {
+													already++;
+												}
+												if (comwpr.getRegeneratorlist().contains(newreg)) {
+													newregg++;
+												}
 											}
 										}
+										if (already < newregg) {// 说明新增加的reg共享的保护链路比较多
+											removereglist.add(alreadyReg);
+											addreglist.add(newreg);
+										}
 									}
-									if (already < newregg) {// 说明新增加的reg共享的保护链路比较多
-										removereglist.add(alreadyReg);
-										addreglist.add(newreg);
+									for (Regenerator remoReg : removereglist) {
+										sharereglist.remove(remoReg);
 									}
+									for (Regenerator addReg : addreglist) {
+										sharereglist.add(addReg);
+									}
+									
+								} else {// 新产生的再生器
+									comnodelist.add(node);
+									sharereglist.add(newreg);
 								}
-								for (Regenerator remoReg : removereglist) {
-									sharereglist.remove(remoReg);
-								}
-								for (Regenerator addReg : addreglist) {
-									sharereglist.add(addReg);
-								}
-
-							} else {// 新产生的再生器
-								comnodelist.add(node);
-								sharereglist.add(newreg);
+								// System.out.println("再生器的个数："+sharereglist.size());
+								// for(Regenerator reg:sharereglist){
+								// System.out.println(reg.getnode().getName());
+								// }
+								if (!ShareReg.contains(po))
+									ShareReg.add(po); // 保存了新的业务上哪些节点上面有再生器
 							}
-							// System.out.println("再生器的个数："+sharereglist.size());
-							// for(Regenerator reg:sharereglist){
-							// System.out.println(reg.getnode().getName());
-							// }
-							if (!ShareReg.contains(po))
-								ShareReg.add(po); // 保存了新的业务上哪些节点上面有再生器
 						}
 					}
 				}
