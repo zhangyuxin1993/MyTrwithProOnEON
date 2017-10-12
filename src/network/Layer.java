@@ -337,6 +337,32 @@ public class Layer extends CommonObject{
 		    }		    
 		} 		
 	}
+	//可以随机产生n个节点对
+	public void generateNodepairs(int n){
+		HashMap<String, Node> map = this.getNodelist();
+		HashMap<String, Node> map2 = this.getNodelist();
+		Iterator<String> iter1 = map.keySet().iterator();
+		
+		while (iter1.hasNext()) {
+		    Node node1 = (Node)(map.get(iter1.next()));
+		    Iterator<String> iter2 = map2.keySet().iterator();
+		    while(iter2.hasNext()){
+		    	Node node2= (Node)(map2.get(iter2.next()));
+		    	if (!node1.equals(node2)) {
+		    		if (node1.getIndex() < node2.getIndex()) {
+		    			String name = node1.getName() + "-" + node2.getName();
+		    			int index = this.getNodepairlist().size();
+		    			NodePair nodepair = new NodePair(name, index, "", this,
+		    					node1, node2);
+		    			TrafficDemand trfdem=new TrafficDemand();  //节点对之间产生流量
+		    			nodepair.setTrafficdemand(trfdem.generateTrafficDemand());
+		    			this.addNodepair(nodepair);
+		    		}
+		    	
+		    }		    
+		    	}
+		} 		
+	}
 	/**
 	 * find a link based on two nodes
 	 */

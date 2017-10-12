@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import demand.Request;
-import general.Constant;
 import general.file_out_put;
-import graphalgorithms.RouteSearching;
 import network.Layer;
 import network.Link;
 import network.Network;
@@ -19,35 +16,56 @@ import subgraph.LinearRoute;
 public class Mymain {
 	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 	public static void main(String[] args) throws IOException {
+		String TopologyName = "D:/zyx/Topology/NSFNET.csv";
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
 		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
+		HashMap<String, NodePair> RadomNodepairlist=new HashMap<String, NodePair>();
 		ArrayList<NodePair> nodepairlist = new ArrayList<>();
 		ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
-//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+		
+		
 		file_out_put file_io=new file_out_put();
 		// 产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
 		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
 		Network network = new Network("ip over EON", 0, null);
-		network.readPhysicalTopology("D:/zyx/Topology/NSFNET.csv");
+		network.readPhysicalTopology(TopologyName);
 		network.copyNodes();
 		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
 		// **(现在随机产生demand 已经注释)
 
+	
+		
 		Layer iplayer = network.getLayerlist().get("Layer0");
 		Layer oplayer = network.getLayerlist().get("Physical");
+		//以下可以读取表格中的业务
+//		ReadDemand rd=new ReadDemand();
+//		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
+//		 for(NodePair nodepair:nodepairlist){
+//			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
+//		 Readnodepairlist.put(nodepair.getName() , nodepair);
+//		 }
+//		 iplayer.setNodepairlist(Readnodepairlist);
+		 
+		//以下可以随机产生节点对
+		DemandRadom dr=new DemandRadom();
+		RadomNodepairlist=dr.demandradom(20,TopologyName,iplayer);
+		iplayer.setNodepairlist(RadomNodepairlist);
+		int p=0;
+		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
+		Iterator<String> testiter3 = testmap3.keySet().iterator();
+		while (testiter3.hasNext()) {
+			p++;
+			NodePair node = (NodePair) (testmap3.get(testiter3.next()));
+//			System.out.println("随机产生节点对为 "+p+"  "+node.getName()+"他的流量为 "+ node.getSlotsnum());
+			file_io.filewrite2(OutFileName, "随机产生节点对为 "+p+"  "+node.getName()+"   流量为 "+ node.getTrafficdemand());
+		}
 		
-		ReadDemand rd=new ReadDemand();
-		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
-		 for(NodePair nodepair:nodepairlist){
-			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
-		 Readnodepairlist.put(nodepair.getName() , nodepair);
-		 }
-		 iplayer.setNodepairlist(Readnodepairlist);
-
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
-
+//		for(NodePair no:demandlist){
+//			file_io.filewrite2(OutFileName, "demand "+no.getName());
+//		}
 		for (int n = 0; n < demandlist.size(); n++) {
 			boolean iproutingFlag = false;
 			boolean ipproFlag = false;
@@ -206,6 +224,7 @@ public class Mymain {
 //			}
 //		}
 		}
+		System.out.println();
 		System.out.println("Finish");
 	}
 
