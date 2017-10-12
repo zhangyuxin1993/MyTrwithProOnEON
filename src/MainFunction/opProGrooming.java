@@ -271,7 +271,7 @@ public class opProGrooming {// 光层路由保护
 					if (cross == 0) {// 表示该链路上面的FS可以共享
 						ArrayList<FSshareOnlink> FSShareOnlink = wpr.getFSoneachLink();
 						file_io.filewrite2(OutFileName,"此时的WPR 为 "+wpr.getdemand().getName());
-						if(FSShareOnlink.size()>0&&FSShareOnlink!=null){
+						if( FSShareOnlink!=null){
 						for(FSshareOnlink FSOnoneLink: FSShareOnlink){
 							if(FSOnoneLink.getlink().equals(link)){
 								for (int share : FSOnoneLink.getslotIndex()) {
