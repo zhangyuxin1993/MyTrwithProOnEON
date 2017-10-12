@@ -36,7 +36,7 @@ public class RegeneratorPlace {
 		
 		// 找到所有可以成功路由的路径 part1
 		for (int s = minRegNum; s <= internode; s++) {
-			if (partworkflag)
+			if (partworkflag||regplaceoption.size()!=0)//如果再生器个数较少的时候已经可以RSA那么就不需要增加再生器的个数
 				break;
 			Test nOfm = new Test(s, internode); // 在所有中间节点中随机选取m个点来放置再生器
 			while (nOfm.hasNext()) {

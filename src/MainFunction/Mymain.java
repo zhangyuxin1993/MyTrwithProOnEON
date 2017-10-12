@@ -40,27 +40,26 @@ public class Mymain {
 		Layer iplayer = network.getLayerlist().get("Layer0");
 		Layer oplayer = network.getLayerlist().get("Physical");
 		//以下可以读取表格中的业务
-//		ReadDemand rd=new ReadDemand();
-//		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
-//		 for(NodePair nodepair:nodepairlist){
-//			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
-//		 Readnodepairlist.put(nodepair.getName() , nodepair);
-//		 }
-//		 iplayer.setNodepairlist(Readnodepairlist);
+		ReadDemand rd=new ReadDemand();
+		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
+		 for(NodePair nodepair:nodepairlist){
+			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
+		 Readnodepairlist.put(nodepair.getName() , nodepair);
+		 }
+		 iplayer.setNodepairlist(Readnodepairlist);
 		 
 		//以下可以随机产生节点对
-		DemandRadom dr=new DemandRadom();
-		RadomNodepairlist=dr.demandradom(20,TopologyName,iplayer);
-		iplayer.setNodepairlist(RadomNodepairlist);
-		int p=0;
-		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
-		Iterator<String> testiter3 = testmap3.keySet().iterator();
-		while (testiter3.hasNext()) {
-			p++;
-			NodePair node = (NodePair) (testmap3.get(testiter3.next()));
-//			System.out.println("随机产生节点对为 "+p+"  "+node.getName()+"他的流量为 "+ node.getSlotsnum());
-			file_io.filewrite2(OutFileName, "随机产生节点对为 "+p+"  "+node.getName()+"   流量为 "+ node.getTrafficdemand());
-		}
+//		DemandRadom dr=new DemandRadom();
+//		RadomNodepairlist=dr.demandradom(20,TopologyName,iplayer);
+//		iplayer.setNodepairlist(RadomNodepairlist);
+//		int p=0;
+//		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
+//		Iterator<String> testiter3 = testmap3.keySet().iterator();
+//		while (testiter3.hasNext()) {
+//			p++;
+//			NodePair node = (NodePair) (testmap3.get(testiter3.next()));
+//			file_io.filewrite2(OutFileName, "随机产生节点对为 "+p+"  "+node.getName()+"   流量为 "+ node.getTrafficdemand());
+//		}
 		
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
 //		for(NodePair no:demandlist){
