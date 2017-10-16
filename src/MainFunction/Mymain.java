@@ -109,6 +109,7 @@ public class Mymain {
 				 
 				}
 			}
+		}
 			System.out.println();
 			System.out.println();
 			file_io.filewrite2(OutFileName, "");
@@ -117,6 +118,7 @@ public class Mymain {
 			file_io.filewrite2(OutFileName, "业务个数：" + wprlist.size());
 			
 			int demandnum=0;
+			ArrayList<Regenerator> reglist=new ArrayList<>();
 			for (WorkandProtectRoute wpr : wprlist) {
 				demandnum++;
 				file_io.filewrite2(OutFileName, "业务：" + demandnum+"  "+wpr.getdemand().getName());
@@ -134,16 +136,31 @@ public class Mymain {
 				file_io.filewrite2(OutFileName, "");
 				file_io.filewrite_without(OutFileName,"放置共享再生器节点：");
 				for (Regenerator reg : wpr.getsharereglist()) {
-					System.out.print(reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+"   ");
+					reg.setpropathNum(reg.getpropathNum()+1);
+					if(!reglist.contains(reg)){
+						reglist.add(reg);
+					}
 					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+"   ");
 				}
+
 				
 				file_io.filewrite2(OutFileName, "");
 				file_io.filewrite_without(OutFileName,"放置新再生器节点：");
 				for (Regenerator reg : wpr.getnewreglist()) {
+					reg.setpropathNum(reg.getpropathNum()+1);
+					if(!reglist.contains(reg)){
+						reglist.add(reg);
+					}
 					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   ");
 				}
+				file_io.filewrite2(OutFileName," ");
 				
+//				测试共享个数				
+//				for(Regenerator reg:reglist){
+//					file_io.filewrite2(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   "+"该再生器已经被"+reg.getpropathNum()+"条路径共享");
+//				}
+				
+				 
 				file_io.filewrite2(OutFileName, "");
 				if(wpr.getregthinglist()!=null){
 					for(int t:wpr.getregthinglist().keySet()){
@@ -156,47 +173,53 @@ public class Mymain {
 				}
 				file_io.filewrite2(OutFileName, "");
 		
-				ArrayList<FSshareOnlink> FSassignOneachLink=wpr.getFSoneachLink();
-				file_io.filewrite2(OutFileName, "此时的request为"+ wpr.getrequest().getNodepair().getName()+"分配保护路径FS如下");
+//				ArrayList<FSshareOnlink> FSassignOneachLink=wpr.getFSoneachLink();
+//				file_io.filewrite2(OutFileName, "此时的request为"+ wpr.getrequest().getNodepair().getName()+"分配保护路径FS如下");
 
-				if(FSassignOneachLink!=null){
-				for(FSshareOnlink fsassignoneachlink: FSassignOneachLink){
-					file_io.filewrite_without(OutFileName, "链路"+fsassignoneachlink.getlink().getName()+"上分配的FS为   ");
-					for(int fs:fsassignoneachlink.getslotIndex()){
-						file_io.filewrite_without(OutFileName, fs+"   ");
-					}
-					file_io.filewrite2(OutFileName, "");
-				}
-			}
-				file_io.filewrite2(OutFileName, "");
-				if(FSassignOneachLink==null){
-					file_io.filewrite2(OutFileName, "该保护路径在IP层grooming成功");
-				}
-		
-				file_io.filewrite2(OutFileName, "");
-				file_io.filewrite2(OutFileName, "grooming的检测");
+//				if(FSassignOneachLink!=null){
+//				for(FSshareOnlink fsassignoneachlink: FSassignOneachLink){
+//					file_io.filewrite_without(OutFileName, "链路"+fsassignoneachlink.getlink().getName()+"上分配的FS为   ");
+//					for(int fs:fsassignoneachlink.getslotIndex()){
+//						file_io.filewrite_without(OutFileName, fs+"   ");
+//					}
+//					file_io.filewrite2(OutFileName, "");
+//				}
+//			}
+//				file_io.filewrite2(OutFileName, "");
+//				if(FSassignOneachLink==null){
+//					file_io.filewrite2(OutFileName, "该保护路径在IP层grooming成功");
+//				}
+				
+//				HashMap<String, Node> testmap2 = oplayer.getNodelist();
+//				Iterator<String> testiter2 = testmap2.keySet().iterator();
+//				while (testiter2.hasNext()) {
+//					Node node = (Node) (testmap2.get(testiter2.next()));
+//					file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
+//				}
 				
 			}
-			HashMap<String, Link> testmap4 = iplayer.getLinklist();
-			Iterator<String> testiter4 = testmap4.keySet().iterator();
-			while (testiter4.hasNext()) {
-				Link link=(Link) (testmap4.get(testiter4.next()));
-				file_io.filewrite2(OutFileName, "IP层上的链路："+link.getName());
-				ArrayList<VirtualLink> vlinklist=link.getVirtualLinkList();
-				for(VirtualLink vlink:vlinklist){
-					file_io.filewrite2(OutFileName, "对应的虚拟链路："+vlink.getSrcnode()+"-"+vlink.getDesnode()+"  性质为："+ vlink.getNature());
-					file_io.filewrite2(OutFileName, "虚拟链路上剩余的容量："+vlink.getRestcapacity());
-				}
-			}
+//			file_io.filewrite2(OutFileName, "");
+//			file_io.filewrite2(OutFileName, "grooming的检测");
+//			HashMap<String, Link> testmap4 = iplayer.getLinklist();
+//			Iterator<String> testiter4 = testmap4.keySet().iterator();
+//			while (testiter4.hasNext()) {
+//				Link link=(Link) (testmap4.get(testiter4.next()));
+//				file_io.filewrite2(OutFileName, "IP层上的链路："+link.getName());
+//				ArrayList<VirtualLink> vlinklist=link.getVirtualLinkList();
+//				for(VirtualLink vlink:vlinklist){
+//					file_io.filewrite2(OutFileName, "对应的虚拟链路："+vlink.getSrcnode()+"-"+vlink.getDesnode()+"  性质为："+ vlink.getNature());
+//					file_io.filewrite2(OutFileName, "虚拟链路上剩余的容量："+vlink.getRestcapacity());
+//				}
+//			}
 		
-			file_io.filewrite2(OutFileName, "");
-			HashMap<String, Node> testmap2 = oplayer.getNodelist();
-			Iterator<String> testiter2 = testmap2.keySet().iterator();
-			while (testiter2.hasNext()) {
-				Node node = (Node) (testmap2.get(testiter2.next()));
-				file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
-			}
-		}
+//			file_io.filewrite2(OutFileName, "");
+//			HashMap<String, Node> testmap2 = oplayer.getNodelist();
+//			Iterator<String> testiter2 = testmap2.keySet().iterator();
+//			while (testiter2.hasNext()) {
+//				Node node = (Node) (testmap2.get(testiter2.next()));
+//				file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
+//			}
+		
 		System.out.println();
 		System.out.println("Finish");
 		file_io.filewrite2(OutFileName, "");

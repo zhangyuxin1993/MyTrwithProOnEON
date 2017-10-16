@@ -270,7 +270,7 @@ public class opProGrooming {// 光层路由保护
 					int cross = t.linklistcompare(nowwpr.getworklinklist(), wpr.getworklinklist());
 					if (cross == 0) {// 表示该链路上面的FS可以共享
 						ArrayList<FSshareOnlink> FSShareOnlink = wpr.getFSoneachLink();
-						file_io.filewrite2(OutFileName,"此时的WPR 为 "+wpr.getdemand().getName());
+//						file_io.filewrite2(OutFileName,"此时的WPR 为 "+wpr.getdemand().getName());
 						if( FSShareOnlink!=null){
 						for(FSshareOnlink FSOnoneLink: FSShareOnlink){
 							if(FSOnoneLink.getlink().equals(link)){
@@ -284,8 +284,9 @@ public class opProGrooming {// 光层路由保护
 						}
 					}
 					}
-					if (cross == 1) {// 表示该链路上面的FS可以共享
+					if (cross == 1) {// 表示该链路上面的FS不可以共享
 						ArrayList<FSshareOnlink> FSShareOnlink = wpr.getFSoneachLink();
+						if(FSShareOnlink!=null){
 						for(FSshareOnlink FSOnoneLink: FSShareOnlink){
 							if(FSOnoneLink.getlink().equals(link)){
 								for (int NOshare : FSOnoneLink.getslotIndex()) {
@@ -297,6 +298,8 @@ public class opProGrooming {// 光层路由保护
 								}
 							}
 						}
+						
+					}
 					}
 					
 					if (shareslotIndex.size() != 0)
@@ -329,13 +332,13 @@ public class opProGrooming {// 光层路由保护
 					}
 					//test
 					
-					for (int remove : RemoveslotIndex) {
-						file_io.filewrite_without(OutFileName,"需要移除的FS为 "+remove+"   ");
-					}
-					file_io.filewrite2(OutFileName,"");
-					for(int share:shareslotWPR.get(wpr)){
-						file_io.filewrite_without(OutFileName,"可以共享的FS为 "+share+"   ");
-					}
+//					for (int remove : RemoveslotIndex) {
+//						file_io.filewrite_without(OutFileName,"需要移除的FS为 "+remove+"   ");
+//					}
+//					file_io.filewrite2(OutFileName,"");
+//					for(int share:shareslotWPR.get(wpr)){
+//						file_io.filewrite_without(OutFileName,"可以共享的FS为 "+share+"   ");
+//					}
 					file_io.filewrite2(OutFileName,"");
 					if(RemoveslotIndex.size()!=0&&RemoveslotIndex!=null){
 						for (int remove : RemoveslotIndex) {
@@ -357,7 +360,7 @@ public class opProGrooming {// 光层路由保护
 					fsonLinklist.add(fsol);
 				}
 			}
-
+			file_io.filewrite_without(OutFileName,"!!!!!!!!!!链路 "+link.getName()+" 上可以共享的slot为 " );
 			for (WorkandProtectRoute wpr : wprlist) {
 				if (shareslotWPR.keySet().contains(wpr)) {
 					if (shareslotWPR.get(wpr).size() != 0) {
@@ -378,27 +381,19 @@ public class opProGrooming {// 光层路由保护
 //							link.getSlotsarray().get(release).getoccupiedreqlist().remove(res);
 							link.getSlotsarray().get(release).getoccupiedreqlist().remove(request);
 							//test
-//							for(Request re:link.getSlotsarray().get(release).getoccupiedreqlist()){
-//								 System.out.println("释放之后占用该链路该FS的节点对为 "+re.getNodepair().getName());
-//								file_io.filewrite2(OutFileName,"释放之后占用该链路该FS的节点对为 "+re.getNodepair().getName());
-//							}
-//							System.out.println("释放之后占用该链路该FS的节点对的个数 "+link.getSlotsarray().get(release).getoccupiedreqlist().size() );
-//							file_io.filewrite2(OutFileName,"释放之后占用该链路该FS的节点对的个数 "+link.getSlotsarray().get(release).getoccupiedreqlist().size() );
-//							if (link.getSlotsarray().get(release).getoccupiedreqlist().size() == 0)  {
-//								file_io.filewrite2(OutFileName,"链路"+link.getName()+"上slot"+release+"已被释放");
-//								System.out.println("链路"+link.getName()+"上slot"+release+"已被释放");
-//							}
+							file_io.filewrite_without(OutFileName,release+"    ");
 						}
 					}
 				}
 			}
 		} // 每一段link上面的FS均释放完毕
-	
+		file_io.filewrite2(OutFileName,"    ");
 		// link上面可以共享的资源释放完毕 之后进行RSA
 		ArrayList<Integer> index_wave = new ArrayList<Integer>();
 		Mymain mm = new Mymain();
 		index_wave = mm.spectrumallocationOneRoute(false, null, linklist, slotnum); //每个link上面均占用这么多
-	
+		file_io.filewrite2(OutFileName,"!!!!!!!!此次RSA分配的slot起点为 "+index_wave.get(0)+"长度为 "+slotnum);
+		
 		int share=0,newFS=0;
 		for (Link link : linklist) {// 恢复之前占用的
 			for(FSshareOnlink fl:fsonLinklist){//对于每一段link要遍历之前所有的业务
@@ -415,8 +410,13 @@ public class opProGrooming {// 光层路由保护
 					}
 				}
 			}
+			if(slotnum<share){
+				share=slotnum;
+			}
 			newFS=newFS+slotnum-share;
+			
 		}
+		file_io.filewrite2(OutFileName,"!!!!!!!!此次RSA需要的新slot数为 "+newFS);
 //		file_io.filewrite2(OutFileName,"");
 //		file_io.filewrite2(OutFileName,"恢复占用之后");
 		for(Link link:linklist){

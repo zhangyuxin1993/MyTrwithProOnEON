@@ -611,7 +611,7 @@ public class ProregeneratorPlace {
 		RouteAndRegPlace finalRoute = new RouteAndRegPlace(null, 1);
 		int FS = 10000;
 		ArrayList<RouteAndRegPlace> RemoveRoute = new ArrayList<>();
-		// 第一种比较：比较每个链路新使用的FS个数 选取最少的//但是这里新使用的FS并没有考虑共享的FS
+		// 第一种比较：比较每个链路新使用的FS个数 选取最少的
 		for (RouteAndRegPlace route : regplaceoption) {
 			if (route.getnewFSnum() <= FS) {
 				FS = route.getnewFSnum();
