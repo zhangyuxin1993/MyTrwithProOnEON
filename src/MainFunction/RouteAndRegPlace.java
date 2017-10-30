@@ -11,6 +11,25 @@ public class RouteAndRegPlace {//Ò»ÌõÒµÎñµÄÂ·ÓÉ ÒÔ¼°Â·ÓÉÉÏreg¸öÊı ĞÂÊ¹ÓÃµÄFSÊı Ô
 	private int newFSnum=0;
 	private ArrayList<Integer> regnode=new ArrayList<Integer>();
 	private int nature=0;  //ÊôĞÔ¹¤×÷ÊÇ0±£»¤ÊÇ1
+	private ArrayList<Integer> IPRegnode=new ArrayList<Integer>();
+	private float NumRemainFlow=0;
+	
+	
+	public void setNumRemainFlow(float  NumRemainFlow) {
+		this.NumRemainFlow=NumRemainFlow;
+	}
+	public float getNumRemainFlow() {
+		return NumRemainFlow;
+	}
+	
+	
+	public void setIPRegnode(ArrayList<Integer> IPRegnode) {
+		this.IPRegnode.addAll(IPRegnode);
+	}
+	public ArrayList<Integer> getIPRegnode() {
+		return IPRegnode;
+	}
+	
 	
 	public RouteAndRegPlace(LinearRoute route, int nature) {
 		super();

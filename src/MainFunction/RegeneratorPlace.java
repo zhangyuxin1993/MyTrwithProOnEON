@@ -19,11 +19,9 @@ public class RegeneratorPlace {
 	static int totalregNum = 0;
 	String OutFileName =Mymain.OutFileName;
 	public boolean regeneratorplace(int IPflow, double routelength, LinearRoute newRoute, Layer oplayer,
-			Layer ipLayer,ArrayList<WorkandProtectRoute> wprlist,NodePair nodepair) {
+			Layer ipLayer,ArrayList<WorkandProtectRoute> wprlist,NodePair nodepair) {  //注意最少再生器个数的计算
 		// /*
 		// 第二种方法先判断一条路径最少使用的再生器的个数 然后穷尽所有的情况来选择再生器 放置的位置
-		// int totalregNum=Mymain.totalregNum;
-//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		int minRegNum = (int) Math.floor(routelength / 4000);// 最少的再生器的个数
 		int internode = newRoute.getNodelist().size() - 2;
@@ -33,8 +31,9 @@ public class RegeneratorPlace {
 		boolean partworkflag = false, RSAflag = false, regflag = false, success = false;
 		ArrayList<RouteAndRegPlace> regplaceoption = new ArrayList<>();
 		RouteAndRegPlace finalRoute = new RouteAndRegPlace(null, 0);
-		
+		float threshold=(float) 0.1;//在这里控制阈值
 		// 找到所有可以成功路由的路径 part1
+		
 		for (int s = minRegNum; s <= internode; s++) {
 			if (partworkflag||regplaceoption.size()!=0)//如果再生器个数较少的时候已经可以RSA那么就不需要增加再生器的个数
 				break;
@@ -48,12 +47,15 @@ public class RegeneratorPlace {
 				FStotal = 0;
 				linklist.clear();
 				int[] set = nOfm.next(); // 随机产生的再生器放置位置
-				for (int i = 0; i < set.length + 1; i++) {// RSA的次数比再生器的个数多1
+				ArrayList<Float> RemainRatio=new ArrayList<>();//记录每段链路上剩余的flow
+				float NumRemainFlow=0;
+				
+				for (int i = 0; i < set.length + 1; i++) {// RSA的次数比再生器的个数多1 对某一段链路在某个set再生器下进行RSA
 					if (!partworkflag && RSAflag)
 						break;
 					if (i < set.length){
-						System.out.println("****************再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
-						file_io.filewrite2(OutFileName,"****************再生器的位置为：" + set[i]); 
+						System.out.println("****************工作再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
+						file_io.filewrite2(OutFileName,"****************工作再生器的位置为：" + set[i]); 
 					}
 					else {
 						System.out.println("************最后一个再生器与终结点之间的RSA ");
@@ -70,15 +72,13 @@ public class RegeneratorPlace {
 						linklist.add(link);
 						n = n + 1;
 						if (!regflag) {// 未到达最后一段路径的RSA
-							if (n != set[i]) {
-								if (n == newRoute.getNodelist().size() - 1) {
-									partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 为目的节点前的剩余链路进行RSA
-									FStotal = FStotal + newFS;
-								}
-							}
 							if (n == set[i]) {
-								// length=length-link.getLength();
-								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 此时在n点放置再生器
+								ParameterTransfer pt=new ParameterTransfer();
+//								float remainFlow=pt.remainFlow;
+								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,pt);// 此时在n点放置再生器
+								RemainRatio.add(pt.getRemainFlowRatio());
+								NumRemainFlow=NumRemainFlow+pt.getNumremainFlow();
+//								file_io.filewrite2(OutFileName,"链路上剩余的容量比例 "+pt.getRemainFlow());
 								FStotal = FStotal + newFS;
 								length = 0;
 								RSAflag = true;
@@ -87,7 +87,11 @@ public class RegeneratorPlace {
 							}
 						}
 						if (n == newRoute.getNodelist().size() - 1) {
-							partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 此时在n点放置再生器
+							ParameterTransfer pt=new ParameterTransfer();
+							partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,pt);// 此时在n点放置再生器
+							RemainRatio.add(pt.getRemainFlowRatio());
+							NumRemainFlow=NumRemainFlow+pt.getNumremainFlow();
+							file_io.filewrite2(OutFileName,"链路上剩余的容量比例 "+pt.getRemainFlowRatio());
 							FStotal = FStotal + newFS;
 						}
 						if (!partworkflag && RSAflag)
@@ -95,15 +99,26 @@ public class RegeneratorPlace {
 					} while (n != newRoute.getNodelist().size() - 1);
 					// 如果路由成功则保存该路由对于再生器的放置
 				}
-				if (partworkflag) {
+				if (partworkflag) {//在一个特定的set下进行路由结束
 					RouteAndRegPlace rarp = new RouteAndRegPlace(newRoute, 0);
 					rarp.setnewFSnum(FStotal);
 					ArrayList<Integer> setarray = new ArrayList<>();
+					ArrayList<Integer> IPRegarray = new ArrayList<>();
+					file_io.filewrite2(OutFileName,"");
+					file_io.filewrite_without(OutFileName," 工作链路IP再生器的位置为" );
+					file_io.filewrite2(OutFileName," " );
 					for (int k = 0; k < set.length; k++) {
 						setarray.add(set[k]);
+						if(RemainRatio.get(k)>threshold||RemainRatio.get(k+1)>threshold){// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
+							IPRegarray.add(set[k]);//存储IP再生器放置节点
+							file_io.filewrite_without(OutFileName,IPRegarray.get(k)+"    ");
+						}
 					}
+					file_io.filewrite2(OutFileName," " );
+					rarp.setIPRegnode(IPRegarray);
 					rarp.setregnode(setarray);
 					rarp.setregnum(setarray.size());
+					rarp.setNumRemainFlow(NumRemainFlow);
 					regplaceoption.add(rarp);
 					System.out.println("该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());// 再生器的个数加进去
 					file_io.filewrite2(OutFileName,"该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());
@@ -115,18 +130,78 @@ public class RegeneratorPlace {
 		// 在已经产生的几条链路中选取一条使用FS最少的链路作为最终链路
 		if (regplaceoption.size() != 0) {
 			success = true;
-			int FS = 10000;
-			for (RouteAndRegPlace route : regplaceoption) {
-				if (route.getnewFSnum() < FS) {
-					FS = route.getnewFSnum();
-					finalRoute = route;// 这是最终选择的再生器放置的地点
-										// 接下来要对该条路径结合其再生器放置位置进行容量分配~
+			ArrayList<RouteAndRegPlace> RemoveRoute= new ArrayList<>(); 
+			//确定final route
+			//第一层选择 选择IP再生器少的路由
+			if(regplaceoption.size()==1){
+				finalRoute=regplaceoption.get(0);
+			}
+			else{
+				RouteAndRegPlace StandardRoute=regplaceoption.get(0);
+				for(int k=1;k<regplaceoption.size();k++){
+					RouteAndRegPlace CompareRoute=regplaceoption.get(k);
+					if(StandardRoute.getIPRegnode().size()>CompareRoute.getIPRegnode().size()){
+						RemoveRoute.add(StandardRoute);//删去IP再生器多的路径
+						StandardRoute=CompareRoute;//如果比较的route比标准的好 则将标准定为比较route
+					}
+					if(StandardRoute.getIPRegnode().size()<CompareRoute.getIPRegnode().size()){
+						RemoveRoute.add(CompareRoute);//比较的没有标准好
+					}
 				}
+			for(RouteAndRegPlace rag:RemoveRoute){
+				regplaceoption.remove(rag);
+			}
+			RemoveRoute.clear();
+			//第二层选择 选择IP再生器少的路由
+			if(regplaceoption.size()==1){
+				finalRoute=regplaceoption.get(0);
+			}
+			else{
+				RouteAndRegPlace StandardRoute_2=regplaceoption.get(0);
+				for(int k=1;k<regplaceoption.size();k++){
+					RouteAndRegPlace CompareRoute_2=regplaceoption.get(k);
+					if(StandardRoute_2.getNumRemainFlow()<CompareRoute_2.getNumRemainFlow()){
+						RemoveRoute.add(StandardRoute_2);//删去剩余流量少的路由
+						StandardRoute_2=CompareRoute_2;//如果比较的route比标准的好 则将标准定为比较route
+					}
+					if(StandardRoute_2.getNumRemainFlow()>CompareRoute_2.getNumRemainFlow()){
+						RemoveRoute.add(CompareRoute_2);//比较的没有标准好
+					}
+				}
+				for(RouteAndRegPlace rag:RemoveRoute){
+					regplaceoption.remove(rag);
+				}
+				RemoveRoute.clear();
+			
+				//第三层选择 选择新使用FS较少的路由
+				if(regplaceoption.size()==1){
+					finalRoute=regplaceoption.get(0);
+				}
+				else{
+					RouteAndRegPlace StandardRoute_3=regplaceoption.get(0);
+					for(int k=1;k<regplaceoption.size();k++){
+						RouteAndRegPlace CompareRoute_3=regplaceoption.get(k);
+						if(StandardRoute_3.getnewFSnum()>CompareRoute_3.getnewFSnum()){
+							RemoveRoute.add(StandardRoute_3);//删去使用FS较多的路由
+							StandardRoute_3=CompareRoute_3;//如果比较的route比标准的好 则将标准定为比较route
+						}
+						if(StandardRoute_3.getnewFSnum()<CompareRoute_3.getnewFSnum()){
+							RemoveRoute.add(CompareRoute_3);//比较的没有标准好
+						}
+					}
+					for(RouteAndRegPlace rag:RemoveRoute){
+						regplaceoption.remove(rag);
+					}
+					RemoveRoute.clear();
+			}
+				finalRoute=regplaceoption.get(0);//最终不管是否只剩一条链路 都选择第一条作为最终链路
+			
+			}
 			}
 			RegeneratorPlace regp = new RegeneratorPlace();
 			regp.FinalRouteRSA(finalRoute, oplayer, ipLayer, IPflow);
-			
 		}
+		
 		if (regplaceoption.size() == 0) {
 			success = false;
 			System.out.println("该路径被阻塞");
@@ -182,7 +257,8 @@ public class RegeneratorPlace {
 		 */
 
 	}
-
+	 
+	
 	public void FinalRouteRSA(RouteAndRegPlace finalRoute, Layer oplayer, Layer ipLayer, int IPflow) {
 
 		finalRoute.getRoute().OutputRoute_node(finalRoute.getRoute());
@@ -225,7 +301,7 @@ public class RegeneratorPlace {
 	}
 
 	public Boolean vertify(int IPflow, double routelength, ArrayList<Link> linklist, Layer oplayer, Layer iplayer,
-			 ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
+			 ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair,ParameterTransfer RemainRatio) {
 	//判断某一段transparent链路是否能够成功RSA 并且记录新使用的FS数量
  
 		double X = 1;
@@ -249,8 +325,6 @@ public class RegeneratorPlace {
 			slotnum = (int) Math.ceil(IPflow / X);// 向上取整
 			System.out.println("该链路所需slot数： " + slotnum);
 
-			Test t = new Test();
-			
 			newFS = slotnum * linklist.size();
 	 
 			ArrayList<Integer> index_wave = new ArrayList<Integer>();
@@ -260,6 +334,9 @@ public class RegeneratorPlace {
 				System.out.println("路径堵塞 ，不分配频谱资源");
 				file_io.filewrite2(OutFileName,"路径堵塞 ，不分配频谱资源");
 			} else {
+				RemainRatio.setRemainFlowRatio(  (float) ((slotnum*X-IPflow) / (slotnum*X)) );
+				RemainRatio.setNumremainFlow((float) (slotnum*X-IPflow));
+				file_io.filewrite2(OutFileName,"建立通道的总容量 "+slotnum*X+" 需要的容量 "+ IPflow+ "剩余的容量比例 "+ RemainRatio.getRemainFlowRatio() );
 				opworkflag = true;
 				System.out.println("可以进行RSA ");
 				file_io.filewrite2(OutFileName,"可以进行RSA");

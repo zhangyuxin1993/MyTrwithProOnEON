@@ -236,7 +236,8 @@ public class ProregeneratorPlace {
 		ArrayList<Link> linklist = new ArrayList<>();
 		int FStotal = 0, n = 0;
 		ProregeneratorPlace rp = new ProregeneratorPlace();
-
+		ArrayList<Float> RemainRatio=new ArrayList<>();//记录每段链路上剩余的flow
+		
 		for (int i = 0; i < set.length + 1; i++) {// RSA的次数比再生器的个数多1
 			if (!partworkflag && RSAflag)
 				break;
@@ -259,7 +260,9 @@ public class ProregeneratorPlace {
 				n = n + 1;
 				if (!regflag) {// 未到达最后一段路径的RSA
 					if (n == set[i]) {
-						partworkflag = rp.vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 此时在n点放置再生器
+						float remainFlow=0;
+						partworkflag = rp.vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,remainFlow);// 此时在n点放置再生器
+						RemainRatio.add(remainFlow);
 						FStotal = FStotal + nodepair.getSlotsnum();
 						length = 0;
 						RSAflag = true;
@@ -268,7 +271,9 @@ public class ProregeneratorPlace {
 					}
 				}
 				if (n == newRoute.getNodelist().size() - 1) {
-					partworkflag = rp.vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair);// 此时在n点放置再生器
+					float remainFlow=0;
+					partworkflag = rp.vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,remainFlow);// 此时在n点放置再生器
+					RemainRatio.add(remainFlow);
 					FStotal = FStotal + nodepair.getSlotsnum();
 				}
 				if (!partworkflag && RSAflag)// 如果之前的链路已经RSA失败 剩下的链路也没有RSA的必要
@@ -280,8 +285,12 @@ public class ProregeneratorPlace {
 			RouteAndRegPlace rarp = new RouteAndRegPlace(newRoute, 1);
 			rarp.setnewFSnum(FStotal);
 			ArrayList<Integer> setarray = new ArrayList<>();
+			ArrayList<Integer> IPRegarray = new ArrayList<>();
 			for (int k = 0; k < set.length; k++) {
 				setarray.add(set[k]);
+				if(RemainRatio.get(k)>0.1||RemainRatio.get(k+1)>0.1){// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
+					IPRegarray.add(set[k]);//存储IP再生器放置节点
+				}
 			}
 			rarp.setregnode(setarray);
 			rarp.setregnum(setarray.size());
@@ -292,7 +301,7 @@ public class ProregeneratorPlace {
 	}
 
 	public Boolean vertify(int IPflow, double routelength, ArrayList<Link> linklist, Layer oplayer, Layer iplayer,
-			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
+			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair,double RemainRatio) {
 		// 判断某一段transparent链路是否能够成功RSA 并且记录新使用的FS数量
 		// workOrproflag=true的时候表示是工作 false的时候表示保护
 		file_out_put file_io = new file_out_put();

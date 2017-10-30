@@ -84,30 +84,30 @@ public class Mymain {
 			IPWorkingGrooming ipwg = new IPWorkingGrooming();
 			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer, numOfTransponder, ipWorkRoute, wprlist);// 在ip层工作路由
 			if (iproutingFlag) {// ip层工作路由成功 建立保护
-				ipProGrooming ipprog = new ipProGrooming();
-				ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true,
-						wprlist);
-				if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
-					opProGrooming opg = new opProGrooming();
-					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true, wprlist);
-				}
+//				ipProGrooming ipprog = new ipProGrooming();
+//				ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true,wprlist);
+				
+//				if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
+//					opProGrooming opg = new opProGrooming();
+//					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true, wprlist);
+//				}
 			}
 
 			// ip层工作路由不成功 在光层路由工作
 			if (!iproutingFlag) {
 				opWorkingGrooming opwg = new opWorkingGrooming();
 				opworkFlag = opwg.opWorkingGrooming(nodepair, iplayer, oplayer, opWorkRoute, wprlist);
-				if (opworkFlag) {// 在光层成功建立工作路径
-					ipProGrooming ipprog = new ipProGrooming();
-					ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder,
-							false, wprlist);
-					if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
-						opProGrooming opg = new opProGrooming();
-						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false,
-								wprlist);
-					}
-				 
-				}
+//				if (opworkFlag) {// 在光层成功建立工作路径后建立保护路径
+//					ipProGrooming ipprog = new ipProGrooming();
+//					ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder,
+//							false, wprlist);
+//					if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
+//						opProGrooming opg = new opProGrooming();
+//						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false,
+//								wprlist);
+//					}
+//				 
+//				}
 			}
 		}
 			System.out.println();
@@ -136,7 +136,7 @@ public class Mymain {
 				file_io.filewrite2(OutFileName, "");
 				file_io.filewrite_without(OutFileName,"放置共享再生器节点：");
 				for (Regenerator reg : wpr.getsharereglist()) {
-					reg.setpropathNum(reg.getpropathNum()+1);
+					reg.setPropathNum(reg.getPropathNum()+1);
 					if(!reglist.contains(reg)){
 						reglist.add(reg);
 					}
@@ -147,7 +147,7 @@ public class Mymain {
 				file_io.filewrite2(OutFileName, "");
 				file_io.filewrite_without(OutFileName,"放置新再生器节点：");
 				for (Regenerator reg : wpr.getnewreglist()) {
-					reg.setpropathNum(reg.getpropathNum()+1);
+					reg.setPropathNum(reg.getPropathNum()+1);
 					if(!reglist.contains(reg)){
 						reglist.add(reg);
 					}

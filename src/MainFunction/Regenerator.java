@@ -6,17 +6,24 @@ public class Regenerator {
 	private Node node = new Node(null, 0, null, null, 0, 0);
 	private int index = 0;
 	private int propathNum = 0;
-//	private NodePair nodepair = new NodePair(null, 0, null, null, null, null);
+	private int RegType = 2;//代表属性 =1表示pyhsical layer 纯光层再生器 ；=1表示在IP层再生器
 	
 	public Regenerator(Node node) {
 		super();
 		this.node = node;
 	}
 	
-	public void setpropathNum(int propathNum) {
+	public void setNature(int nature) {
+		 this.RegType=nature;
+	}
+	public int getNature() {
+		return RegType;
+	}
+	
+	public void setPropathNum(int propathNum) {
 		 this.propathNum=propathNum;
 	}
-	public int getpropathNum() {
+	public int getPropathNum() {
 		return propathNum;
 	}
 	
