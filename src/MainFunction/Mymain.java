@@ -51,7 +51,7 @@ public class Mymain {
 		 
 		//以下可以随机产生节点对
 		DemandRadom dr=new DemandRadom();
-		RadomNodepairlist=dr.demandradom(20,TopologyName,iplayer);
+		RadomNodepairlist=dr.demandradom(20,TopologyName,iplayer);//随机产生结对对并且产生业务量
 		iplayer.setNodepairlist(RadomNodepairlist);
 		int p=0;
 		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
@@ -265,7 +265,7 @@ public class Mymain {
 		}
 		for (Link link : linklistOnroute) {
 			link.getSlotsindex().clear();
-			// slotarray和slotindex的区别？？
+		
 			for (int start = 0; start < link.getSlotsarray().size() - slotnum; start++) {
 				int flag = 0;
 				for (int num = start; num < slotnum + start; num++) {//分配的FS必须是连续的

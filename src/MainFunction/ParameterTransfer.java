@@ -1,5 +1,7 @@
 package MainFunction;
-
+/*
+ * 为了实现方法中值的传递
+ */
 public class ParameterTransfer {
 
 	float remainFlowRatio=100;
