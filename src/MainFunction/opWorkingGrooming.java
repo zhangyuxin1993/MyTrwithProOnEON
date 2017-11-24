@@ -106,6 +106,7 @@ public class opWorkingGrooming {
 				Link finlink=iplayer.findLink(srcnode, desnode);
 				Link createlink = new Link(null, 0, null, iplayer, null, null, 0, 0);
 				boolean findflag=false;
+				System.out.println();
 				try{
 					System.out.println("IP层中找到工作链路"+finlink.getName());
 					file_io.filewrite2(OutFileName,"IP层中找到工作链路"+finlink.getName());
@@ -162,6 +163,7 @@ public class opWorkingGrooming {
 		}
 		if(opworkflag){
 //				&&routelength<=4000) {
+			System.out.println();
 			System.out.println("在光层成功路由并且RSA");
 			file_io.filewrite2(OutFileName,"在光层成功路由并且RSA");
 			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);

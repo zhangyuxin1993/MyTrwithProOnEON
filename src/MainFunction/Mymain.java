@@ -15,9 +15,9 @@ import network.VirtualLink;
 import subgraph.LinearRoute;
 
 public class Mymain {
-	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\cost239.dat";
 	public static void main(String[] args) throws IOException {
-		String TopologyName = "D:/zyx/Topology/NSFNET.csv";
+		String TopologyName = "D:/zyx/Topology/cost239.csv";
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
 		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
@@ -51,7 +51,7 @@ public class Mymain {
 		 
 		//以下可以随机产生节点对
 		DemandRadom dr=new DemandRadom();
-		RadomNodepairlist=dr.demandradom(20,TopologyName,iplayer);//随机产生结对对并且产生业务量
+		RadomNodepairlist=dr.demandradom(55,TopologyName,iplayer);//随机产生结对对并且产生业务量
 		iplayer.setNodepairlist(RadomNodepairlist);
 		int p=0;
 		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
@@ -109,6 +109,21 @@ public class Mymain {
 //				 
 //				}
 			}
+		//test
+			System.out.println("IP层上的链路条数为：" +  iplayer.getLinklist().size());
+			HashMap<String, Link> linklisttest = iplayer.getLinklist();
+			Iterator<String> linkitortest = linklisttest.keySet().iterator();
+			while (linkitortest.hasNext()) {
+				Link Mlink = (Link) (linklisttest.get(linkitortest.next()));
+				file_io.filewrite2(OutFileName,"IP层上的链路为：" +  Mlink.getName());
+				System.out.println("IP层上的链路为：" +  Mlink.getName());
+				ArrayList<VirtualLink> VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
+				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtua
+					System.out.println("该IP链路上的虚拟链路为：" +  Vlink.getSrcnode()+"-"+Vlink.getDesnode()+"   性质为："+Vlink.getNature());
+					file_io.filewrite2(OutFileName,"该IP链路上的虚拟链路为：" +  Vlink.getSrcnode()+"-"+Vlink.getDesnode()+"   性质为："+Vlink.getNature());
+				}
+			}
+		
 		}
 			System.out.println();
 			System.out.println();
