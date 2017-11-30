@@ -66,7 +66,7 @@ public class DemandRadom {
 			setDemand++;
 //			System.out.println(nodePair.getName());
 			if(setDemand<nodepairNum/5){
-				nodePair.setTrafficdemand(radom.Num_random(1, 10)[0]+1);
+				nodePair.setTrafficdemand(radom.Num_random(1, 7)[0]+1);
 			}
 			else{
 				nodePair.setTrafficdemand(radom.Num_random(1, demandlimit)[0]+1);

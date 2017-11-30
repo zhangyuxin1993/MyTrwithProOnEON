@@ -17,7 +17,6 @@ public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生
 	private HashMap<Integer, Regenerator> regthinglist=null; 
 	private ArrayList<Regenerator> Regneratorlist=new ArrayList<Regenerator>();
 	private LinearRoute proroute=new LinearRoute(null, 0, null);
-//	private HashMap<Link, ArrayList<Integer>> SlotindexUseOnlink=null;
 	private ArrayList<FSshareOnlink> FSoneachLink=null;
 	 private ArrayList<Regenerator> newreglist=new ArrayList<Regenerator>();
 	 private ArrayList<Regenerator> sharereglist=new ArrayList<Regenerator>();

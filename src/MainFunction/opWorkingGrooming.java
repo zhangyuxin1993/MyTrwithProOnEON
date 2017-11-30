@@ -24,7 +24,6 @@ public class opWorkingGrooming {
 		Node desnode = nodepair.getDesNode();
 		double routelength = 0;
 		LinearRoute route_out=new LinearRoute(null, 0, null);
-//		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
 		
@@ -55,6 +54,7 @@ public class opWorkingGrooming {
 							// QBSK,500-1000，8QAM,0-500 16QAM
 			
 			for(Link link:opnewRoute.getLinklist()){
+				System.out.println(link.getName());
 				routelength=routelength+link.getLength();
 			}
 			// System.out.println("物理路径的长度是："+routelength);

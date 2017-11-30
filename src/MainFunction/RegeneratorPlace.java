@@ -51,8 +51,7 @@ public class RegeneratorPlace {
 				ArrayList<Float> RemainRatio = new ArrayList<>();// 记录每段链路上剩余的flow
 				float NumRemainFlow = 0;
 
-				for (int i = 0; i < set.length + 1; i++) {// RSA的次数比再生器的个数多1
-															// 对某一段链路在某个set再生器下进行RSA
+				for (int i = 0; i < set.length + 1; i++) {// RSA的次数比再生器的个数多1  对某一段链路在某个set再生器下进行RSA
 					if (!partworkflag && RSAflag)
 						break;
 					if (i < set.length) {
@@ -75,7 +74,6 @@ public class RegeneratorPlace {
 						if (!regflag) {// 未到达最后一段路径的RSA
 							if (n == set[i]) {
 								ParameterTransfer pt = new ParameterTransfer();
-								// float remainFlow=pt.remainFlow;
 								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,pt);//
 								RemainRatio.add(pt.getRemainFlowRatio());
 								NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
@@ -107,7 +105,7 @@ public class RegeneratorPlace {
 					
 					for (int k = 0; k < set.length; k++) {
 						setarray.add(set[k]);
-						if (RemainRatio.get(k) > threshold || RemainRatio.get(k + 1) > threshold) {// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
+						if (RemainRatio.get(k) >= threshold || RemainRatio.get(k + 1) >= threshold) {// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
 							IPRegarray.add(set[k]);// 存储IP再生器放置节点
 						}
 					}
@@ -170,15 +168,15 @@ public class RegeneratorPlace {
 					RouteAndRegPlace StandardRoute = regplaceoption.get(standard);
 					if(RemoveRoute.contains(StandardRoute)) 
 						continue;
-					System.out.print("第一层筛选 标准路由的IP再生器个数为 ：");
-					System.out.println(StandardRoute.getIPRegnode().size());
+//					System.out.print("第一层筛选 标准路由的IP再生器个数为 ：");
+//					System.out.println(StandardRoute.getIPRegnode().size());
 					
 					for (int k = standard+1; k < regplaceoption.size(); k++) {
 						RouteAndRegPlace CompareRoute = regplaceoption.get(k);
 						if(RemoveRoute.contains(CompareRoute)) 
 							continue;
-						System.out.print("第一层筛选 比较路由的IP再生器个数为：");
-						System.out.println(CompareRoute.getIPRegnode().size());
+//						System.out.print("第一层筛选 比较路由的IP再生器个数为：");
+//						System.out.println(CompareRoute.getIPRegnode().size());
 						if (StandardRoute.getIPRegnode().size() > CompareRoute.getIPRegnode().size()) {
 							RemoveRoute.add(StandardRoute);// 删去IP再生器多的路径
 							break;
@@ -200,15 +198,15 @@ public class RegeneratorPlace {
 						RouteAndRegPlace StandardRoute_2 = regplaceoption.get(standard);
 						if(RemoveRoute.contains(StandardRoute_2)) 
 							continue;
-						System.out.print("第二层筛选 标准路由剩余流量为：");
-						System.out.println(StandardRoute_2.getNumRemainFlow());
+//						System.out.print("第二层筛选 标准路由剩余流量为：");
+//						System.out.println(StandardRoute_2.getNumRemainFlow());
 						
 						for (int k = standard+1; k < regplaceoption.size(); k++) {
 							RouteAndRegPlace CompareRoute_2 = regplaceoption.get(k);
 							if(RemoveRoute.contains(CompareRoute_2)) 
 								continue;
-							System.out.print("第二层筛选 比较路由剩余流量为：");
-							System.out.println(CompareRoute_2.getNumRemainFlow());
+//							System.out.print("第二层筛选 比较路由剩余流量为：");
+//							System.out.println(CompareRoute_2.getNumRemainFlow());
 							if (StandardRoute_2.getNumRemainFlow() < CompareRoute_2.getNumRemainFlow()) {
 								RemoveRoute.add(StandardRoute_2);// 删去剩余流量少的路由
 								break;
@@ -231,15 +229,15 @@ public class RegeneratorPlace {
 							RouteAndRegPlace StandardRoute_3 = regplaceoption.get(standard);
 							if(RemoveRoute.contains(StandardRoute_3)) 
 								continue;
-							System.out.print("第三层筛选 标准路由使用的FS为：");
-							System.out.println(StandardRoute_3.getnewFSnum());
+//							System.out.print("第三层筛选 标准路由使用的FS为：");
+//							System.out.println(StandardRoute_3.getnewFSnum());
 						
 							for (int k = standard+1; k < regplaceoption.size(); k++) {
 								RouteAndRegPlace CompareRoute_3 = regplaceoption.get(k);
 								if(RemoveRoute.contains(CompareRoute_3)) 
 									continue;
-								System.out.print("第三层筛选 比较路由使用的FS为：");
-								System.out.println(CompareRoute_3.getnewFSnum());
+//								System.out.print("第三层筛选 比较路由使用的FS为：");
+//								System.out.println(CompareRoute_3.getnewFSnum());
 								if (StandardRoute_3.getnewFSnum() > CompareRoute_3.getnewFSnum()) {
 									RemoveRoute.add(StandardRoute_3);// 删去使用FS较多的路由
 									break;
@@ -255,8 +253,14 @@ public class RegeneratorPlace {
 						RemoveRoute.clear();
 					}
 					finalRoute = regplaceoption.get(0);// 最终不管是否只剩一条链路 都选择第一条作为最终链路
+				
+//					file_io.filewrite2(OutFileName, "！！！！！！此时的nodepair为 "+ nodepair.getName());
+//					if(nodepair.getFinalRoute()!=null){
+//						file_io.filewrite2(OutFileName, "！！！！！！ 该工作链路需要再生器");
+//					}
 				}
 			}
+			nodepair.setFinalRoute(finalRoute);
 			RegeneratorPlace regp = new RegeneratorPlace();
 			regp.FinalRouteRSA(finalRoute, oplayer, ipLayer, IPflow);
 		}
@@ -363,10 +367,10 @@ public class RegeneratorPlace {
 				count = count + 1;
 				if (!regflag2) {// 未到达最后一段路径的RSA
 					if (count == finalRoute.getregnode().get(i)) {// 首先该点放置了再生器
-						// 该点放置了IP再生器
+					
 						pt.setEndNode(finalRoute.getRoute().getNodelist().get(count));//设置终止节点
 						System.out.println("起始节点为："+ pt.getStartNode().getName()+"终止节点为："+ pt.getEndNode().getName());
-						
+							// 该点放置了IP再生器
 						if (finalRoute.getIPRegnode().contains(count)) {
 							modifylinkcapacity(true, IPflow, length2, linklist2, oplayer, ipLayer, pt);
 							length2 = 0;
@@ -429,10 +433,8 @@ public class RegeneratorPlace {
 			} else {
 				RemainRatio.setRemainFlowRatio((float) ((slotnum * X - IPflow) / (slotnum * X)));
 				RemainRatio.setNumremainFlow((float) (slotnum * X - IPflow));
-				System.out.println("建立通道的总容量 " + slotnum * X + "   业务容量 " + IPflow + "   剩余的容量比例 "
-						+ RemainRatio.getRemainFlowRatio() + "   剩余的业务量：" + RemainRatio.getNumremainFlow());
 				file_io.filewrite2(OutFileName, "建立通道的总容量 " + slotnum * X + "   业务容量 " + IPflow + "   剩余的容量比例 "
-						+ RemainRatio.getRemainFlowRatio() + "   剩余的业务量：" + RemainRatio.getNumremainFlow()+"  需要的FS数量："+slotnum);
+						+ RemainRatio.getRemainFlowRatio() + "   剩余的业务量：" + RemainRatio.getNumremainFlow()+"  需要的FS数量："+slotnum+"  FS起始："+index_wave.get(0));
 				opworkflag = true;
 				System.out.println("可以进行RSA ");
 				file_io.filewrite2(OutFileName, "可以进行RSA");
@@ -502,39 +504,8 @@ public class RegeneratorPlace {
 				if (IPorOEO) {// true的时候表示放置的是IP再生器 需要在IP层建立链路
 //					改变起始节点 剩余容量
 					//首先寻找需要构建IP链路的起始节点和终止节点
-//					Node startnode = new Node(null, 0, null, iplayer, 0, 0);
-//					Node endnode = new Node(null, 0, null, iplayer, 0, 0);
 					Node startnode = pt.getStartNode();
 					Node endnode = pt.getEndNode();
-					
-					
-//					if (linklist.size() != 1) {
-//						System.out.println("该段虚拟链路的起始节点为： "+startnode.getName());
-//						Link link1 = linklist.get(0);
-//						Link link2 = linklist.get(1);
-//						Link link3 = linklist.get(linklist.size() - 2);
-//						Link link4 = linklist.get(linklist.size() - 1);
-////						Node nodeA = link1.getNodeA();
-////						Node nodeB = link1.getNodeB();
-//						Node nodeC = link4.getNodeA();
-//						Node nodeD = link4.getNodeB();
-//						file_io.filewrite2(OutFileName, "取出的链路为" + link1.getName() + "  " + link2.getName() + "   "
-//								+ link3.getName() + "  " + link4.getName());
-//
-////						if (link2.getNodeA().equals(nodeA) || link2.getNodeB().equals(nodeA))
-////							startnode = nodeB;
-////						if (link2.getNodeA().equals(nodeB) || link2.getNodeB().equals(nodeB))
-////							startnode = nodeA;// 找到起始端点
-//						if (link3.getNodeA().equals(nodeC) || link3.getNodeB().equals(nodeC))
-//							endnode = nodeD;
-//						if (link3.getNodeA().equals(nodeD) || link3.getNodeB().equals(nodeD))
-//							endnode = nodeC;// 找到终止端点
-//						file_io.filewrite2(OutFileName, "找到的节点：" + startnode.getName() + "  " + endnode.getName());
-//					}
-//					if (linklist.size() == 1) {
-//						startnode = linklist.get(0).getNodeA();
-//						endnode = linklist.get(0).getNodeB();
-//					}
 					
 					// 	在IP层中寻找transparent链路的两端
 					for (int num = 0; num < iplayer.getNodelist().size() - 1; num++) {
@@ -593,30 +564,23 @@ public class RegeneratorPlace {
 					
 					if (findflag) {// 如果在IP层中已经找到该链路
 						finlink.getVirtualLinkList().add(Vlink);
-						System.out.println(
-								"IP层已存在的链路 " + finlink.getName() );
-//								+ "\n " + "    预留的flow：  " + Vlink.getRestcapacity());
 						file_io.filewrite2(OutFileName,
-								"IP层已存在的链路 " + finlink.getName() + "\n " + "    预留的flow：  " + Vlink.getRestcapacity());
+								"IP层已存在的链路 " + finlink.getName() +  "    预留的flow：  " + Vlink.getRestcapacity());
 						System.out.println("工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
 								+ finlink.getVirtualLinkList().size());
 						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
 								+ finlink.getVirtualLinkList().size());
 					} else {
 						createlink.getVirtualLinkList().add(Vlink);
-						System.out.println(
-								"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+						System.out.println("IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
 						System.out.println("工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
 								+ createlink.getVirtualLinkList().size());
-						file_io.filewrite2(OutFileName,
-								"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+						file_io.filewrite2(OutFileName,"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
 						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
 								+ createlink.getVirtualLinkList().size());
 					}
 					//以上已经成功建立IP虚拟链路 要更改此次的终止节点为下次的起始节点 并且初始化链路上最小剩余容量
 					pt.setMinRemainFlowRSA(10000);
-					
-					
 				}
 			}
 		}

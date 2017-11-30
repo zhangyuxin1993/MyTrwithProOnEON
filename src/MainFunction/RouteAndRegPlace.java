@@ -2,7 +2,6 @@ package MainFunction;
 
 import java.util.ArrayList;
 
-import network.Link;
 import subgraph.LinearRoute;
 
 public class RouteAndRegPlace {//Ò»ÌõÒµÎñµÄÂ·ÓÉ ÒÔ¼°Â·ÓÉÉÏreg¸öÊı ĞÂÊ¹ÓÃµÄFSÊı ÔÙÉúÆ÷µÄÎ»ÖÃ ÒÔ¼°¹¤×÷»¹ÊÇ±£»¤
@@ -13,7 +12,14 @@ public class RouteAndRegPlace {//Ò»ÌõÒµÎñµÄÂ·ÓÉ ÒÔ¼°Â·ÓÉÉÏreg¸öÊı ĞÂÊ¹ÓÃµÄFSÊı Ô
 	private int nature=0;  //ÊôĞÔ¹¤×÷ÊÇ0±£»¤ÊÇ1
 	private ArrayList<Integer> IPRegnode=new ArrayList<Integer>();
 	private float NumRemainFlow=0;
+	private ArrayList<Regenerator> UsedShareReg=new ArrayList<Regenerator>();
 	
+	public void setUsedShareReg(ArrayList<Regenerator> UsedShareReg) {
+		this.UsedShareReg.addAll(UsedShareReg);
+	}
+	public ArrayList<Regenerator> getUsedShareReg() {
+		return UsedShareReg;
+	}
 	
 	public void setNumRemainFlow(float  NumRemainFlow) {
 		this.NumRemainFlow=NumRemainFlow;
