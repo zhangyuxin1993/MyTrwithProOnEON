@@ -13,6 +13,15 @@ public class RouteAndRegPlace {//Ò»ÌõÒµÎñµÄÂ·ÓÉ ÒÔ¼°Â·ÓÉÉÏreg¸öÊı ĞÂÊ¹ÓÃµÄFSÊı Ô
 	private ArrayList<Integer> IPRegnode=new ArrayList<Integer>();
 	private float NumRemainFlow=0;
 	private ArrayList<Regenerator> UsedShareReg=new ArrayList<Regenerator>();
+	private ArrayList<Integer> NewRegList=new ArrayList<Integer>();
+	
+	
+	public void setNewRegList(ArrayList<Integer> NewRegList) {
+		this.NewRegList.addAll(NewRegList);
+	}
+	public ArrayList<Integer> getNewRegList() {
+		return NewRegList;
+	}
 	
 	public void setUsedShareReg(ArrayList<Regenerator> UsedShareReg) {
 		this.UsedShareReg.addAll(UsedShareReg);
