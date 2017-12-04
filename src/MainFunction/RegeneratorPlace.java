@@ -55,19 +55,19 @@ public class RegeneratorPlace {
 					if (!partworkflag && RSAflag)
 						break;
 					if (i < set.length) {
-						System.out.println("****************工作再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
-						file_io.filewrite2(OutFileName, "****************工作再生器的位置为：" + set[i]);
+//						System.out.println("****************工作再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
+//						file_io.filewrite2(OutFileName, "****************工作再生器的位置为：" + set[i]);
 					} else {
-						System.out.println("************最后一个再生器与终结点之间的RSA ");
-						file_io.filewrite2(OutFileName, "************最后一个再生器与终结点之间的RSA ");
+//						System.out.println("************最后一个再生器与终结点之间的RSA ");
+//						file_io.filewrite2(OutFileName, "************最后一个再生器与终结点之间的RSA ");
 						regflag = true;
 					}
 					do {// 通过一个
 						Node nodeA = newRoute.getNodelist().get(n);
 						Node nodeB = newRoute.getNodelist().get(n + 1);
 						Link link = oplayer.findLink(nodeA, nodeB);
-						System.out.println(link.getName());
-						file_io.filewrite2(OutFileName, link.getName());
+//						System.out.println(link.getName());
+//						file_io.filewrite2(OutFileName, link.getName());
 						length = length + link.getLength();
 						linklist.add(link);
 						n = n + 1;
@@ -101,7 +101,7 @@ public class RegeneratorPlace {
 					rarp.setnewFSnum(FStotal);
 					ArrayList<Integer> setarray = new ArrayList<>();
 					ArrayList<Integer> IPRegarray = new ArrayList<>();
-					file_io.filewrite2(OutFileName, "");
+//					file_io.filewrite2(OutFileName, "");
 					
 					for (int k = 0; k < set.length; k++) {
 						setarray.add(set[k]);
@@ -110,7 +110,7 @@ public class RegeneratorPlace {
 						}
 					}
 
-					file_io.filewrite2(OutFileName, " ");
+//					file_io.filewrite2(OutFileName, " ");
 					rarp.setIPRegnode(IPRegarray);
 					rarp.setregnode(setarray);
 					rarp.setregnum(setarray.size());
@@ -349,6 +349,7 @@ public class RegeneratorPlace {
 		
 		pt.setStartNode(finalRoute.getRoute().getNodelist().get(0));// 首先设置该链路的起始节点
 		pt.setMinRemainFlowRSA(10000);//首先初始化
+		file_io.filewrite2(OutFileName, "");
 		
 		for (int i = 0; i < finalRoute.getregnum() + 1; i++) {
 			if (i >= finalRoute.getregnum())
@@ -358,8 +359,6 @@ public class RegeneratorPlace {
 				Node nodeB = finalRoute.getRoute().getNodelist().get(count + 1);
 				
 				Link link = oplayer.findLink(nodeA, nodeB);
-				System.out.println();
-				file_io.filewrite2(OutFileName, "");
 				System.out.println("工作链路RSA：" + link.getName());
 				file_io.filewrite2(OutFileName, "工作链路RSA：" + link.getName());
 				length2 = length2 + link.getLength();
@@ -472,10 +471,10 @@ public class RegeneratorPlace {
 			if(RemainFlow<pt.getMinRemainFlowRSA()){//若中间经过OEO再生器那么存储剩余较小的flow
 				pt.setMinRemainFlowRSA(RemainFlow);
 			}
-			System.out.println("此时的最小剩余容量为：" + pt.getMinRemainFlowRSA());
+//			System.out.println("此时的最小剩余容量为：" + pt.getMinRemainFlowRSA());
 			
 			// 计算所需要的FS数 并且观察每段链路上可用的频谱窗
-			System.out.println("该链路所需slot数： " + slotnum);
+//			System.out.println("该链路所需slot数： " + slotnum);
 			file_io.filewrite2(OutFileName, "该链路所需slot数： " + slotnum);
 			ArrayList<Integer> index_wave = new ArrayList<Integer>();
 			Mymain spa = new Mymain();
@@ -545,9 +544,6 @@ public class RegeneratorPlace {
 						file_io.filewrite2(OutFileName,finlink.getName());
 						findflag = true;
 					} catch (java.lang.NullPointerException ex) {
-						System.out.println("IP 层没有该路径需要建立");
-						file_io.filewrite_without(OutFileName,"IP 层没有该路径需要建立  ");
-						file_io.filewrite2(OutFileName,srcnode.getName()+" "+desnode.getName());
 						createlink = new Link(name, index, null, iplayer, srcnode, desnode, length1, cost);
 						iplayer.addLink(createlink);
 					}
@@ -564,8 +560,7 @@ public class RegeneratorPlace {
 					
 					if (findflag) {// 如果在IP层中已经找到该链路
 						finlink.getVirtualLinkList().add(Vlink);
-						file_io.filewrite2(OutFileName,
-								"IP层已存在的链路 " + finlink.getName() +  "    预留的flow：  " + Vlink.getRestcapacity());
+						file_io.filewrite2(OutFileName,"IP层已存在的链路 " + finlink.getName() +  "    预留的flow：  " + Vlink.getRestcapacity());
 						System.out.println("工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
 								+ finlink.getVirtualLinkList().size());
 						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "

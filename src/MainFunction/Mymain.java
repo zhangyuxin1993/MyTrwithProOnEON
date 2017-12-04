@@ -15,9 +15,9 @@ import network.VirtualLink;
 import subgraph.LinearRoute;
 
 public class Mymain {
-	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\NSFNET.dat";
+	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
 	public static void main(String[] args) throws IOException {
-		String TopologyName = "D:/zyx/Topology/NSFNET.csv";
+		String TopologyName = "D:/zyx/Topology/USNET.csv";
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
 		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
@@ -50,7 +50,7 @@ public class Mymain {
 		 
 		//以下可以随机产生节点对
 		DemandRadom dr=new DemandRadom();
-		RadomNodepairlist=dr.demandradom(50,TopologyName,iplayer);//随机产生结对对并且产生业务量
+		RadomNodepairlist=dr.demandradom(100,TopologyName,iplayer);//随机产生结对对并且产生业务量
 		iplayer.setNodepairlist(RadomNodepairlist);
 		int p=0;
 		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
@@ -117,7 +117,8 @@ public class Mymain {
 			System.out.println("业务个数：" + wprlist.size());
 			file_io.filewrite2(OutFileName, "业务个数：" + wprlist.size());
 			
-			int demandnum=0;
+			int demandnum=0,TotalWorkRegNum=0,TotalWorkIPReg=0,
+					TotalProRegNum=0,TotalProIPReg=0;
 			ArrayList<Regenerator> reglist=new ArrayList<>();
 			for (WorkandProtectRoute wpr : wprlist) {
 				demandnum++;
@@ -132,12 +133,14 @@ public class Mymain {
 					RouteAndRegPlace FinalRoute= wpr.getdemand().getFinalRoute();
 					file_io.filewrite_without(OutFileName, "工作路径放置再生器的位置为：");
 					for(int reg: FinalRoute.getregnode()){
+						TotalWorkRegNum++;
 						file_io.filewrite_without(OutFileName, reg +"  ");
 					}
 					file_io.filewrite2(OutFileName, "");
 					if(FinalRoute.getIPRegnode()!=null){
 						file_io.filewrite_without(OutFileName, "工作路径放置IP再生器的位置为：");
 						for(int reg: FinalRoute.getIPRegnode()){
+							TotalWorkIPReg++;
 							file_io.filewrite_without(OutFileName, reg +"  ");
 						}
 					}
@@ -169,16 +172,20 @@ public class Mymain {
 				
 				file_io.filewrite2(OutFileName, "");
 				file_io.filewrite_without(OutFileName,"保护路径放置新再生器节点：");
+			 
 				for (Regenerator reg : wpr.getnewreglist()) {
 					reg.setPropathNum(reg.getPropathNum()+1);
 					if(!reglist.contains(reg)){
+						TotalProRegNum++;
 						reglist.add(reg);
 					}
 					if(reg.getNature()==0)
 						file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是OEO再生器  ");
 						
-						if(reg.getNature()==1)
+						if(reg.getNature()==1){
 							file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是IP再生器  ");
+							TotalProIPReg++;
+						}
 
 				}
 				file_io.filewrite2(OutFileName," ");
@@ -226,6 +233,15 @@ public class Mymain {
 //				}
 				
 			}
+			file_io.filewrite2(OutFileName, "   ");
+			file_io.filewrite2(OutFileName, "工作路径放置的再生器个数为："+ TotalWorkRegNum);
+			file_io.filewrite2(OutFileName, "工作路径放置的IP再生器个数为："+ TotalWorkIPReg);
+			float TotalWorkCost=10*(TotalWorkRegNum-TotalWorkIPReg)+13*TotalWorkIPReg;
+			file_io.filewrite2(OutFileName, "工作路径再生器cost为："+ TotalWorkCost);
+			file_io.filewrite2(OutFileName, "保护路径放置的再生器个数为："+ TotalProRegNum);
+			file_io.filewrite2(OutFileName, "保护路径放置的IP再生器个数为："+ TotalProIPReg);
+			float TotalProCost=10*(TotalProRegNum-TotalProIPReg)+13*TotalProIPReg;
+			file_io.filewrite2(OutFileName, "工作路径再生器cost为："+ TotalProCost);
 //			file_io.filewrite2(OutFileName, "");
 //			file_io.filewrite2(OutFileName, "grooming的检测");
 //			HashMap<String, Link> testmap4 = iplayer.getLinklist();
