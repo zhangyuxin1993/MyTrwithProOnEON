@@ -60,10 +60,10 @@ public class ProregeneratorPlace {
 								continue;
 							for (Regenerator haveshareReg : comwpr.getsharereglist()) {
 								if (haveshareReg.equals(newreg)) {// 其他业务上曾经共享该再生器
-									file_io.filewrite2(OutFileName,
-											"已有业务" + comwpr.getdemand().getName() + "共享该再生器,"
-													+ haveshareReg.getnode().getName() + "上的第" + haveshareReg.getindex()
-													+ "个再生器");
+//									file_io.filewrite2(OutFileName,
+//											"已有业务" + comwpr.getdemand().getName() + "共享该再生器,"
+//													+ haveshareReg.getnode().getName() + "上的第" + haveshareReg.getindex()
+//													+ "个再生器");
 
 									int cross_second = t.linklistcompare(nowdemand.getworklinklist(),
 											comwpr.getworklinklist());
@@ -153,23 +153,23 @@ public class ProregeneratorPlace {
 		int minRegNum = (int) Math.floor(routelength / 4000);
 		int internode = newRoute.getNodelist().size() - 2;
 		// debug
-		System.out.println();
-		file_io.filewrite2(OutFileName, "");
-		System.out.println("可共享再生器的个数：" + ShareReg.size() + "需要的最少再生器个数：" + minRegNum);
-		file_io.filewrite2(OutFileName, "可共享再生器的个数：" + ShareReg.size() + "需要的最少再生器个数：" + minRegNum);
-
-		for (Regenerator reg : sharereglist) {
-			System.out.print("可共享再生器在 " + reg.getnode().getName() + "节点上,  ");
-			file_io.filewrite_without(OutFileName, "可共享再生器在 " + reg.getnode().getName() + "节点上,  ");
-			if (reg.getNature() == 0) {
-				System.out.println("他是纯OEO再生器 ");
-				file_io.filewrite2(OutFileName, "他是纯OEO再生器 ");
-			}
-			if (reg.getNature() == 1) {
-				System.out.print("他是IP再生器 ");
-				file_io.filewrite2(OutFileName, "他是IP再生器 ");
-			}
-		}
+//		System.out.println();
+//		file_io.filewrite2(OutFileName, "");
+//		System.out.println("可共享再生器的个数：" + ShareReg.size() + "需要的最少再生器个数：" + minRegNum);
+//		file_io.filewrite2(OutFileName, "可共享再生器的个数：" + ShareReg.size() + "需要的最少再生器个数：" + minRegNum);
+//
+//		for (Regenerator reg : sharereglist) {
+//			System.out.print("可共享再生器在 " + reg.getnode().getName() + "节点上,  ");
+//			file_io.filewrite_without(OutFileName, "可共享再生器在 " + reg.getnode().getName() + "节点上,  ");
+//			if (reg.getNature() == 0) {
+//				System.out.println("他是纯OEO再生器 ");
+//				file_io.filewrite2(OutFileName, "他是纯OEO再生器 ");
+//			}
+//			if (reg.getNature() == 1) {
+//				System.out.print("他是IP再生器 ");
+//				file_io.filewrite2(OutFileName, "他是IP再生器 ");
+//			}
+//		}
 
 		/*
 		 * // part2 当路由上共享再生器的个数小于所需再生器的最小个数时 给定set进行RSA 产生regplaceoption
@@ -248,54 +248,54 @@ public class ProregeneratorPlace {
 			}
 		}
 		// debug 在选择备选路由之前先观察其各个性能指标
-		if (regplaceoption.size() != 0) {
-			for (RouteAndRegPlace DebugRegRoute : regplaceoption) {
-				ArrayList<Integer> NewRegList = new ArrayList<>();
-				file_io.filewrite2(OutFileName, " ");
-				System.out.println();
-				// 先输出可共享再生器
-				if (DebugRegRoute.getUsedShareReg() != null) {
-					file_io.filewrite2(OutFileName, "可共享的再生器  ");
-					for (Regenerator reg : DebugRegRoute.getUsedShareReg()) {
-						if (reg.getNature() == 0) {
-							file_io.filewrite2(OutFileName, reg.getnode().getName() + "  OEO再生器");
-						}
-						if (reg.getNature() == 1) {
-							file_io.filewrite2(OutFileName, reg.getnode().getName() + "  IP再生器");
-						}
-					}
-				}
-				// 首先判断可否共享不可共享则为新建
-				System.out.println("新建再生器： ");
-				file_io.filewrite2(OutFileName, "新建再生器： ");
-				for (int Reg : DebugRegRoute.getregnode()) {
-					boolean share = false;
-					Node NewRegNode = DebugRegRoute.getRoute().getNodelist().get(Reg);
-					for (Regenerator ShareReg2 : DebugRegRoute.getUsedShareReg()) {
-						if (ShareReg2.getnode().getName().equals(NewRegNode.getName())) {// 改点上的再生器可以共享无需新建
-							share = true;
-							break;
-						}
-					}
-					if (!share) {
-						NewRegList.add(Reg);
-						if (DebugRegRoute.getIPRegnode().contains(Reg)) { // 新建的再生器是IP再生器
-							System.out.print(NewRegNode.getName() + "  IP再生器  ");
-							file_io.filewrite_without(OutFileName, NewRegNode.getName() + "  IP再生器  ");
-						} else {
-							System.out.print(NewRegNode.getName() + "  OEO再生器  ");
-							file_io.filewrite_without(OutFileName, NewRegNode.getName() + "  OEO再生器  ");
-						}
-					}
-				}
-				file_io.filewrite2(OutFileName, " ");
-				System.out.println("剩余的流量： " + DebugRegRoute.getNumRemainFlow());
-				file_io.filewrite2(OutFileName, "剩余的流量： " + DebugRegRoute.getNumRemainFlow());
-				System.out.println("使用的newFS个数： " + DebugRegRoute.getnewFSnum());
-				file_io.filewrite2(OutFileName, "使用的newFS个数： " + DebugRegRoute.getnewFSnum());
-				DebugRegRoute.setNewRegList(NewRegList); // 统计每个备选路径中使用的新再生器个数
-			}
-		}
+//		if (regplaceoption.size() != 0) {
+//			for (RouteAndRegPlace DebugRegRoute : regplaceoption) {
+//				ArrayList<Integer> NewRegList = new ArrayList<>();
+//				file_io.filewrite2(OutFileName, " ");
+//				System.out.println();
+//				// 先输出可共享再生器
+//				if (DebugRegRoute.getUsedShareReg() != null) {
+//					file_io.filewrite2(OutFileName, "可共享的再生器  ");
+//					for (Regenerator reg : DebugRegRoute.getUsedShareReg()) {
+//						if (reg.getNature() == 0) {
+//							file_io.filewrite2(OutFileName, reg.getnode().getName() + "  OEO再生器");
+//						}
+//						if (reg.getNature() == 1) {
+//							file_io.filewrite2(OutFileName, reg.getnode().getName() + "  IP再生器");
+//						}
+//					}
+//				}
+//				// 首先判断可否共享不可共享则为新建
+//				System.out.println("新建再生器： ");
+//				file_io.filewrite2(OutFileName, "新建再生器： ");
+//				for (int Reg : DebugRegRoute.getregnode()) {
+//					boolean share = false;
+//					Node NewRegNode = DebugRegRoute.getRoute().getNodelist().get(Reg);
+//					for (Regenerator ShareReg2 : DebugRegRoute.getUsedShareReg()) {
+//						if (ShareReg2.getnode().getName().equals(NewRegNode.getName())) {// 改点上的再生器可以共享无需新建
+//							share = true;
+//							break;
+//						}
+//					}
+//					if (!share) {
+//						NewRegList.add(Reg);
+//						if (DebugRegRoute.getIPRegnode().contains(Reg)) { // 新建的再生器是IP再生器
+//							System.out.print(NewRegNode.getName() + "  IP再生器  ");
+//							file_io.filewrite_without(OutFileName, NewRegNode.getName() + "  IP再生器  ");
+//						} else {
+//							System.out.print(NewRegNode.getName() + "  OEO再生器  ");
+//							file_io.filewrite_without(OutFileName, NewRegNode.getName() + "  OEO再生器  ");
+//						}
+//					}
+//				}
+//				file_io.filewrite2(OutFileName, " ");
+//				System.out.println("剩余的流量： " + DebugRegRoute.getNumRemainFlow());
+//				file_io.filewrite2(OutFileName, "剩余的流量： " + DebugRegRoute.getNumRemainFlow());
+//				System.out.println("使用的newFS个数： " + DebugRegRoute.getnewFSnum());
+//				file_io.filewrite2(OutFileName, "使用的newFS个数： " + DebugRegRoute.getnewFSnum());
+//				DebugRegRoute.setNewRegList(NewRegList); // 统计每个备选路径中使用的新再生器个数
+//			}
+//		}
 
 		// part4 对产生的备选链路进行筛选并且对选中链路建立IP链路
 		if (regplaceoption.size() > 0) {
@@ -313,22 +313,22 @@ public class ProregeneratorPlace {
 		if (regplaceoption.size() == 0) {
 			success = false;
 		}
-		System.out.println();
-		file_io.filewrite2(OutFileName, "");
+//		System.out.println();
+//		file_io.filewrite2(OutFileName, "");
 		if (success) {
-			System.out.print("保护路径再生器放置成功并且RSA,放置的再生器个数为");
-			file_io.filewrite_without(OutFileName, "保护路径再生器放置成功并且RSA,放置的再生器个数为");
+//			System.out.print("保护路径再生器放置成功并且RSA,放置的再生器个数为");
+//			file_io.filewrite_without(OutFileName, "保护路径再生器放置成功并且RSA,放置的再生器个数为");
 			for (WorkandProtectRoute wpr : wprlist) {
 				if (wpr.getdemand().equals(nodepair)) {
 					wpr.setrequest(request);
-					System.out.println(wpr.getRegeneratorlist().size());
-					file_io.filewrite(OutFileName, wpr.getRegeneratorlist().size());
+//					System.out.println(wpr.getRegeneratorlist().size());
+//					file_io.filewrite(OutFileName, wpr.getRegeneratorlist().size());
 				}
 			}
 
 		} else {
-			System.out.println("保护路径放置再生器不成功改路径被堵塞");
-			file_io.filewrite2(OutFileName, "保护路径放置再生器不成功改路径被堵塞");
+//			System.out.println("保护路径放置再生器不成功改路径被堵塞");
+//			file_io.filewrite2(OutFileName, "保护路径放置再生器不成功改路径被堵塞");
 		}
 		return success;
 	}// 主函数结束
@@ -337,7 +337,7 @@ public class ProregeneratorPlace {
 			LinearRoute newRoute, Layer oplayer, Layer ipLayer, int IPflow, ArrayList<RouteAndRegPlace> regplaceoption,
 			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
 		// 建立新的再生器 并且控制阈值
-		float threshold = (float) 0.03;// 在这里控制阈值
+		float threshold = (float) 0.06;// 在这里控制阈值
 		boolean partworkflag = false, RSAflag = false, regflag = false;
 		double length = 0;
 		file_out_put file_io = new file_out_put();
@@ -421,8 +421,8 @@ public class ProregeneratorPlace {
 			rarp.setregnum(setarray.size());
 			rarp.setNumRemainFlow(NumRemainFlow);
 			regplaceoption.add(rarp);
-			System.out.println("该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());// 再生器的个数加进去
-			file_io.filewrite2(OutFileName, "该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());
+//			System.out.println("该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());// 再生器的个数加进去
+//			file_io.filewrite2(OutFileName, "该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());
 		}
 	}
 
@@ -437,8 +437,8 @@ public class ProregeneratorPlace {
 		int slotnum = 0;
 		boolean opworkflag = false;
 		if (routelength > 4000) {
-			System.out.println("链路过长无法RSA");
-			file_io.filewrite2(OutFileName, "链路过长无法RSA");
+//			System.out.println("链路过长无法RSA");
+//			file_io.filewrite2(OutFileName, "链路过长无法RSA");
 		}
 		if (routelength < 4000) {
 			if (routelength > 2000 && routelength <= 4000) {
@@ -467,8 +467,8 @@ public class ProregeneratorPlace {
 //								+ RemainRatio.getRemainFlowRatio() + "   剩余的业务量：" + RemainRatio.getNumremainFlow()
 //								+ "  需要的FS数量：" + slotnum);
 			} else {
-				System.out.println("频谱不够无法RSA");
-				file_io.filewrite2(OutFileName, "频谱不够无法RSA");
+//				System.out.println("频谱不够无法RSA");
+//				file_io.filewrite2(OutFileName, "频谱不够无法RSA");
 			}
 
 		}
@@ -485,11 +485,11 @@ public class ProregeneratorPlace {
 		ArrayList<Link> alllinklist = new ArrayList<>();
 		ArrayList<Regenerator> regthinglist = new ArrayList<>();
 		Test t = new Test();
-		file_io.filewrite2(OutFileName, "");
-		System.out.println("");
-		System.out.println("对最终路径进行RSA：");
-		file_io.filewrite2(OutFileName, "对最终路径进行RSA：");
-		file_io.filewrite2(OutFileName, " ");
+//		file_io.filewrite2(OutFileName, "");
+//		System.out.println("");
+//		System.out.println("对最终路径进行RSA：");
+//		file_io.filewrite2(OutFileName, "对最终路径进行RSA：");
+//		file_io.filewrite2(OutFileName, " ");
 		pt.setStartNode(finalRoute.getRoute().getNodelist().get(0));// 首先设置该链路的起始节点
 		pt.setMinRemainFlowRSA(10000);// 首先初始化
 
@@ -508,8 +508,8 @@ public class ProregeneratorPlace {
 				Node nodeB = finalRoute.getRoute().getNodelist().get(count + 1);
 
 				Link link = oplayer.findLink(nodeA, nodeB);
-				System.out.println("保护最终路径上RSA的链路：" + link.getName());
-				file_io.filewrite2(OutFileName, "保护最终路径上RSA的链路：" + link.getName());
+//				System.out.println("保护最终路径上RSA的链路：" + link.getName());
+//				file_io.filewrite2(OutFileName, "保护最终路径上RSA的链路：" + link.getName());
 				length2 = length2 + link.getLength();
 				linklist2.add(link);
 				count = count + 1;
@@ -565,20 +565,21 @@ public class ProregeneratorPlace {
 		ArrayList<Regenerator> shareReg = new ArrayList<>();
 		ArrayList<Regenerator> newReg = new ArrayList<>();
 		HashMap<Integer, Regenerator> hashregthinglist = new HashMap<Integer, Regenerator>();
-		System.out.println("保护链路最终路径上再生器节点的数量：" + finalRoute.getregnode().size());
-		file_io.filewrite2(OutFileName, "保护最终路径上再生器节点的数量：" + finalRoute.getregnode().size());
+//		System.out.println("保护链路最终路径上再生器节点的数量：" + finalRoute.getregnode().size());
+//		file_io.filewrite2(OutFileName, "保护最终路径上再生器节点的数量：" + finalRoute.getregnode().size());
 
 		for (int i : finalRoute.getregnode()) {// 取出路径上所有再生器节点
 			Node regnode = finalRoute.getRoute().getNodelist().get(i);// 判断再生器是共享来的还是新建的
-			file_io.filewrite_without(OutFileName, regnode.getName() + " 节点上 放置了再生器");
+//			file_io.filewrite_without(OutFileName, regnode.getName() + " 节点上 放置了再生器");
 
 			if (ShareReg.contains(i)) {// 该再生器是通过共享得到的
 				for (Regenerator r : sharereglist) {
 					if (r.getnode().equals(regnode)) {
-						if (r.getNature() == 0)
-							file_io.filewrite_without(OutFileName, "是通过共享得到的纯OEO再生器");
+						if (r.getNature() == 0){
+//							file_io.filewrite_without(OutFileName, "是通过共享得到的纯OEO再生器");
+						}
 						else if (r.getNature() == 1)
-							file_io.filewrite_without(OutFileName, "是通过共享得到的IP再生器");
+//							file_io.filewrite_without(OutFileName, "是通过共享得到的IP再生器");
 						regthinglist.add(r);// 找出可共享的再生器 加入再生器集合
 						hashregthinglist.put(t.nodeindexofroute(regnode, finalRoute.getRoute()), r); // 建立Hashmap!!!
 						shareReg.add(r);// 加入针对于该链路的可共享再生器集合
@@ -590,10 +591,10 @@ public class ProregeneratorPlace {
 				Regenerator reg = new Regenerator(regnode);
 				if (finalRoute.getIPRegnode().contains(i)) {
 					reg.setNature(1);// 设置新建的再生器是IP再生器
-					file_io.filewrite_without(OutFileName, "是新建的IP再生器");
+//					file_io.filewrite_without(OutFileName, "是新建的IP再生器");
 				} else {
 					reg.setNature(0); // 设置新建的再生器是OEO再生器
-					file_io.filewrite_without(OutFileName, "是新建纯OEO再生器");
+//					file_io.filewrite_without(OutFileName, "是新建纯OEO再生器");
 				}
 				reg.setindex(index);
 				regthinglist.add(reg);
@@ -654,18 +655,18 @@ public class ProregeneratorPlace {
 			cost = cost + link.getCost();
 			ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 			link.setMaxslot(slotnum + link.getMaxslot());
-			System.out.print("链路 " + link.getName() + "上分配的FS为 ");
-			file_io.filewrite_without(OutFileName, "链路 " + link.getName() + "上分配的FS为 ");
-			file_io.filewrite2(OutFileName, "");
+//			System.out.print("链路 " + link.getName() + "上分配的FS为 ");
+//			file_io.filewrite_without(OutFileName, "链路 " + link.getName() + "上分配的FS为 ");
+//			file_io.filewrite2(OutFileName, "");
 			int m = index_wave.get(0);
 			for (int n = 0; n < slotnum; n++) {
 				index_wave1.add(m);
-				System.out.print(m);
-				file_io.filewrite_without(OutFileName, m + "  ");
+//				System.out.print(m);
+//				file_io.filewrite_without(OutFileName, m + "  ");
 				m++;
 			}
-			System.out.println();
-			file_io.filewrite2(OutFileName, " ");
+//			System.out.println();
+//			file_io.filewrite2(OutFileName, " ");
 			FSshareOnlink fsonLink = new FSshareOnlink(link, index_wave1);
 			FSoneachLink.add(fsonLink);
 		}
@@ -743,22 +744,22 @@ public class ProregeneratorPlace {
 			file_io.filewrite2(OutFileName, "");
 			if (findflag) {// 如果在IP层中已经找到该链路
 				finlink.getVirtualLinkList().add(Vlink);
-				System.out.println("IP层已存在的链路 " + finlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
-				System.out.println(
-						"保护链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： " + finlink.getVirtualLinkList().size());
-				file_io.filewrite2(OutFileName,
-						"IP层已存在的链路 " + finlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
-				file_io.filewrite2(OutFileName,
-						"保护链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： " + finlink.getVirtualLinkList().size());
+//				System.out.println("IP层已存在的链路 " + finlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+//				System.out.println(
+//						"保护链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： " + finlink.getVirtualLinkList().size());
+//				file_io.filewrite2(OutFileName,
+//						"IP层已存在的链路 " + finlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+//				file_io.filewrite2(OutFileName,
+//						"保护链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： " + finlink.getVirtualLinkList().size());
 			} else {
 				createlink.getVirtualLinkList().add(Vlink);
-				System.out.println("IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
-				System.out.println("保护链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
-						+ createlink.getVirtualLinkList().size());
-				file_io.filewrite2(OutFileName,
-						"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
-				file_io.filewrite2(OutFileName, "保护链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
-						+ createlink.getVirtualLinkList().size());
+//				System.out.println("IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+//				System.out.println("保护链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
+//						+ createlink.getVirtualLinkList().size());
+//				file_io.filewrite2(OutFileName,
+//						"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+//				file_io.filewrite2(OutFileName, "保护链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
+//						+ createlink.getVirtualLinkList().size());
 			}
 			pt.setMinRemainFlowRSA(10000);
 		}
@@ -792,7 +793,7 @@ public class ProregeneratorPlace {
 							StandardIP++;
 					}
 //					System.out.print("第一层筛选 标准路由共享的IP再生器个数为 ：");
-					file_io.filewrite2(OutFileName, "第一层筛选 标准路由共享的IP再生器个数为 ："+StandardIP);
+//					file_io.filewrite2(OutFileName, "第一层筛选 标准路由共享的IP再生器个数为 ："+StandardIP);
 //					System.out.println(StandardIP);
 					for (Regenerator shareReg : CompareRoute.getUsedShareReg()) {
 						if (shareReg.getNature() == 1)
@@ -800,7 +801,7 @@ public class ProregeneratorPlace {
 					}
 //					System.out.print("第一层筛选 比较路由共享的IP再生器个数为：");
 //					System.out.println(CompareIP);
-					file_io.filewrite2(OutFileName, "第一层筛选 比较路由共享的IP再生器个数为："+CompareIP);
+//					file_io.filewrite2(OutFileName, "第一层筛选 比较路由共享的IP再生器个数为："+CompareIP);
 					if (StandardRoute.getNewRegList().size() == 0) {// 再生器全是靠共享得到的
 																	// 则此时优先选用IP再生器多的路径
 						if (StandardIP < CompareIP) {
@@ -836,14 +837,14 @@ public class ProregeneratorPlace {
 						continue;
 //					System.out.print("第二层筛选 标准路由剩余流量为：");
 //					System.out.println(StandardRoute_2.getNumRemainFlow());
-					file_io.filewrite2(OutFileName, "第二层筛选 标准路由剩余流量："+StandardRoute_2.getNumRemainFlow());
+//					file_io.filewrite2(OutFileName, "第二层筛选 标准路由剩余流量："+StandardRoute_2.getNumRemainFlow());
 					for (int k = standard + 1; k < regplaceoption.size(); k++) {
 						RouteAndRegPlace CompareRoute_2 = regplaceoption.get(k);
 						if (RemoveRoute.contains(CompareRoute_2))
 							continue;
 //						System.out.print("第二层筛选 比较路由剩余流量为：");
 //						System.out.println(CompareRoute_2.getNumRemainFlow());
-						file_io.filewrite2(OutFileName, "第二层筛选 比较路由剩余流量："+CompareRoute_2.getNumRemainFlow());
+//						file_io.filewrite2(OutFileName, "第二层筛选 比较路由剩余流量："+CompareRoute_2.getNumRemainFlow());
 						if (StandardRoute_2.getNumRemainFlow() < CompareRoute_2.getNumRemainFlow()) {
 							RemoveRoute.add(StandardRoute_2);// 删去剩余流量少的路由
 							break;
@@ -868,7 +869,7 @@ public class ProregeneratorPlace {
 							continue;
 //						System.out.print("第三层筛选 标准路由使用的FS为：");
 //						System.out.println(StandardRoute_3.getnewFSnum());
-						file_io.filewrite2(OutFileName, "第三层筛选 标准路由使用的FS为："+StandardRoute_3.getnewFSnum());
+//						file_io.filewrite2(OutFileName, "第三层筛选 标准路由使用的FS为："+StandardRoute_3.getnewFSnum());
 						
 						for (int k = standard + 1; k < regplaceoption.size(); k++) {
 							RouteAndRegPlace CompareRoute_3 = regplaceoption.get(k);
@@ -876,7 +877,7 @@ public class ProregeneratorPlace {
 								continue;
 //							System.out.print("第三层筛选 比较路由使用的FS为：");
 //							System.out.println(CompareRoute_3.getnewFSnum());
-							file_io.filewrite2(OutFileName, "第三层筛选 比较路由使用的FS为："+CompareRoute_3.getnewFSnum());
+//							file_io.filewrite2(OutFileName, "第三层筛选 比较路由使用的FS为："+CompareRoute_3.getnewFSnum());
 							if (StandardRoute_3.getnewFSnum() > CompareRoute_3.getnewFSnum()) {
 								RemoveRoute.add(StandardRoute_3);// 删去使用FS较多的路由
 								break;

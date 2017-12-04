@@ -24,9 +24,9 @@ public class ipProGrooming {
 //		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
-		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
-		file_io.filewrite2(OutFileName,"  ");
-		file_io.filewrite2(OutFileName,"节点对：" + nodepair.getName() + "   flag=" + flag);
+//		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
+//		file_io.filewrite2(OutFileName,"  ");
+//		file_io.filewrite2(OutFileName,"节点对：" + nodepair.getName() + "   flag=" + flag);
 		ArrayList<VirtualLink> DelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<VirtualLink> SumDelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<Link> DelIPLinkList = new ArrayList<Link>();
@@ -184,10 +184,10 @@ public class ipProGrooming {
 		Iterator<String> linkitorr = linklistt.keySet().iterator();
 		while (linkitorr.hasNext()) {
 			Link link = (Link) (linklistt.get(linkitorr.next()));
-			System.out.println("剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
-					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
-			file_io.filewrite2(OutFileName,"剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
-					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
+//			System.out.println("剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
+//					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
+//			file_io.filewrite2(OutFileName,"剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
+//					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
 		}
 
 		LinearRoute newRoute = new LinearRoute(null, 0, null);
@@ -200,14 +200,14 @@ public class ipProGrooming {
 
 		if (newRoute.getNodelist().size() != 0) {
 			ipproflag = true;
-			System.out.print("**************保护路由在IP层上路由成功  ");
-			file_io.filewrite_without(OutFileName,"**************保护路由在IP层上路由成功  ");
+//			System.out.print("**************保护路由在IP层上路由成功  ");
+//			file_io.filewrite_without(OutFileName,"**************保护路由在IP层上路由成功  ");
 			newRoute.OutputRoute_node(newRoute);
 			ArrayList<Link> totallink = new ArrayList<>();
 			for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 				Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
-				System.out.println("IP路由上的链路：" + link.getName());
-				file_io.filewrite2(OutFileName,"IP路由上的链路：" + link.getName());
+//				System.out.println("IP路由上的链路：" + link.getName());
+//				file_io.filewrite2(OutFileName,"IP路由上的链路：" + link.getName());
 				/*
 				 * 如果路由成功 则需要找到IP层上的link对应的虚拟链路 改变其容量
 				 */
@@ -218,8 +218,8 @@ public class ipProGrooming {
 					Link link1 = (Link) (linklist2.get(linkitor2.next()));// IPlayer里面的link
 					if (link1.getNodeA().getName().equals(link.getNodeA().getName())
 							&& link1.getNodeB().getName().equals(link.getNodeB().getName())) {
-						System.out.println("找到路由经过的链路： " + link1.getName());
-						file_io.filewrite2(OutFileName,"找到路由经过的链路： " + link1.getName());
+//						System.out.println("找到路由经过的链路： " + link1.getName());
+//						file_io.filewrite2(OutFileName,"找到路由经过的链路： " + link1.getName());
 						VirtualLink Vlink = link1.getVirtualLinkList().get(0);
 						// System.out.println(Vlink.getSrcnode() + " " +
 						// Vlink.getDesnode() + " "
@@ -269,6 +269,12 @@ public class ipProGrooming {
 			}
 		}
 		DelhighcapVlink.clear();
+		if(ipproflag){
+			file_io.filewrite2(OutFileName,"保护路径在IP层成功路由");
+		}
+		else{
+			file_io.filewrite2(OutFileName,"保护路径在IP层路由失败");
+		}
 		return ipproflag;
 	}
 

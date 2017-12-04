@@ -32,7 +32,7 @@ public class RegeneratorPlace {
 		boolean partworkflag = false, RSAflag = false, regflag = false, success = false;
 		ArrayList<RouteAndRegPlace> regplaceoption = new ArrayList<>();
 		RouteAndRegPlace finalRoute = new RouteAndRegPlace(null, 0);
-		float threshold = (float) 0.03;// 在这里控制阈值
+		float threshold = (float) 0.06;// 在这里控制阈值
 
 		// 找到所有可以成功路由的路径 part1
 		for (int s = minRegNum; s <= internode; s++) {
@@ -116,44 +116,44 @@ public class RegeneratorPlace {
 					rarp.setregnum(setarray.size());
 					rarp.setNumRemainFlow(NumRemainFlow);
 					regplaceoption.add(rarp);
-					System.out.println("该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());// 再生器的个数加进去
-					file_io.filewrite2(OutFileName, "该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());
+//					System.out.println("该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());// 再生器的个数加进去
+//					file_io.filewrite2(OutFileName, "该路径成功RSA, 已成功RSA的条数为：" + regplaceoption.size());
 				}
 			}
 		} // part1 finish
 		/*
 		 * debug print出每个备选路由上的IP路由器个数 剩余的容量 以及使用的FS数
 		 */
-		System.out.println();
-
-		for (RouteAndRegPlace DebugRegRoute : regplaceoption) {
-			file_io.filewrite2(OutFileName, " ");
-			System.out.println();
-			System.out.print("再生器放置位置： ");
-			file_io.filewrite_without(OutFileName, "再生器放置位置： ");
-			for (int Reg : DebugRegRoute.getregnode()) {
-				System.out.print(Reg + "  ");
-				file_io.filewrite_without(OutFileName, Reg + "  ");
-			}
-			System.out.println();
-			file_io.filewrite2(OutFileName, "  ");
-			if (DebugRegRoute.getIPRegnode().size() != 0) {
-				System.out.print("IP再生器放置位置 ： ");
-				file_io.filewrite_without(OutFileName, "IP再生器放置位置 ： ");
-				for (int IPReg : DebugRegRoute.getIPRegnode()) {
-					System.out.print(IPReg + "  ");
-					file_io.filewrite_without(OutFileName, IPReg + "  ");
-				}
-			}else{
-				System.out.println("再生器均为纯OEO再生");
-				file_io.filewrite2(OutFileName, "再生器均为纯OEO再生");
-			}
-			
-			System.out.println("剩余的流量： " + DebugRegRoute.getNumRemainFlow());
-			file_io.filewrite2(OutFileName, "剩余的流量： " + DebugRegRoute.getNumRemainFlow());
-			System.out.println("使用的newFS个数： " + DebugRegRoute.getnewFSnum());
-			file_io.filewrite2(OutFileName, "使用的newFS个数： " + DebugRegRoute.getnewFSnum());
-		}
+//		System.out.println();
+//
+//		for (RouteAndRegPlace DebugRegRoute : regplaceoption) {
+//			file_io.filewrite2(OutFileName, " ");
+//			System.out.println();
+//			System.out.print("再生器放置位置： ");
+//			file_io.filewrite_without(OutFileName, "再生器放置位置： ");
+//			for (int Reg : DebugRegRoute.getregnode()) {
+//				System.out.print(Reg + "  ");
+//				file_io.filewrite_without(OutFileName, Reg + "  ");
+//			}
+//			System.out.println();
+//			file_io.filewrite2(OutFileName, "  ");
+//			if (DebugRegRoute.getIPRegnode().size() != 0) {
+//				System.out.print("IP再生器放置位置 ： ");
+//				file_io.filewrite_without(OutFileName, "IP再生器放置位置 ： ");
+//				for (int IPReg : DebugRegRoute.getIPRegnode()) {
+//					System.out.print(IPReg + "  ");
+//					file_io.filewrite_without(OutFileName, IPReg + "  ");
+//				}
+//			}else{
+//				System.out.println("再生器均为纯OEO再生");
+//				file_io.filewrite2(OutFileName, "再生器均为纯OEO再生");
+//			}
+//			
+//			System.out.println("剩余的流量： " + DebugRegRoute.getNumRemainFlow());
+//			file_io.filewrite2(OutFileName, "剩余的流量： " + DebugRegRoute.getNumRemainFlow());
+//			System.out.println("使用的newFS个数： " + DebugRegRoute.getnewFSnum());
+//			file_io.filewrite2(OutFileName, "使用的newFS个数： " + DebugRegRoute.getnewFSnum());
+//		}
 
 		// 以下在备选路径中通过3层选出最终路径
 		if (regplaceoption.size() != 0) {
@@ -267,39 +267,39 @@ public class RegeneratorPlace {
 
 		if (regplaceoption.size() == 0) {
 			success = false;
-			System.out.println("该路径无法RSA");
-			file_io.filewrite2(OutFileName, "该路径无法RSA");
+//			System.out.println("该路径无法RSA");
+//			file_io.filewrite2(OutFileName, "该路径无法RSA");
 		}
-		System.out.println();
+//		System.out.println();
 		if (success) {
-			System.out.print("再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
-			file_io.filewrite_without(OutFileName, "再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
+//			System.out.print("再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
+//			file_io.filewrite_without(OutFileName, "再生器放置成功并且RSA,放置的再生器个数为" + finalRoute.getregnum() + "  位置为：");
 				
 			for (int p = 0; p < finalRoute.getregnode().size(); p++) {
-				System.out.print(finalRoute.getregnode().get(p) + "     ");
-				file_io.filewrite_without(OutFileName, finalRoute.getregnode().get(p) + "     ");
+//				System.out.print(finalRoute.getregnode().get(p) + "     ");
+//				file_io.filewrite_without(OutFileName, finalRoute.getregnode().get(p) + "     ");
 			}
-			System.out.println();
+//			System.out.println();
 			if (finalRoute.getIPRegnode().size() != 0) {
-				System.out.print("IP再生器放置位置 ： ");
-				file_io.filewrite_without(OutFileName, "IP再生器放置位置 ： ");
+//				System.out.print("IP再生器放置位置 ： ");
+//				file_io.filewrite_without(OutFileName, "IP再生器放置位置 ： ");
 				for (int IPReg : finalRoute.getIPRegnode()) {
-					System.out.print(IPReg + "  ");
-					file_io.filewrite_without(OutFileName, IPReg + "  ");
+//					System.out.print(IPReg + "  ");
+//					file_io.filewrite_without(OutFileName, IPReg + "  ");
 				}
 			}else{
-				System.out.println("再生器均为纯OEO再生"); 
-				file_io.filewrite2(OutFileName,  "再生器均为纯OEO再生");
+//				System.out.println("再生器均为纯OEO再生"); 
+//				file_io.filewrite2(OutFileName,  "再生器均为纯OEO再生");
 			}
 				
-			System.out.println();
+//			System.out.println();
 			totalregNum = totalregNum + finalRoute.getregnum();
-			System.out.println("*******工作路径一共需要再生器个数：" + totalregNum);
-			file_io.filewrite2(OutFileName, "");
-			file_io.filewrite2(OutFileName, "******工作路径一共需要再生器个数：" + totalregNum);
+//			System.out.println("*******工作路径一共需要再生器个数：" + totalregNum);
+//			file_io.filewrite2(OutFileName, "");
+//			file_io.filewrite2(OutFileName, "******工作路径一共需要再生器个数：" + totalregNum);
 		} else {
-			System.out.println("放置再生器不成功该路径被堵塞");
-			file_io.filewrite2(OutFileName, "放置再生器不成功该路径被堵塞");
+//			System.out.println("放置再生器不成功该路径被堵塞");
+//			file_io.filewrite2(OutFileName, "放置再生器不成功该路径被堵塞");
 		}
 		return success;
 
@@ -349,7 +349,7 @@ public class RegeneratorPlace {
 		
 		pt.setStartNode(finalRoute.getRoute().getNodelist().get(0));// 首先设置该链路的起始节点
 		pt.setMinRemainFlowRSA(10000);//首先初始化
-		file_io.filewrite2(OutFileName, "");
+//		file_io.filewrite2(OutFileName, "");
 		
 		for (int i = 0; i < finalRoute.getregnum() + 1; i++) {
 			if (i >= finalRoute.getregnum())
@@ -359,8 +359,8 @@ public class RegeneratorPlace {
 				Node nodeB = finalRoute.getRoute().getNodelist().get(count + 1);
 				
 				Link link = oplayer.findLink(nodeA, nodeB);
-				System.out.println("工作链路RSA：" + link.getName());
-				file_io.filewrite2(OutFileName, "工作链路RSA：" + link.getName());
+//				System.out.println("工作链路RSA：" + link.getName());
+//				file_io.filewrite2(OutFileName, "工作链路RSA：" + link.getName());
 				length2 = length2 + link.getLength();
 				linklist2.add(link);
 				count = count + 1;
@@ -368,7 +368,7 @@ public class RegeneratorPlace {
 					if (count == finalRoute.getregnode().get(i)) {// 首先该点放置了再生器
 					
 						pt.setEndNode(finalRoute.getRoute().getNodelist().get(count));//设置终止节点
-						System.out.println("起始节点为："+ pt.getStartNode().getName()+"终止节点为："+ pt.getEndNode().getName());
+//						System.out.println("起始节点为："+ pt.getStartNode().getName()+"终止节点为："+ pt.getEndNode().getName());
 							// 该点放置了IP再生器
 						if (finalRoute.getIPRegnode().contains(count)) {
 							modifylinkcapacity(true, IPflow, length2, linklist2, oplayer, ipLayer, pt);
@@ -387,7 +387,7 @@ public class RegeneratorPlace {
 				}
 				if (count == finalRoute.getRoute().getNodelist().size() - 1) {// 最后一个再生器和终点之间的RSA
 					pt.setEndNode(finalRoute.getRoute().getNodelist().get(count));//设置终止节点
-					System.out.println("起始节点为："+ pt.getStartNode().getName()+"终止节点为："+ pt.getEndNode().getName());
+//					System.out.println("起始节点为："+ pt.getStartNode().getName()+"终止节点为："+ pt.getEndNode().getName());
 					modifylinkcapacity(true, IPflow, length2, linklist2, oplayer, ipLayer, pt);// 此时在n点放置再生器
 					linklist2.clear();
 				}
@@ -405,8 +405,8 @@ public class RegeneratorPlace {
 		file_out_put file_io = new file_out_put();
 		boolean opworkflag = false;
 		if (routelength > 4000) {
-			System.out.println("链路过长无法RSA");
-			file_io.filewrite2(OutFileName, "链路过长无法RSA");
+//			System.out.println("链路过长无法RSA");
+//			file_io.filewrite2(OutFileName, "链路过长无法RSA");
 		}
 		if (routelength < 4000) {
 			if (routelength > 2000 && routelength <= 4000) {
@@ -419,7 +419,7 @@ public class RegeneratorPlace {
 				X = 50.0;
 			}
 			slotnum = (int) Math.ceil(IPflow / X);// 向上取整
-			System.out.println("该链路所需slot数： " + slotnum);
+//			System.out.println("该链路所需slot数： " + slotnum);
 
 			newFS = slotnum * linklist.size();
 
@@ -427,16 +427,16 @@ public class RegeneratorPlace {
 			Mymain spa = new Mymain();
 			index_wave = spa.spectrumallocationOneRoute(false, null, linklist, slotnum);
 			if (index_wave.size() == 0) {
-				System.out.println("路径堵塞 ，不分配频谱资源");
-				file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
+//				System.out.println("路径堵塞 ，不分配频谱资源");
+//				file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
 			} else {
 				RemainRatio.setRemainFlowRatio((float) ((slotnum * X - IPflow) / (slotnum * X)));
 				RemainRatio.setNumremainFlow((float) (slotnum * X - IPflow));
-				file_io.filewrite2(OutFileName, "建立通道的总容量 " + slotnum * X + "   业务容量 " + IPflow + "   剩余的容量比例 "
-						+ RemainRatio.getRemainFlowRatio() + "   剩余的业务量：" + RemainRatio.getNumremainFlow()+"  需要的FS数量："+slotnum+"  FS起始："+index_wave.get(0));
+//				file_io.filewrite2(OutFileName, "建立通道的总容量 " + slotnum * X + "   业务容量 " + IPflow + "   剩余的容量比例 "
+//						+ RemainRatio.getRemainFlowRatio() + "   剩余的业务量：" + RemainRatio.getNumremainFlow()+"  需要的FS数量："+slotnum+"  FS起始："+index_wave.get(0));
 				opworkflag = true;
-				System.out.println("可以进行RSA ");
-				file_io.filewrite2(OutFileName, "可以进行RSA");
+//				System.out.println("可以进行RSA ");
+//			    file_io.filewrite2(OutFileName, "可以进行RSA");
 			}
 		}
 		return opworkflag;
@@ -452,8 +452,8 @@ public class RegeneratorPlace {
 		Node srcnode = new Node(null, 0, null, iplayer, 0, 0);
 		Node desnode = new Node(null, 0, null, iplayer, 0, 0);
 		if (routelength > 4000) {
-			System.out.println("链路过长无法RSA");
-			file_io.filewrite2(OutFileName, "链路过长无法RSA");
+//			System.out.println("链路过长无法RSA");
+//			file_io.filewrite2(OutFileName, "链路过长无法RSA");
 		}
 		if (routelength < 4000) {
 			if (routelength > 2000 && routelength <= 4000) {
@@ -475,19 +475,19 @@ public class RegeneratorPlace {
 			
 			// 计算所需要的FS数 并且观察每段链路上可用的频谱窗
 //			System.out.println("该链路所需slot数： " + slotnum);
-			file_io.filewrite2(OutFileName, "该链路所需slot数： " + slotnum);
+//			file_io.filewrite2(OutFileName, "该链路所需slot数： " + slotnum);
 			ArrayList<Integer> index_wave = new ArrayList<Integer>();
 			Mymain spa = new Mymain();
 			index_wave = spa.spectrumallocationOneRoute(false, null, linklist, slotnum);
 			if (index_wave.size() == 0) {
-				System.out.println("路径堵塞 ，不分配频谱资源");
-				file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
+//				System.out.println("路径堵塞 ，不分配频谱资源");
+//				file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
 			} else {
 				opworkflag = true;
 				double length1 = 0;
 				double cost = 0;
-				file_io.filewrite_without(OutFileName, "光层分配频谱：");
-				file_io.filewrite2(OutFileName, "FS起始值：" + index_wave.get(0) + "  长度" + slotnum);
+//				file_io.filewrite_without(OutFileName, "光层分配频谱：");
+//				file_io.filewrite2(OutFileName, "FS起始值：" + index_wave.get(0) + "  长度" + slotnum);
 				// 物理层的link 改变物理层link上面剩余的FS数
 				for (Link link : linklist) {
 					length1 = length1 + link.getLength();
@@ -560,19 +560,19 @@ public class RegeneratorPlace {
 					
 					if (findflag) {// 如果在IP层中已经找到该链路
 						finlink.getVirtualLinkList().add(Vlink);
-						file_io.filewrite2(OutFileName,"IP层已存在的链路 " + finlink.getName() +  "    预留的flow：  " + Vlink.getRestcapacity());
-						System.out.println("工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
-								+ finlink.getVirtualLinkList().size());
-						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
-								+ finlink.getVirtualLinkList().size());
+//						file_io.filewrite2(OutFileName,"IP层已存在的链路 " + finlink.getName() +  "    预留的flow：  " + Vlink.getRestcapacity());
+//						System.out.println("工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
+//								+ finlink.getVirtualLinkList().size());
+//						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + finlink.getName() + "  上的虚拟链路条数： "
+//								+ finlink.getVirtualLinkList().size());
 					} else {
 						createlink.getVirtualLinkList().add(Vlink);
-						System.out.println("IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
-						System.out.println("工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
-								+ createlink.getVirtualLinkList().size());
-						file_io.filewrite2(OutFileName,"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
-						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
-								+ createlink.getVirtualLinkList().size());
+//						System.out.println("IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+//						System.out.println("工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
+//								+ createlink.getVirtualLinkList().size());
+//						file_io.filewrite2(OutFileName,"IP层上新建链路 " + createlink.getName() + "    预留的flow：  " + Vlink.getRestcapacity());
+//						file_io.filewrite2(OutFileName, "工作链路在光层新建的链路：  " + createlink.getName() + "  上的虚拟链路条数： "
+//								+ createlink.getVirtualLinkList().size());
 					}
 					//以上已经成功建立IP虚拟链路 要更改此次的终止节点为下次的起始节点 并且初始化链路上最小剩余容量
 					pt.setMinRemainFlowRSA(10000);
