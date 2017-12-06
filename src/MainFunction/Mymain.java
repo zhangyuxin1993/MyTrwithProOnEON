@@ -15,9 +15,12 @@ import network.VirtualLink;
 import subgraph.LinearRoute;
 
 public class Mymain {
-	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
+//	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
+	public static String OutFileName = "F:\\zyx\\programFile\\0.2.dat";
+	                  public static float threshold = (float) 0.2;
 	public static void main(String[] args) throws IOException {
-		String TopologyName = "D:/zyx/Topology/USNET.csv";
+		String TopologyName = "F:/zyx/Topology/cost239.csv";
+//		String TopologyName = "D:/zyx/Topology/cost239.csv";
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
 		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
@@ -41,7 +44,8 @@ public class Mymain {
 		Layer oplayer = network.getLayerlist().get("Physical");
 		//以下可以读取表格中的业务
 		ReadDemand rd=new ReadDemand();
-		 nodepairlist=rd.readDemand(iplayer, "D:/USNET.csv");
+		 nodepairlist=rd.readDemand(iplayer, "f:/ZYX/cost239Traffic.csv");
+//		 nodepairlist=rd.readDemand(iplayer, "D:/ZYX/cost239Traffic.csv");
 		 for(NodePair nodepair:nodepairlist){
 			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
 		 Readnodepairlist.put(nodepair.getName() , nodepair);
@@ -50,7 +54,7 @@ public class Mymain {
 		 
 		//以下可以随机产生节点对
 //		DemandRadom dr=new DemandRadom();
-//		RadomNodepairlist=dr.demandradom(276,TopologyName,iplayer);//随机产生结对对并且产生业务量
+//		RadomNodepairlist=dr.demandradom(100,TopologyName,iplayer);//随机产生结对对并且产生业务量
 //		iplayer.setNodepairlist(RadomNodepairlist);
 //		int p=0;
 //		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
@@ -59,12 +63,14 @@ public class Mymain {
 //			p++;
 //			NodePair node = (NodePair) (testmap3.get(testiter3.next()));
 ////			file_io.filewrite2(OutFileName, "随机产生节点对为 "+p+"  "+node.getName()+"   流量为 "+ node.getTrafficdemand());
-////			file_io.filewrite2(OutFileName, node.getName());
-//			file_io.filewrite(OutFileName, node.getTrafficdemand());
+//			file_io.filewrite2("F:\\zyx\\programFile\\nodePair.dat", node.getName());
+//			file_io.filewrite("F:\\zyx\\programFile\\Demand.dat", node.getTrafficdemand());
 //		}
 		
 		ArrayList<NodePair> demandlist = Rankflow(iplayer);
-		
+		float Average=Findalowthreshold(demandlist);
+		Average=0;
+		file_io.filewrite2(OutFileName, "average= "+Average);
 //		for(NodePair no:demandlist){
 //			file_io.filewrite2(OutFileName, "demand "+no.getName());
 //		}
@@ -91,22 +97,21 @@ public class Mymain {
 				
 				if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
 					opProGrooming opg = new opProGrooming();
-					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true, wprlist);
+					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true, wprlist,Average);
 				}
 			}
 
 			// ip层工作路由不成功 在光层路由工作
 			if (!iproutingFlag) {
 				opWorkingGrooming opwg = new opWorkingGrooming();
-				opworkFlag = opwg.opWorkingGrooming(nodepair, iplayer, oplayer, opWorkRoute, wprlist);
+				opworkFlag = opwg.opWorkingGrooming(nodepair, iplayer, oplayer, opWorkRoute, wprlist,Average);
 				if (opworkFlag) {// 在光层成功建立工作路径后建立保护路径
 					ipProGrooming ipprog = new ipProGrooming();
 					ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder,
 							false, wprlist);
 					if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
 						opProGrooming opg = new opProGrooming();
-						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false,
-								wprlist);
+						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false,wprlist,Average);
 					}
 				 
 				}
@@ -272,7 +277,15 @@ public class Mymain {
 		file_io.filewrite2(OutFileName, "Finish");
 	}
 
-
+	public static float Findalowthreshold( ArrayList<NodePair> demandList) {
+		int lastNum=demandList.size()/5;
+		int TotalTraffic=0;
+		for(int n=0;n<lastNum;n++){
+			TotalTraffic=TotalTraffic+demandList.get(demandList.size()-1-lastNum).getTrafficdemand();
+		}
+		float Average=TotalTraffic/lastNum;
+		return Average;
+	}
 	public static ArrayList<NodePair> Rankflow(Layer IPlayer) {
 		ArrayList<NodePair> nodepairlist = new ArrayList<NodePair>(2000);
 		HashMap<String, NodePair> map3 = IPlayer.getNodepairlist();

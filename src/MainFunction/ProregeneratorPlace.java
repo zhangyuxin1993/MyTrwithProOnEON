@@ -17,11 +17,12 @@ import subgraph.LinearRoute;
 
 public class ProregeneratorPlace {
 	String OutFileName = Mymain.OutFileName;
+	float threshold= Mymain.threshold;
 	static int totalregNum = 0;
 
 	// 在RSAunderSet 里面控制阈值
 	public boolean ProRegeneratorPlace(NodePair nodepair, LinearRoute newRoute, ArrayList<WorkandProtectRoute> wprlist,
-			double routelength, Layer oplayer, Layer ipLayer, int IPflow, Request request) throws IOException {
+			double routelength, Layer oplayer, Layer ipLayer, int IPflow, Request request,float Average) throws IOException {
 		WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
 		ArrayList<VirtualLink> provirtuallinklist = new ArrayList<>();
 		ProregeneratorPlace rgp2 = new ProregeneratorPlace();
@@ -199,8 +200,7 @@ public class ProregeneratorPlace {
 						continue;// 已有的共享再生器 已经内定所以所有产生的可能性中要包含这些再生器
 
 					// 给定再生器节点之后进行RSA 产生option选项的路径
-					rgp.RSAunderSet(sharereglist, ShareReg, set, newRoute, oplayer, ipLayer, IPflow, regplaceoption,
-							wprlist, nodepair);
+					rgp.RSAunderSet(sharereglist, ShareReg, set, newRoute, oplayer, ipLayer, IPflow, regplaceoption,wprlist, nodepair,Average);
 				}
 			}
 		}
@@ -242,8 +242,7 @@ public class ProregeneratorPlace {
 							continue;
 					} // 以上主要为了产生set
 						// 给定再生器节点之后进行RSA
-					rgp.RSAunderSet(sharereglist, ShareReg, set, newRoute, oplayer, ipLayer, IPflow, regplaceoption,
-							wprlist, nodepair);
+					rgp.RSAunderSet(sharereglist, ShareReg, set, newRoute, oplayer, ipLayer, IPflow, regplaceoption,wprlist, nodepair,Average);
 				}
 			}
 		}
@@ -312,6 +311,14 @@ public class ProregeneratorPlace {
 		}
 		if (regplaceoption.size() == 0) {
 			success = false;
+			WorkandProtectRoute RemoveWpr= new WorkandProtectRoute(null);
+			for(WorkandProtectRoute wpr: wprlist){//因为保护路径无法建立 需要删除已经建立的wpr
+				if(wpr.getdemand().equals(nodepair)){
+					RemoveWpr=wpr;
+					break;
+				}
+			}
+			wprlist.remove(RemoveWpr);
 		}
 //		System.out.println();
 //		file_io.filewrite2(OutFileName, "");
@@ -327,24 +334,24 @@ public class ProregeneratorPlace {
 			}
 
 		} else {
-//			System.out.println("保护路径放置再生器不成功改路径被堵塞");
-//			file_io.filewrite2(OutFileName, "保护路径放置再生器不成功改路径被堵塞");
+			System.out.println("保护路径放置再生器不成功改路径被堵塞");
+			file_io.filewrite2(OutFileName, "保护路径放置再生器不成功改路径被堵塞");
 		}
 		return success;
 	}// 主函数结束
 
 	public void RSAunderSet(ArrayList<Regenerator> sharereglist, ArrayList<Integer> ShareReg, int[] set,
 			LinearRoute newRoute, Layer oplayer, Layer ipLayer, int IPflow, ArrayList<RouteAndRegPlace> regplaceoption,
-			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
+			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair,float Average) {
 		// 建立新的再生器 并且控制阈值
-		float threshold = (float) 0.06;// 在这里控制阈值
 		boolean partworkflag = false, RSAflag = false, regflag = false;
 		double length = 0;
 		file_out_put file_io = new file_out_put();
 		ArrayList<Link> linklist = new ArrayList<>();
 		int FStotal = 0, n = 0;
 		ProregeneratorPlace rp = new ProregeneratorPlace();
-		ArrayList<Float> RemainRatio = new ArrayList<>();// 记录每段链路上剩余的flow
+		ArrayList<Float> RemainRatio = new ArrayList<>();// 记录每段链路上剩余的flow比例
+		ArrayList<Float> RemainNum = new ArrayList<>();// 记录每段链路上剩余的flow的实际值
 		float NumRemainFlow = 0;
 		ArrayList<Regenerator> UseShareReg = new ArrayList<>();
 
@@ -373,6 +380,7 @@ public class ProregeneratorPlace {
 						ParameterTransfer pt = new ParameterTransfer();
 						partworkflag = rp.vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair, pt);
 						RemainRatio.add(pt.getRemainFlowRatio());
+						RemainNum.add(pt.getNumremainFlow());
 						NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
 						FStotal = FStotal + nodepair.getSlotsnum();
 						length = 0;
@@ -386,6 +394,7 @@ public class ProregeneratorPlace {
 					partworkflag = rp.vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair, pt);
 					NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
 					RemainRatio.add(pt.getRemainFlowRatio());
+					RemainNum.add(pt.getNumremainFlow());
 					FStotal = FStotal + nodepair.getSlotsnum();
 				}
 				if (!partworkflag && RSAflag)// 如果之前的链路已经RSA失败 剩下的链路也没有RSA的必要
@@ -403,7 +412,9 @@ public class ProregeneratorPlace {
 				if (!ShareReg.contains(set[k])) {// 该再生器是新建的 需要判断其类型 如果是共享的
 													// 那么他的类型已经确定 不需要判断
 					if (RemainRatio.get(k) >= threshold || RemainRatio.get(k + 1) >= threshold) {// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
-						IPRegarray.add(set[k]);// 存储IP再生器放置节点
+						if(RemainNum.get(k)>=Average||RemainNum.get(k+1)>=Average){
+							IPRegarray.add(set[k]);// 存储IP再生器放置节点
+						}
 					}
 				} else {// 使用了该可共享的再生器
 					for (Regenerator UsedShareReg : sharereglist) {
@@ -456,7 +467,7 @@ public class ProregeneratorPlace {
 
 			ArrayList<Integer> index_wave = new ArrayList<Integer>();
 			index_wave = opg.FSassignOnlink(linklist, wprlist, nodepair, slotnum, oplayer);// 在考虑共享的情况下分配频谱
-			if (index_wave.size() != 0) {
+			if (index_wave.size() != 0&& index_wave!=null) {
 				opworkflag = true;
 				RemainRatio.setRemainFlowRatio((float) ((slotnum * X - IPflow) / (slotnum * X)));
 				RemainRatio.setNumremainFlow((float) (slotnum * X - IPflow));

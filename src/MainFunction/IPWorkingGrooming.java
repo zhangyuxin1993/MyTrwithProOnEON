@@ -110,7 +110,7 @@ public class IPWorkingGrooming {
 				}//将所有剩余容量大于最小剩余容量的链路全部放入集合 并删除
 			}
 			
-			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
+			
 			Request re=new Request(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
@@ -123,6 +123,7 @@ public class IPWorkingGrooming {
 
 			// 储存dijkstra经过的链路 并且改变这些链路上的容量
 			if (newRoute.getLinklist().size() != 0) {// 工作路径路由成功
+				WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
 //				System.out.print("part2==在IP层找到路由:");
 //				file_io.filewrite_without(OutFileName,"part2==工作路径在IP层找到路由:");
 				newRoute.OutputRoute_node(newRoute);

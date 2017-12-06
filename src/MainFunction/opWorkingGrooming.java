@@ -17,7 +17,8 @@ import subgraph.LinearRoute;
 
 public class opWorkingGrooming {
 	String OutFileName =Mymain.OutFileName;
-	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute,ArrayList<WorkandProtectRoute> wprlist) throws IOException {
+	public boolean opWorkingGrooming(NodePair nodepair, Layer iplayer, Layer oplayer,LinearRoute opnewRoute,ArrayList<WorkandProtectRoute> wprlist
+			,float Average) throws IOException {
 		RouteSearching Dijkstra = new RouteSearching();
 		boolean opworkflag=false;
 		Node srcnode = nodepair.getSrcNode();
@@ -79,8 +80,8 @@ public class opWorkingGrooming {
 			Mymain spa=new Mymain();
 			index_wave = spa.spectrumallocationOneRoute(true,opnewRoute,null,slotnum);
 			if (index_wave.size() == 0) {
-//				System.out.println("路径堵塞 ，不分配频谱资源");
-//				file_io.filewrite2(OutFileName,"路径堵塞 ，不分配频谱资源");
+				System.out.println("工作路径不需要再生器堵塞 ，不分配频谱资源");
+				file_io.filewrite2(OutFileName,"工作路径不需要再生器堵塞 ，不分配频谱资源");
 			} else {
 //				file_io.filewrite2(OutFileName,"");
 //				file_io.filewrite2(OutFileName,"工作链路不需要再生器时在光层分配频谱：");
@@ -158,7 +159,7 @@ public class opWorkingGrooming {
 			}
 			if(routelength>4000){
 				RegeneratorPlace  regplace=new RegeneratorPlace();
-				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer, wprlist, nodepair);
+				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer, wprlist, nodepair,Average);
 			}
 		}
 		if(opworkflag){

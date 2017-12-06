@@ -21,7 +21,7 @@ public class opProGrooming {// 光层路由保护
 	String OutFileName = Mymain.OutFileName;
 
 	public boolean opprotectiongrooming(Layer iplayer, Layer oplayer, NodePair nodepair, LinearRoute route,
-			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist) throws IOException {// flag=true表示保护IP层建立的工作路径
+			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist,float Average) throws IOException {// flag=true表示保护IP层建立的工作路径
 		// flag=flase表示光层建立的工作路径
 		RouteSearching Dijkstra = new RouteSearching();
 		Request request = new Request(nodepair);
@@ -129,8 +129,16 @@ public class opProGrooming {// 光层路由保护
 				index_wave = opg.FSassignOnlink(opPrtectRoute.getLinklist(), wprlist, nodepair, slotnum, oplayer);
 
 				if (index_wave.size() == 0) {
-//					System.out.println("路径堵塞 ，不分配频谱资源");
-//					file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
+					System.out.println("保护不放置再生器路径堵塞 ，不分配频谱资源");
+					file_io.filewrite2(OutFileName, "保护不放置再生器路径堵塞  ，不分配频谱资源");
+					WorkandProtectRoute RemoveWpr=new WorkandProtectRoute(null);
+					for(WorkandProtectRoute wpr: wprlist){//因为保护路径无法建立 需要删除已经建立的wpr
+						if(wpr.getdemand().equals(nodepair)){
+							RemoveWpr=wpr;
+							break;
+						}
+					}
+					wprlist.remove(RemoveWpr);
 				} else {
 					success = true;
 					double length = 0;
@@ -224,8 +232,7 @@ public class opProGrooming {// 光层路由保护
 			}
 			if (routelength > 4000) {
 				ProregeneratorPlace rgp = new ProregeneratorPlace();
-				success = rgp.ProRegeneratorPlace(nodepair, opPrtectRoute, wprlist, routelength, oplayer, iplayer,
-						IPflow, request);
+				success = rgp.ProRegeneratorPlace(nodepair, opPrtectRoute, wprlist, routelength, oplayer, iplayer,IPflow, request,Average);
 			}
 		}
 
@@ -427,31 +434,39 @@ public class opProGrooming {// 光层路由保护
 		Mymain mm = new Mymain();
 		// file_io.filewrite2(OutFileName,"每段链路上需要的FS数为： "+slotnum );
 		index_wave = mm.spectrumallocationOneRoute(false, null, linklist, slotnum); // 每个link上面均占用这么多
+		if(index_wave!=null&& index_wave.size()!=0){
 //		file_io.filewrite2(OutFileName, "此次RSA分配的slot起点为 " + index_wave.get(0) + " ,长度为 " + slotnum);
 //		System.out.println("此次RSA分配的slot起点为 " + index_wave.get(0) + " ,长度为 " + slotnum);
-		int share = 0, newFS = 0;
-		for (Link link : linklist) {// 恢复之前占用的
-			for (FSshareOnlink fl : fsonLinklist) {// 对于每一段link要遍历之前所有的业务
-				if (fl.getlink().equals(link)) {
-					Request request = fl.getwpr().getrequest();
-					for (int recovery : fl.getslotIndex()) {
-						link.getSlotsarray().get(recovery).getoccupiedreqlist().add(request);
-
-						for (int co = index_wave.get(0); co < index_wave.get(0) + slotnum; co++) {
-							if (co == recovery) {
-								share++;
-								break;
+			int share = 0, newFS = 0;
+			for (Link link : linklist) {// 恢复之前占用的
+				for (FSshareOnlink fl : fsonLinklist) {// 对于每一段link要遍历之前所有的业务
+					if (fl.getlink().equals(link)) {
+						Request request = fl.getwpr().getrequest();
+						for (int recovery : fl.getslotIndex()) {
+							link.getSlotsarray().get(recovery).getoccupiedreqlist().add(request);
+							
+							for (int co = index_wave.get(0); co < index_wave.get(0) + slotnum; co++) {
+								if (co == recovery) {
+									share++;
+									break;
+								}
 							}
 						}
 					}
 				}
+				if (slotnum < share) {
+					share = slotnum;
+				}
+				newFS = newFS + slotnum - share;
+				
 			}
-			if (slotnum < share) {
-				share = slotnum;
-			}
-			newFS = newFS + slotnum - share;
-
+			nodePair.setSlotsnum(newFS);
+			
 		}
+//		else{
+//			System.out.println("路径堵塞 ，不分配频谱资源");
+//			file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
+//		}
 //		file_io.filewrite2(OutFileName, "此次RSA需要的新slot数为 " + newFS);
 		// file_io.filewrite2(OutFileName,"");
 		// file_io.filewrite2(OutFileName,"恢复占用之后");
@@ -476,7 +491,7 @@ public class opProGrooming {// 光层路由保护
 		// }
 		// }
 
-		nodePair.setSlotsnum(newFS);
+		
 		return index_wave;
 
 	}

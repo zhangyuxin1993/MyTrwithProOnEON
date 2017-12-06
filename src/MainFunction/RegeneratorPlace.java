@@ -18,9 +18,10 @@ public class RegeneratorPlace {
 	public int newFS = 0;
 	static int totalregNum = 0;
 	String OutFileName = Mymain.OutFileName;
-
+	float threshold= Mymain.threshold;
+	
 	public boolean regeneratorplace(int IPflow, double routelength, LinearRoute newRoute, Layer oplayer, Layer ipLayer,
-			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) { // 注意最少再生器个数的计算
+			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair,float Average) { // 注意最少再生器个数的计算
 		// /*
 		// 第二种方法先判断一条路径最少使用的再生器的个数 然后穷尽所有的情况来选择再生器 放置的位置
 		file_out_put file_io = new file_out_put();
@@ -32,7 +33,7 @@ public class RegeneratorPlace {
 		boolean partworkflag = false, RSAflag = false, regflag = false, success = false;
 		ArrayList<RouteAndRegPlace> regplaceoption = new ArrayList<>();
 		RouteAndRegPlace finalRoute = new RouteAndRegPlace(null, 0);
-		float threshold = (float) 0.06;// 在这里控制阈值
+		 
 
 		// 找到所有可以成功路由的路径 part1
 		for (int s = minRegNum; s <= internode; s++) {
@@ -49,6 +50,7 @@ public class RegeneratorPlace {
 				linklist.clear();
 				int[] set = nOfm.next(); // 随机产生的再生器放置位置
 				ArrayList<Float> RemainRatio = new ArrayList<>();// 记录每段链路上剩余的flow
+				ArrayList<Float> RemainNum = new ArrayList<>();// 记录每段链路上剩余的flow的实际值
 				float NumRemainFlow = 0;
 
 				for (int i = 0; i < set.length + 1; i++) {// RSA的次数比再生器的个数多1  对某一段链路在某个set再生器下进行RSA
@@ -76,6 +78,7 @@ public class RegeneratorPlace {
 								ParameterTransfer pt = new ParameterTransfer();
 								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,pt);//
 								RemainRatio.add(pt.getRemainFlowRatio());
+								RemainNum.add(pt.getNumremainFlow());
 								NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
 								FStotal = FStotal + newFS;
 								length = 0;
@@ -88,6 +91,7 @@ public class RegeneratorPlace {
 							ParameterTransfer pt = new ParameterTransfer();
 							partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair, pt);// 此时在n点放置再生器
 							RemainRatio.add(pt.getRemainFlowRatio());
+							RemainNum.add(pt.getNumremainFlow());
 							NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
 							FStotal = FStotal + newFS;
 						}
@@ -106,7 +110,9 @@ public class RegeneratorPlace {
 					for (int k = 0; k < set.length; k++) {
 						setarray.add(set[k]);
 						if (RemainRatio.get(k) >= threshold || RemainRatio.get(k + 1) >= threshold) {// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
-							IPRegarray.add(set[k]);// 存储IP再生器放置节点
+							if(RemainNum.get(k)>=Average||RemainNum.get(k+1)>=Average){
+								IPRegarray.add(set[k]);// 存储IP再生器放置节点
+							}
 						}
 					}
 
@@ -267,8 +273,8 @@ public class RegeneratorPlace {
 
 		if (regplaceoption.size() == 0) {
 			success = false;
-//			System.out.println("该路径无法RSA");
-//			file_io.filewrite2(OutFileName, "该路径无法RSA");
+			System.out.println("工作路径无法防止再生器 option=0");
+			file_io.filewrite2(OutFileName, "工作路径无法防止再生器 option=0");
 		}
 //		System.out.println();
 		if (success) {
