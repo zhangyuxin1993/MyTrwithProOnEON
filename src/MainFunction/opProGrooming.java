@@ -21,7 +21,7 @@ public class opProGrooming {// 光层路由保护
 	String OutFileName = Mymain.OutFileName;
 
 	public boolean opprotectiongrooming(Layer iplayer, Layer oplayer, NodePair nodepair, LinearRoute route,
-			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist,float Average) throws IOException {// flag=true表示保护IP层建立的工作路径
+			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist) throws IOException {// flag=true表示保护IP层建立的工作路径
 		// flag=flase表示光层建立的工作路径
 		RouteSearching Dijkstra = new RouteSearching();
 		Request request = new Request(nodepair);
@@ -34,8 +34,8 @@ public class opProGrooming {// 光层路由保护
 		ArrayList<VirtualLink> provirtuallinklist = new ArrayList<>();
 		ArrayList<FSshareOnlink> FSuseOnlink = new ArrayList<FSshareOnlink>();
 		ArrayList<Link> opDelLink = new ArrayList<Link>();
-//		System.out.println("************保护路由在IP层不能路由，需要在光层新建");
-//		file_io.filewrite2(OutFileName, "************保护路由在IP层不能路由，需要在光层新建");
+		System.out.println("************保护路由在IP层不能路由，需要在光层新建");
+		file_io.filewrite2(OutFileName, "************保护路由在IP层不能路由，需要在光层新建");
 
 		// 删除该节点对的工作路由经过的所有物理链路
 		for (Link LinkOnRoute : route.getLinklist()) {// 取出工作路由中的链路
@@ -89,15 +89,15 @@ public class opProGrooming {// 光层路由保护
 		opDelLink.clear();
 
 		if (opPrtectRoute.getLinklist().size() == 0) {
-//			System.out.println("保护路由光层无法建立");
-//			file_io.filewrite2(OutFileName, "保护路由光层无法建立");
+			System.out.println("保护路由光层无法建立");
+			file_io.filewrite2(OutFileName, "保护路由光层无法建立");
 		} else {
-//			System.out.println("光层找到路由:");
-//			file_io.filewrite2(OutFileName, "   ");
-//			file_io.filewrite2(OutFileName, "光层找到路由:");
+			System.out.println("光层找到路由:");
+			file_io.filewrite2(OutFileName, "   ");
+			file_io.filewrite2(OutFileName, "光层找到路由:");
 			opPrtectRoute.OutputRoute_node(opPrtectRoute);
 			LinearRoute route_out = new LinearRoute(null, 0, null);
-//			route_out.OutputRoute_node(opPrtectRoute, OutFileName);
+			route_out.OutputRoute_node(opPrtectRoute, OutFileName);
 			int slotnum = 0;
 			int IPflow = nodepair.getTrafficdemand();
 			double X = 1;// 2000-4000 BPSK,1000-2000
@@ -121,24 +121,16 @@ public class opProGrooming {// 光层路由保护
 				slotnum = (int) Math.ceil(IPflow / X);// 向上取整
 
 				opPrtectRoute.setSlotsnum(slotnum);
-//				System.out.println("该链路所需slot数： " + slotnum);
-//				file_io.filewrite2(OutFileName, "该路由上每段链路所需slot数： " + slotnum);
+				System.out.println("该链路所需slot数： " + slotnum);
+				file_io.filewrite2(OutFileName, "该路由上每段链路所需slot数： " + slotnum);
 				// FIX
 
 				ArrayList<Integer> index_wave = new ArrayList<Integer>();
 				index_wave = opg.FSassignOnlink(opPrtectRoute.getLinklist(), wprlist, nodepair, slotnum, oplayer);
 
 				if (index_wave.size() == 0) {
-					System.out.println("保护不放置再生器路径堵塞 ，不分配频谱资源");
-					file_io.filewrite2(OutFileName, "保护不放置再生器路径堵塞  ，不分配频谱资源");
-					WorkandProtectRoute RemoveWpr=new WorkandProtectRoute(null);
-					for(WorkandProtectRoute wpr: wprlist){//因为保护路径无法建立 需要删除已经建立的wpr
-						if(wpr.getdemand().equals(nodepair)){
-							RemoveWpr=wpr;
-							break;
-						}
-					}
-					wprlist.remove(RemoveWpr);
+					System.out.println("路径堵塞 ，不分配频谱资源");
+					file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
 				} else {
 					success = true;
 					double length = 0;
@@ -157,13 +149,13 @@ public class opProGrooming {// 光层路由保护
 						for (int n = 0; n < slotnum; n++) {
 							index_wave1.add(m);
 							// System.out.print(m);
-//							file_io.filewrite_without(OutFileName, m + "  ");
+							file_io.filewrite_without(OutFileName, m + "  ");
 							m++;
 						}
 						FSshareOnlink fsonLink = new FSshareOnlink(link, index_wave1);
 						FSuseOnlink.add(fsonLink);
 					}
-//					file_io.filewrite2(OutFileName, "  ");
+					file_io.filewrite2(OutFileName, "  ");
 					String name = opsrcnode.getName() + "-" + opdesnode.getName();
 					int index = iplayer.getLinklist().size();// 因为iplayer里面的link是一条一条加上去的
 																// 故这样设置index
@@ -195,44 +187,45 @@ public class opProGrooming {// 光层路由保护
 					if (findflag) {// 如果在IP层中已经找到该链路
 						// System.out.println("虚拟链路条数：" +
 						// finlink.getVirtualLinkList().size());
-//						file_io.filewrite2(OutFileName, "虚拟链路条数：" + finlink.getVirtualLinkList().size());
+						file_io.filewrite2(OutFileName, "虚拟链路条数：" + finlink.getVirtualLinkList().size());
 						finlink.getVirtualLinkList().add(Vlink);
-//						System.out.println("IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
-//								+ Vlink.getUsedcapacity() + "\n " + "共有的flow:  " + Vlink.getFullcapacity()
-//								+ "    预留的flow：  " + Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength()
-//								+ "   " + "虚拟链路cost： " + Vlink.getcost());
-//						file_io.filewrite2(OutFileName,
-//								"IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: " + Vlink.getUsedcapacity()
-//										+ "\n " + "共有的flow:  " + Vlink.getFullcapacity() + "    预留的flow：  "
-//										+ Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength() + "   "
-//										+ "虚拟链路cost： " + Vlink.getcost());
-//						System.out.println("*********已存在IP层链路：  " + finlink.getName() + "  上的虚拟链路条数： "
-//								+ finlink.getVirtualLinkList().size());
-//						file_io.filewrite2(OutFileName, "*********已存在IP层链路：  " + finlink.getName() + "  上的虚拟链路条数： "
-//								+ finlink.getVirtualLinkList().size());
+						System.out.println("IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
+								+ Vlink.getUsedcapacity() + "\n " + "共有的flow:  " + Vlink.getFullcapacity()
+								+ "    预留的flow：  " + Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength()
+								+ "   " + "虚拟链路cost： " + Vlink.getcost());
+						file_io.filewrite2(OutFileName,
+								"IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: " + Vlink.getUsedcapacity()
+										+ "\n " + "共有的flow:  " + Vlink.getFullcapacity() + "    预留的flow：  "
+										+ Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength() + "   "
+										+ "虚拟链路cost： " + Vlink.getcost());
+						System.out.println("*********已存在IP层链路：  " + finlink.getName() + "  上的虚拟链路条数： "
+								+ finlink.getVirtualLinkList().size());
+						file_io.filewrite2(OutFileName, "*********已存在IP层链路：  " + finlink.getName() + "  上的虚拟链路条数： "
+								+ finlink.getVirtualLinkList().size());
 					} else {
-//						System.out.println("虚拟链路条数：" + createlink.getVirtualLinkList().size());
-//						file_io.filewrite2(OutFileName, "虚拟链路条数：" + createlink.getVirtualLinkList().size());
+						System.out.println("虚拟链路条数：" + createlink.getVirtualLinkList().size());
+						file_io.filewrite2(OutFileName, "虚拟链路条数：" + createlink.getVirtualLinkList().size());
 						createlink.getVirtualLinkList().add(Vlink);
-//						System.out.println("IP层上新建链路 " + createlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
-//								+ Vlink.getUsedcapacity() + "\n " + "共有的flow:  " + Vlink.getFullcapacity()
-//								+ "    预留的flow：  " + Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength()
-//								+ "   " + "虚拟链路cost： " + Vlink.getcost());
-//						file_io.filewrite2(OutFileName,
-//								"IP层上新建链路 " + createlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: " + Vlink.getUsedcapacity()
-//										+ "\n " + "共有的flow:  " + Vlink.getFullcapacity() + "    预留的flow：  "
-//										+ Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength() + "   "
-//										+ "虚拟链路cost： " + Vlink.getcost());
-//						System.out.println("*********新建IP链路：  " + createlink.getName() + "  上的虚拟链路条数： "
-//								+ createlink.getVirtualLinkList().size());
-//						file_io.filewrite2(OutFileName, "*********新建IP链路：  " + createlink.getName() + "  上的虚拟链路条数： "
-//								+ createlink.getVirtualLinkList().size());
+						System.out.println("IP层上新建链路 " + createlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
+								+ Vlink.getUsedcapacity() + "\n " + "共有的flow:  " + Vlink.getFullcapacity()
+								+ "    预留的flow：  " + Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength()
+								+ "   " + "虚拟链路cost： " + Vlink.getcost());
+						file_io.filewrite2(OutFileName,
+								"IP层上新建链路 " + createlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: " + Vlink.getUsedcapacity()
+										+ "\n " + "共有的flow:  " + Vlink.getFullcapacity() + "    预留的flow：  "
+										+ Vlink.getRestcapacity() + "\n" + "虚拟链路长度：" + Vlink.getlength() + "   "
+										+ "虚拟链路cost： " + Vlink.getcost());
+						System.out.println("*********新建IP链路：  " + createlink.getName() + "  上的虚拟链路条数： "
+								+ createlink.getVirtualLinkList().size());
+						file_io.filewrite2(OutFileName, "*********新建IP链路：  " + createlink.getName() + "  上的虚拟链路条数： "
+								+ createlink.getVirtualLinkList().size());
 					}
 				}
 			}
 			if (routelength > 4000) {
 				ProregeneratorPlace rgp = new ProregeneratorPlace();
-				success = rgp.ProRegeneratorPlace(nodepair, opPrtectRoute, wprlist, routelength, oplayer, iplayer,IPflow, request,Average);
+				success = rgp.ProRegeneratorPlace(nodepair, opPrtectRoute, wprlist, routelength, oplayer, iplayer,
+						IPflow, request);
 			}
 		}
 
@@ -390,9 +383,9 @@ public class opProGrooming {// 光层路由保护
 			for (WorkandProtectRoute wpr : wprlist) {
 				if (shareslotWPR.keySet().contains(wpr)) {
 					if (shareslotWPR.get(wpr).size() != 0) {
-//						file_io.filewrite2(OutFileName, " ");
-//						file_io.filewrite_without(OutFileName, "链路 " + link.getName() + " 上可以共享的slot为 ");
-//						System.out.print("链路 " + link.getName() + " 上可以共享的slot为 ");
+						file_io.filewrite2(OutFileName, " ");
+						file_io.filewrite_without(OutFileName, "链路 " + link.getName() + " 上可以共享的slot为 ");
+						System.out.print("链路 " + link.getName() + " 上可以共享的slot为 ");
 						for (int release : shareslotWPR.get(wpr)) {// 释放可共享资源
 							Request request = wpr.getrequest();
 
@@ -418,10 +411,10 @@ public class opProGrooming {// 光层路由保护
 							// link.getSlotsarray().get(release).getoccupiedreqlist().remove(res);
 							link.getSlotsarray().get(release).getoccupiedreqlist().remove(request);
 							// test
-//							file_io.filewrite_without(OutFileName, release + "    ");
-//							System.out.print(release + "    ");
+							file_io.filewrite_without(OutFileName, release + "    ");
+							System.out.print(release + "    ");
 						}
-//						file_io.filewrite2(OutFileName, " ");
+						file_io.filewrite2(OutFileName, " ");
 						}
 				}
 			}
@@ -434,40 +427,38 @@ public class opProGrooming {// 光层路由保护
 		Mymain mm = new Mymain();
 		// file_io.filewrite2(OutFileName,"每段链路上需要的FS数为： "+slotnum );
 		index_wave = mm.spectrumallocationOneRoute(false, null, linklist, slotnum); // 每个link上面均占用这么多
+
 		if(index_wave!=null&& index_wave.size()!=0){
-//		file_io.filewrite2(OutFileName, "此次RSA分配的slot起点为 " + index_wave.get(0) + " ,长度为 " + slotnum);
-//		System.out.println("此次RSA分配的slot起点为 " + index_wave.get(0) + " ,长度为 " + slotnum);
-			int share = 0, newFS = 0;
-			for (Link link : linklist) {// 恢复之前占用的
-				for (FSshareOnlink fl : fsonLinklist) {// 对于每一段link要遍历之前所有的业务
-					if (fl.getlink().equals(link)) {
-						Request request = fl.getwpr().getrequest();
-						for (int recovery : fl.getslotIndex()) {
-							link.getSlotsarray().get(recovery).getoccupiedreqlist().add(request);
-							
-							for (int co = index_wave.get(0); co < index_wave.get(0) + slotnum; co++) {
-								if (co == recovery) {
-									share++;
-									break;
+			file_io.filewrite2(OutFileName, "此次RSA分配的slot起点为 " + index_wave.get(0) + " ,长度为 " + slotnum);
+			System.out.println("此次RSA分配的slot起点为 " + index_wave.get(0) + " ,长度为 " + slotnum);
+				int share = 0, newFS = 0;
+				for (Link link : linklist) {// 恢复之前占用的
+					for (FSshareOnlink fl : fsonLinklist) {// 对于每一段link要遍历之前所有的业务
+						if (fl.getlink().equals(link)) {
+							Request request = fl.getwpr().getrequest();
+							for (int recovery : fl.getslotIndex()) {
+								link.getSlotsarray().get(recovery).getoccupiedreqlist().add(request);
+								
+								for (int co = index_wave.get(0); co < index_wave.get(0) + slotnum; co++) {
+										if (co == recovery) {
+											share++;
+											break;
+										}
 								}
+							 
 							}
 						}
 					}
+					if (slotnum < share) {
+						share = slotnum;
+					}
+					newFS = newFS + slotnum - share;
+					
 				}
-				if (slotnum < share) {
-					share = slotnum;
-				}
-				newFS = newFS + slotnum - share;
-				
+				nodePair.setSlotsnum(newFS);
+				file_io.filewrite2(OutFileName, "此次RSA需要的新slot数为 " + newFS);
 			}
-			nodePair.setSlotsnum(newFS);
-			
-		}
-//		else{
-//			System.out.println("路径堵塞 ，不分配频谱资源");
-//			file_io.filewrite2(OutFileName, "路径堵塞 ，不分配频谱资源");
-//		}
-//		file_io.filewrite2(OutFileName, "此次RSA需要的新slot数为 " + newFS);
+		
 		// file_io.filewrite2(OutFileName,"");
 		// file_io.filewrite2(OutFileName,"恢复占用之后");
 		// for(Link link:linklist){
@@ -491,7 +482,6 @@ public class opProGrooming {// 光层路由保护
 		// }
 		// }
 
-		
 		return index_wave;
 
 	}

@@ -110,7 +110,7 @@ public class IPWorkingGrooming {
 				}//将所有剩余容量大于最小剩余容量的链路全部放入集合 并删除
 			}
 			
-			
+			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
 			Request re=new Request(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
@@ -123,15 +123,14 @@ public class IPWorkingGrooming {
 
 			// 储存dijkstra经过的链路 并且改变这些链路上的容量
 			if (newRoute.getLinklist().size() != 0) {// 工作路径路由成功
-				WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
-//				System.out.print("part2==在IP层找到路由:");
-//				file_io.filewrite_without(OutFileName,"part2==工作路径在IP层找到路由:");
+				System.out.print("part2==在IP层找到路由:");
+				file_io.filewrite_without(OutFileName,"part2==工作路径在IP层找到路由:");
 				newRoute.OutputRoute_node(newRoute);
 				routeFlag=true;
 				for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 					Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
-//					System.out.println("ip层上路由链路："+link.getName());
-//					file_io.filewrite2(OutFileName,"ip层上路由链路："+link.getName());
+					System.out.println("ip层上路由链路："+link.getName());
+					file_io.filewrite2(OutFileName,"ip层上路由链路："+link.getName());
 					HashMap<String, Link> linklist2 = iplayer.getLinklist();
 					Iterator<String> linkitor2 = linklist2.keySet().iterator();
 					while (linkitor2.hasNext()) {
@@ -182,12 +181,12 @@ public class IPWorkingGrooming {
 			
 			
 			if(routeFlag) {
-//				System.out.println("在IP层成功路由");
-				file_io.filewrite2(OutFileName,"工作路径在IP层成功路由");
+				System.out.println("在IP层成功路由");
+				file_io.filewrite2(OutFileName,"在IP层成功路由");
 			}
 			if(!routeFlag){ 
-//				System.out.println("IP层路由失败");
-				file_io.filewrite2(OutFileName,"工作路径IP层路由失败");
+				System.out.println("IP层路由失败");
+				file_io.filewrite2(OutFileName,"IP层路由失败");
 			}
 		return routeFlag;
 	}
