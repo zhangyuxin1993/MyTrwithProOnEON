@@ -12,18 +12,18 @@ import subgraph.LinearRoute;
 
 public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生器节点
 	private NodePair demand = null;
-	private ArrayList<Link> worklinklist=null;
-	private ArrayList<Link> prolinklist=null;
-	private ArrayList<VirtualLink> provirtuallinklist=null;
+	private ArrayList<Link> worklinklist=new ArrayList<Link>();
+	private ArrayList<Link> prolinklist=new ArrayList<Link>();
+	private ArrayList<VirtualLink> provirtuallinklist=new ArrayList<VirtualLink>();
 	private HashMap<Integer, Regenerator> regthinglist=null; 
-	private ArrayList<Regenerator> Regneratorlist=null;
+	private ArrayList<Regenerator> Regneratorlist=new ArrayList<Regenerator>();
 	private LinearRoute proroute=null;
-	private ArrayList<FSshareOnlink> FSoneachLink=null;
-	 private ArrayList<Regenerator> newreglist=null;
-	 private ArrayList<Regenerator> sharereglist=null;
+	private ArrayList<FSshareOnlink> FSoneachLink=new ArrayList<FSshareOnlink>();
+	 private ArrayList<Regenerator> newreglist=new ArrayList<Regenerator>();
+	 private ArrayList<Regenerator> sharereglist=new ArrayList<Regenerator>();
 	 private Request request=null;
-	 private ArrayList<Double> RegWorkLengthList=null;
-	 private ArrayList<Double> RegProLengthList=null;
+	 private ArrayList<Double> RegWorkLengthList=new ArrayList<Double>();
+	 private ArrayList<Double> RegProLengthList=new ArrayList<Double>();
 	 
 		public void setRegRegProLengthList(ArrayList<Double> RegProLengthList) {
 			this.RegProLengthList=RegProLengthList;

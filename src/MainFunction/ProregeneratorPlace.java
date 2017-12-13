@@ -255,7 +255,7 @@ public class ProregeneratorPlace {
 				System.out.println();
 				// 先输出可共享再生器
 				if (DebugRegRoute.getUsedShareReg() != null) {
-					file_io.filewrite2(OutFileName, "可共享的再生器  ");
+					file_io.filewrite2(OutFileName, "!!!!!!!可共享的再生器的个数： "+ DebugRegRoute.getUsedShareReg().size());
 					for (Regenerator reg : DebugRegRoute.getUsedShareReg()) {
 						if (reg.getNature() == 0) {
 							file_io.filewrite2(OutFileName, reg.getnode().getName() + "  OEO再生器");
