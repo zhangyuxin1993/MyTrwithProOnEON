@@ -12,14 +12,10 @@ import subgraph.LinearRoute;
 
 public class DemandRadom {
 	
-	public HashMap<String, NodePair> demandradom(int nodepairNum,String filename,Layer mylayer){
-//		int nodepairNum=10;//随机产生的节点数
-		int demandlimit=250;
+	public ArrayList<NodePair> NodePairRadom(int nodepairNum,String filename,Layer mylayer){//随机产生nodepair列表
 //		Layer mylayer= new Layer(null, 0, null, null);
 		ArrayList<LinearRoute> routelist_once=new ArrayList<LinearRoute>();
-		RouteSearching rs=new RouteSearching();
 		int serial=0;
-		HashMap<String, NodePair> RadomNodepairlist=new HashMap<String, NodePair>();
 		
 //		mylayer.readTopology(filename);
 //		mylayer.generateNodepairs(); 
@@ -60,30 +56,28 @@ public class DemandRadom {
 			if(has==0) continue;//随机产生demand
 			nodepairlist.add(nodepair);
 		}
-//		System.out.println("随机产生的节点对：");
-		int setDemand=0;
+		return nodepairlist;
+	}
+	
+	public HashMap<String, NodePair> TrafficNumRadom(ArrayList<NodePair>nodepairlist ){
+		randomfunction radom=new randomfunction();
+		HashMap<String, NodePair> NodepairWithTraffic=new HashMap<String, NodePair>(0);
 		for(NodePair nodePair:nodepairlist){
-			setDemand++;
+//			setDemand++;
 //			System.out.println(nodePair.getName());
-			if(setDemand<nodepairNum/5){
-				nodePair.setTrafficdemand(radom.Num_random(1, 7)[0]+1);
-			}
-			else{
-				nodePair.setTrafficdemand(radom.Num_random(1, demandlimit)[0]+1);
-			}
+//			if(setDemand<nodepairNum/5){
+			nodePair.setTrafficdemand(radom.Num_random(1, 1025)[0]+200);//产生200G-1T的容量
+//			}
+//			else{
+//				nodePair.setTrafficdemand(radom.Num_random(1, demandlimit)[0]+1);
+//			}
 		}
 //		System.out.println();
 		for(NodePair nodePair:nodepairlist){
 //			System.out.print(nodePair.getName()+"   ");
 //			System.out.println(nodePair.getSlotsnum());
-			RadomNodepairlist.put(nodePair.getName(), nodePair);
+			NodepairWithTraffic.put(nodePair.getName(), nodePair);
 		}
-		return RadomNodepairlist;
+		return NodepairWithTraffic;
 	}
-
-//	public static void main(String[] args) {
-//		DemandRadom dr=new DemandRadom();
-//		dr.demandradom(5,"G:/Topology/NSFNET.csv");
-//	}
-
 }

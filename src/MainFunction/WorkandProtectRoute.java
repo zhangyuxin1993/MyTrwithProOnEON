@@ -21,7 +21,18 @@ public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生
 	 private ArrayList<Regenerator> newreglist=new ArrayList<Regenerator>();
 	 private ArrayList<Regenerator> sharereglist=new ArrayList<Regenerator>();
 	 private Request request=new Request(demand);
+	 private ArrayList<Double> RegWorkLengthList=null;
 	 
+	 
+		public void setRegWorkLengthList(ArrayList<Double> RegLengthList) {
+			this.RegWorkLengthList=RegLengthList;
+		}
+		public ArrayList<Double> getRegWorkLengthList() {
+			return RegWorkLengthList;
+		}
+		
+		
+		
 	public WorkandProtectRoute(NodePair demand) {
 		super();
 		this.demand = demand;

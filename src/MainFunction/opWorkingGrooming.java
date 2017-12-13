@@ -25,7 +25,7 @@ public class opWorkingGrooming {
 		double routelength = 0;
 		LinearRoute route_out=new LinearRoute(null, 0, null);
 		file_out_put file_io=new file_out_put();
-		
+		ArrayList<Double> RegLengthList=new ArrayList<>();
 		
 		System.out.println("IP层工作路由不成功，需要新建光路");
 		file_io.filewrite2(OutFileName,"IP层工作路由不成功，需要新建光路");
@@ -156,9 +156,10 @@ public class opWorkingGrooming {
 //				numOfTransponder = numOfTransponder + 2;
 			}
 			}
+			
 			if(routelength>4000){
 				RegeneratorPlace  regplace=new RegeneratorPlace();
-				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer, wprlist, nodepair);
+				opworkflag=regplace.regeneratorplace( IPflow,routelength, opnewRoute, oplayer,iplayer, wprlist, nodepair,RegLengthList);
 			}
 		}
 		if(opworkflag){
@@ -172,12 +173,13 @@ public class opWorkingGrooming {
 			totallink=opnewRoute.getLinklist();
 			wpr.setrequest(re);
 			wpr.setworklinklist(totallink);
+			wpr.setRegWorkLengthList(RegLengthList);
 			wprlist.add(wpr);
 		
 		}
 		if(!opworkflag) {
-			System.out.println("在光层路由失败 改业务阻塞");
-			file_io.filewrite2(OutFileName,"在光层路由失败 改业务阻塞");
+			System.out.println("在光层路由失败 该业务阻塞");
+			file_io.filewrite2(OutFileName,"在光层路由失败 该业务阻塞");
 		}
 		return opworkflag;
 	}

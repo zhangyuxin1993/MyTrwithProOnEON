@@ -20,7 +20,7 @@ public class RegeneratorPlace {
 	String OutFileName = Mymain.OutFileName;
 
 	public boolean regeneratorplace(int IPflow, double routelength, LinearRoute newRoute, Layer oplayer, Layer ipLayer,
-			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) { // 注意最少再生器个数的计算
+			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair,ArrayList<Double> RegLengthList) { // 注意最少再生器个数的计算
 		// /*
 		// 第二种方法先判断一条路径最少使用的再生器的个数 然后穷尽所有的情况来选择再生器 放置的位置
 		file_out_put file_io = new file_out_put();
@@ -32,8 +32,7 @@ public class RegeneratorPlace {
 		boolean partworkflag = false, RSAflag = false, regflag = false, success = false;
 		ArrayList<RouteAndRegPlace> regplaceoption = new ArrayList<>();
 		RouteAndRegPlace finalRoute = new RouteAndRegPlace(null, 0);
-		float threshold = (float) 0.03;// 在这里控制阈值
-
+		
 		// 找到所有可以成功路由的路径 part1
 		for (int s = minRegNum; s <= internode; s++) {
 			if (partworkflag || regplaceoption.size() != 0)// 如果再生器个数较少的时候已经可以RSA那么就不需要增加再生器的个数
@@ -55,19 +54,19 @@ public class RegeneratorPlace {
 					if (!partworkflag && RSAflag)
 						break;
 					if (i < set.length) {
-//						System.out.println("****************工作再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
-//						file_io.filewrite2(OutFileName, "****************工作再生器的位置为：" + set[i]);
+						System.out.println("****************工作再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
+						file_io.filewrite2(OutFileName, "****************工作再生器的位置为：" + set[i]);
 					} else {
-//						System.out.println("************最后一个再生器与终结点之间的RSA ");
-//						file_io.filewrite2(OutFileName, "************最后一个再生器与终结点之间的RSA ");
+						System.out.println("************最后一个再生器与终结点之间的RSA ");
+						file_io.filewrite2(OutFileName, "************最后一个再生器与终结点之间的RSA ");
 						regflag = true;
 					}
 					do {// 通过一个
 						Node nodeA = newRoute.getNodelist().get(n);
 						Node nodeB = newRoute.getNodelist().get(n + 1);
 						Link link = oplayer.findLink(nodeA, nodeB);
-//						System.out.println(link.getName());
-//						file_io.filewrite2(OutFileName, link.getName());
+						System.out.println(link.getName());
+						file_io.filewrite2(OutFileName, link.getName());
 						length = length + link.getLength();
 						linklist.add(link);
 						n = n + 1;
@@ -105,7 +104,7 @@ public class RegeneratorPlace {
 					
 					for (int k = 0; k < set.length; k++) {
 						setarray.add(set[k]);
-						if (RemainRatio.get(k) >= threshold || RemainRatio.get(k + 1) >= threshold) {// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
+						if (RemainRatio.get(k) >= 2 || RemainRatio.get(k + 1) >= 2) {// 只要再生器前面或者后面有一段未充分使用则放置IP再生器
 							IPRegarray.add(set[k]);// 存储IP再生器放置节点
 						}
 					}
@@ -254,21 +253,15 @@ public class RegeneratorPlace {
 					}
 					finalRoute = regplaceoption.get(0);// 最终不管是否只剩一条链路 都选择第一条作为最终链路
 				
-//					file_io.filewrite2(OutFileName, "！！！！！！此时的nodepair为 "+ nodepair.getName());
-//					if(nodepair.getFinalRoute()!=null){
-//						file_io.filewrite2(OutFileName, "！！！！！！ 该工作链路需要再生器");
-//					}
 				}
 			}
 			nodepair.setFinalRoute(finalRoute);
 			RegeneratorPlace regp = new RegeneratorPlace();
-			regp.FinalRouteRSA(finalRoute, oplayer, ipLayer, IPflow);
+			regp.FinalRouteRSA(finalRoute, oplayer, ipLayer, IPflow,RegLengthList);
 		}
 
 		if (regplaceoption.size() == 0) {
 			success = false;
-			System.out.println("该路径无法RSA");
-			file_io.filewrite2(OutFileName, "该路径无法RSA");
 		}
 		System.out.println();
 		if (success) {
@@ -280,17 +273,17 @@ public class RegeneratorPlace {
 				file_io.filewrite_without(OutFileName, finalRoute.getregnode().get(p) + "     ");
 			}
 			System.out.println();
-			if (finalRoute.getIPRegnode().size() != 0) {
-				System.out.print("IP再生器放置位置 ： ");
-				file_io.filewrite_without(OutFileName, "IP再生器放置位置 ： ");
-				for (int IPReg : finalRoute.getIPRegnode()) {
-					System.out.print(IPReg + "  ");
-					file_io.filewrite_without(OutFileName, IPReg + "  ");
-				}
-			}else{
-				System.out.println("再生器均为纯OEO再生"); 
-				file_io.filewrite2(OutFileName,  "再生器均为纯OEO再生");
-			}
+//			if (finalRoute.getIPRegnode().size() != 0) {
+//				System.out.print("IP再生器放置位置 ： ");
+//				file_io.filewrite_without(OutFileName, "IP再生器放置位置 ： ");
+//				for (int IPReg : finalRoute.getIPRegnode()) {
+//					System.out.print(IPReg + "  ");
+//					file_io.filewrite_without(OutFileName, IPReg + "  ");
+//				}
+//			}else{
+//				System.out.println("再生器均为纯OEO再生"); 
+//				file_io.filewrite2(OutFileName,  "再生器均为纯OEO再生");
+//			}//工作路径全部采用OEO再生器
 				
 			System.out.println();
 			totalregNum = totalregNum + finalRoute.getregnum();
@@ -298,8 +291,8 @@ public class RegeneratorPlace {
 			file_io.filewrite2(OutFileName, "");
 			file_io.filewrite2(OutFileName, "******工作路径一共需要再生器个数：" + totalregNum);
 		} else {
-			System.out.println("放置再生器不成功该路径被堵塞");
-			file_io.filewrite2(OutFileName, "放置再生器不成功该路径被堵塞");
+			System.out.println("工作路径无法成功放置再生器");
+			file_io.filewrite2(OutFileName, "工作路径无法成功放置再生器");
 		}
 		return success;
 
@@ -336,7 +329,7 @@ public class RegeneratorPlace {
 
 	}
 
-	public void FinalRouteRSA(RouteAndRegPlace finalRoute, Layer oplayer, Layer ipLayer, int IPflow) {
+	public void FinalRouteRSA(RouteAndRegPlace finalRoute, Layer oplayer, Layer ipLayer, int IPflow,ArrayList<Double>RegLengthList) {
 		// 这里需要将不同的再生器 构造不同的IP虚拟链路加入IP层
 		// IP再生器 两端需要加入两段虚拟链路 oeo再生器只需要加入一段虚拟链路
 		ParameterTransfer pt = new ParameterTransfer();
@@ -346,7 +339,7 @@ public class RegeneratorPlace {
 		boolean regflag2 = false;
 		ArrayList<Link> linklist2 = new ArrayList<>();
 		file_out_put file_io = new file_out_put();
-		
+
 		pt.setStartNode(finalRoute.getRoute().getNodelist().get(0));// 首先设置该链路的起始节点
 		pt.setMinRemainFlowRSA(10000);//首先初始化
 		file_io.filewrite2(OutFileName, "");
@@ -372,6 +365,8 @@ public class RegeneratorPlace {
 							// 该点放置了IP再生器
 						if (finalRoute.getIPRegnode().contains(count)) {
 							modifylinkcapacity(true, IPflow, length2, linklist2, oplayer, ipLayer, pt);
+							file_io.filewrite2(OutFileName, "本次RSA长度为：" + length2);
+							RegLengthList.add(length2);
 							length2 = 0;
 							linklist2.clear();
 							break;
@@ -379,6 +374,8 @@ public class RegeneratorPlace {
 						// 该点放置纯OEO再生器
 						else {
 							modifylinkcapacity(false, IPflow, length2, linklist2, oplayer, ipLayer, pt);
+							RegLengthList.add(length2);
+							file_io.filewrite2(OutFileName, "本次RSA长度为：" + length2);
 							length2 = 0;
 							linklist2.clear();
 							break;
@@ -389,11 +386,12 @@ public class RegeneratorPlace {
 					pt.setEndNode(finalRoute.getRoute().getNodelist().get(count));//设置终止节点
 					System.out.println("起始节点为："+ pt.getStartNode().getName()+"终止节点为："+ pt.getEndNode().getName());
 					modifylinkcapacity(true, IPflow, length2, linklist2, oplayer, ipLayer, pt);// 此时在n点放置再生器
+					RegLengthList.add(length2);
+					file_io.filewrite2(OutFileName, "本次RSA长度为：" + length2);
 					linklist2.clear();
 				}
 			} while (count != finalRoute.getRoute().getNodelist().size() - 1);
 		}
-
 	}
 
 	public Boolean vertify(int IPflow, double routelength, ArrayList<Link> linklist, Layer oplayer, Layer iplayer,

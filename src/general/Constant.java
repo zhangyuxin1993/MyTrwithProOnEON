@@ -19,5 +19,15 @@ public class Constant {
 	public final static int ENCONS_OF_ROUTERPORT=1000; //每个路由端口耗能1000W
 	public final static int ENCONS_OF_TRANSPONDER=73;  //每个变换器耗能73W
 	public final static int ENCONS_OF_EDFA=8;  //每个EDFA耗能8W 
+	
+	public final static int Cost_OEO_reg_BPSK=1;  //OEO再生 不同调制格式下的cost
+	public final static double Cost_OEO_reg_QPSK=1.3;  
+	public final static double Cost_OEO_reg_8QAM=1.5;   
+	public final static double Cost_OEO_reg_16QAM=1.7;   
+	
+	public final static int Cost_IP_reg_BPSK=2;  //IP再生 不同调制格式下的cost
+	public final static double Cost_IP_reg_QPSK=2.6;  
+	public final static double Cost_IP_reg_8QAM=3;   
+	public final static double Cost_IP_reg_16QAM=3.4;   
 }
 

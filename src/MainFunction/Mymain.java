@@ -2,6 +2,7 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -15,30 +16,26 @@ import network.VirtualLink;
 import subgraph.LinearRoute;
 
 public class Mymain {
-	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
+//	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
+	public static String OutFileName = "F:\\zyx\\programFile\\USNET.dat";
 	public static void main(String[] args) throws IOException {
-		String TopologyName = "D:/zyx/Topology/USNET.csv";
+//		String TopologyName = "D:/zyx/Topology/USNET.csv";
+		String TopologyName = "F:/zyx/Topology/USNET.csv";
 		int numOfTransponder = 0;
 		Onlyfortest ot=new Onlyfortest();
-		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
-		HashMap<String, NodePair> RadomNodepairlist=new HashMap<String, NodePair>();
-		ArrayList<NodePair> nodepairlist = new ArrayList<>();
-		ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
-		
-		
 		file_out_put file_io=new file_out_put();
-		// 产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
-		LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
-		LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
-		Network network = new Network("ip over EON", 0, null);
-		network.readPhysicalTopology(TopologyName);
-		network.copyNodes();
-		network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
-		// **(现在随机产生demand 已经注释)
-
 		
-		Layer iplayer = network.getLayerlist().get("Layer0");
-		Layer oplayer = network.getLayerlist().get("Physical");
+		ArrayList<NodePair> RadomNodepairlist=new ArrayList<NodePair>();
+		Network network_base = new Network("ip over EON", 0, null);
+		network_base.readPhysicalTopology(TopologyName);
+		network_base.copyNodes();
+		network_base.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
+		DemandRadom dr=new DemandRadom();
+		Layer iplayer_base = network_base.getLayerlist().get("Layer0");
+		RadomNodepairlist=dr.NodePairRadom(10,TopologyName,iplayer_base);//随机产生结对
+		HashMap<String, NodePair> NodePairWithDemand=new HashMap<String, NodePair>();
+		NodePairWithDemand=dr.TrafficNumRadom(RadomNodepairlist);
+		
 		//以下可以读取表格中的业务
 //		ReadDemand rd=new ReadDemand();
 //		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
@@ -47,69 +44,77 @@ public class Mymain {
 //		 Readnodepairlist.put(nodepair.getName() , nodepair);
 //		 }
 //		 iplayer.setNodepairlist(Readnodepairlist);
-		 
-		//以下可以随机产生节点对
-		DemandRadom dr=new DemandRadom();
-		RadomNodepairlist=dr.demandradom(100,TopologyName,iplayer);//随机产生结对对并且产生业务量
-		iplayer.setNodepairlist(RadomNodepairlist);
-		int p=0;
-		HashMap<String, NodePair> testmap3 = iplayer.getNodepairlist();
-		Iterator<String> testiter3 = testmap3.keySet().iterator();
-		while (testiter3.hasNext()) {
-			p++;
-			NodePair node = (NodePair) (testmap3.get(testiter3.next()));
-			file_io.filewrite2(OutFileName, "随机产生节点对为 "+p+"  "+node.getName()+"   流量为 "+ node.getTrafficdemand());
-		}
-		
-		ArrayList<NodePair> demandlist = Rankflow(iplayer);
-		
-//		for(NodePair no:demandlist){
-//			file_io.filewrite2(OutFileName, "demand "+no.getName());
-//		}
-		for (int n = 0; n < demandlist.size(); n++) {
-			boolean iproutingFlag = false;
-			boolean ipproFlag = false;
-			boolean opworkFlag = false;
+		for(int shuffle=0;shuffle<5;shuffle++){//打乱次序100次
+			file_io.filewrite2(OutFileName, "  ");
+			file_io.filewrite2(OutFileName, "shuffle="+shuffle);
+			
+			Collections.shuffle(RadomNodepairlist);//打乱产生的业务100次
+			HashMap<String, NodePair> NodepairListForEach=new HashMap<String, NodePair>();
+			for(NodePair nodepair: RadomNodepairlist){
+				NodepairListForEach.put(nodepair.getName(),nodepair);
+				file_io.filewrite2(OutFileName, "节点对  "+nodepair.getName()+"  流量：" + nodepair.getTrafficdemand());
+			}
+			HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
+			ArrayList<NodePair> nodepairlist = new ArrayList<>();
+			ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
+			
+			// 产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
+			LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
+			LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
+			Network network = new Network("ip over EON", 0, null);
+			network.readPhysicalTopology(TopologyName);
+			network.copyNodes();
+			network.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
+			// **(现在随机产生demand 已经注释)
+			
+			Layer iplayer = network.getLayerlist().get("Layer0");
+			Layer oplayer = network.getLayerlist().get("Physical");
+			iplayer.setNodepairlist(NodepairListForEach);
 
-			 NodePair nodepair = demandlist.get(n);
-			
-			System.out.println();
-			System.out.println();
-			file_io.filewrite2(OutFileName, "");
-			file_io.filewrite2(OutFileName, "");
-			System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
-			file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
-			
-			// 先在IP层路由工作
-			IPWorkingGrooming ipwg = new IPWorkingGrooming();
-			iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer, numOfTransponder, ipWorkRoute, wprlist);// 在ip层工作路由
-			if (iproutingFlag) {// ip层工作路由成功 建立保护
-				ipProGrooming ipprog = new ipProGrooming();
-				ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true,wprlist);
+			for (int n = 0; n < RadomNodepairlist.size(); n++) {
+				boolean iproutingFlag = false;
+				boolean ipproFlag = false;
+				boolean opworkFlag = false;
 				
-				if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
-					opProGrooming opg = new opProGrooming();
-					opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true, wprlist);
-				}
-			}
-
-			// ip层工作路由不成功 在光层路由工作
-			if (!iproutingFlag) {
-				opWorkingGrooming opwg = new opWorkingGrooming();
-				opworkFlag = opwg.opWorkingGrooming(nodepair, iplayer, oplayer, opWorkRoute, wprlist);
-				if (opworkFlag) {// 在光层成功建立工作路径后建立保护路径
-					ipProGrooming ipprog = new ipProGrooming();
-					ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder,
-							false, wprlist);
+				NodePair nodepair = RadomNodepairlist.get(n);
+				
+				System.out.println();
+				System.out.println();
+				file_io.filewrite2(OutFileName, "");
+				file_io.filewrite2(OutFileName, "");
+				System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+				file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+				
+				// 先在IP层路由工作
+				IPWorkingGrooming ipwg = new IPWorkingGrooming();
+				iproutingFlag = ipwg.ipWorkingGrooming(nodepair, iplayer, oplayer, numOfTransponder, ipWorkRoute, wprlist);// 在ip层工作路由
+				if (iproutingFlag) {// ip层工作路由成功 建立保护
+//					ipProGrooming ipprog = new ipProGrooming();
+//					ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true,wprlist);
+					
 					if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
-						opProGrooming opg = new opProGrooming();
-						opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false,
-								wprlist);
+//						opProGrooming opg = new opProGrooming();
+//						opg.opprotectiongrooming(iplayer, oplayer, nodepair, ipWorkRoute, numOfTransponder, true, wprlist);
 					}
-				 
+				}
+				
+				// ip层工作路由不成功 在光层路由工作
+				if (!iproutingFlag) {
+					opWorkingGrooming opwg = new opWorkingGrooming();
+					opworkFlag = opwg.opWorkingGrooming(nodepair, iplayer, oplayer, opWorkRoute, wprlist);
+//					if (opworkFlag) {// 在光层成功建立工作路径后建立保护路径
+//						ipProGrooming ipprog = new ipProGrooming();
+//						ipproFlag = ipprog.ipprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder,
+//								false, wprlist);
+//						if (!ipproFlag) {// 在ip层保护路由受阻 则在光层路由保护
+//							opProGrooming opg = new opProGrooming();
+//							opg.opprotectiongrooming(iplayer, oplayer, nodepair, opWorkRoute, numOfTransponder, false,
+//									wprlist);
+//						}
+//						
+//					}
 				}
 			}
-		}
 			System.out.println();
 			System.out.println();
 			file_io.filewrite2(OutFileName, "");
@@ -137,16 +142,37 @@ public class Mymain {
 						file_io.filewrite_without(OutFileName, reg +"  ");
 					}
 					file_io.filewrite2(OutFileName, "");
-					if(FinalRoute.getIPRegnode()!=null){
-						file_io.filewrite_without(OutFileName, "工作路径放置IP再生器的位置为：");
-						for(int reg: FinalRoute.getIPRegnode()){
-							TotalWorkIPReg++;
-							file_io.filewrite_without(OutFileName, reg +"  ");
-						}
-					}
+//					if(FinalRoute.getIPRegnode()!=null){
+//						file_io.filewrite_without(OutFileName, "工作路径放置IP再生器的位置为：");
+//						for(int reg: FinalRoute.getIPRegnode()){
+//							TotalWorkIPReg++;
+//							file_io.filewrite_without(OutFileName, reg +"  ");
+//						}
+//					}
 				}
 				else{
 					file_io.filewrite2(OutFileName, "该工作链路不需要放置再生器");
+				}
+				
+				//工作的cost （全部为OEO再生器）
+				double WorkCost=0;
+				for(double length: wpr.getRegWorkLengthList()){
+					double cost=0;
+					if (length > 2000 && length <= 4000) {
+						cost=1;
+						file_io.filewrite2(OutFileName,"采用BPSK,cost为："+ cost);
+					} else if (length > 1000 && length <= 2000) {
+						cost=1.3;
+						file_io.filewrite2(OutFileName,"采用QPSK,cost为："+ cost);
+					} else if (length > 500 && length <= 1000) {
+						cost=1.5;
+						file_io.filewrite2(OutFileName,"采用8QAM,cost为："+ cost);
+					} else if (length > 0 && length <= 500) {
+						cost=1.7;
+						file_io.filewrite2(OutFileName,"采用16QAM,cost为："+ cost);
+					}
+					WorkCost=WorkCost+cost;
+					file_io.filewrite2(OutFileName,"总的cost为："+ WorkCost);
 				}
 				
 				file_io.filewrite2(OutFileName, " ");
@@ -163,16 +189,16 @@ public class Mymain {
 						reglist.add(reg);
 					}
 					if(reg.getNature()==0)
-					file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是OEO再生器  ");
+						file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是OEO再生器  ");
 					
 					if(reg.getNature()==1)
 						file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是IP再生器  ");
 				}
-
+				
 				
 				file_io.filewrite2(OutFileName, "");
 				file_io.filewrite_without(OutFileName,"保护路径放置新再生器节点：");
-			 
+				
 				for (Regenerator reg : wpr.getnewreglist()) {
 					reg.setPropathNum(reg.getPropathNum()+1);
 					if(!reglist.contains(reg)){
@@ -181,12 +207,12 @@ public class Mymain {
 					}
 					if(reg.getNature()==0)
 						file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是OEO再生器  ");
-						
-						if(reg.getNature()==1){
-							file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是IP再生器  ");
-							TotalProIPReg++;
-						}
-
+					
+					if(reg.getNature()==1){
+						file_io.filewrite_without(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号: "+reg.getindex()+" 是IP再生器  ");
+						TotalProIPReg++;
+					}
+					
 				}
 				file_io.filewrite2(OutFileName," ");
 				
@@ -195,7 +221,7 @@ public class Mymain {
 //					file_io.filewrite2(OutFileName,reg.getnode().getName() + "     "+"再生器在节点上的序号:"+reg.getindex()+"   "+"该再生器已经被"+reg.getpropathNum()+"条路径共享");
 //				}
 				
-				 
+				
 				file_io.filewrite2(OutFileName, "");
 //				if(wpr.getregthinglist()!=null){
 //					for(int t:wpr.getregthinglist().keySet()){
@@ -207,10 +233,10 @@ public class Mymain {
 //					file_io.filewrite2(OutFileName, "该业务保护路径不需要再生器");
 //				}
 //				file_io.filewrite2(OutFileName, "");
-		
+				
 //				ArrayList<FSshareOnlink> FSassignOneachLink=wpr.getFSoneachLink();
 //				file_io.filewrite2(OutFileName, "此时的request为"+ wpr.getrequest().getNodepair().getName()+"分配保护路径FS如下");
-
+				
 //				if(FSassignOneachLink!=null){
 //				for(FSshareOnlink fsassignoneachlink: FSassignOneachLink){
 //					file_io.filewrite_without(OutFileName, "链路"+fsassignoneachlink.getlink().getName()+"上分配的FS为   ");
@@ -255,7 +281,7 @@ public class Mymain {
 //					file_io.filewrite2(OutFileName, "虚拟链路上剩余的容量："+vlink.getRestcapacity());
 //				}
 //			}
-		
+			
 //			file_io.filewrite2(OutFileName, "");
 //			HashMap<String, Node> testmap2 = oplayer.getNodelist();
 //			Iterator<String> testiter2 = testmap2.keySet().iterator();
@@ -263,11 +289,12 @@ public class Mymain {
 //				Node node = (Node) (testmap2.get(testiter2.next()));
 //				file_io.filewrite2(OutFileName, node.getName()+"上面再生器的个数："+node.getregnum());
 //			}
-		
-		System.out.println();
-		System.out.println("Finish");
-		file_io.filewrite2(OutFileName, "");
-		file_io.filewrite2(OutFileName, "Finish");
+			
+			System.out.println();
+			System.out.println("Finish");
+			file_io.filewrite2(OutFileName, "");
+			file_io.filewrite2(OutFileName, "Finish");
+		}
 	}
 
 
