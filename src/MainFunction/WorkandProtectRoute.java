@@ -1,3 +1,4 @@
+
 package MainFunction;
 
 import java.util.ArrayList;
@@ -10,28 +11,33 @@ import network.VirtualLink;
 import subgraph.LinearRoute;
 
 public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生器节点
-	private NodePair demand = new NodePair(null, 0, null, null, null, null);
-	private ArrayList<Link> worklinklist=new ArrayList<Link>();
-	private ArrayList<Link> prolinklist=new ArrayList<Link>();
-	private ArrayList<VirtualLink> provirtuallinklist=new ArrayList<>();
+	private NodePair demand = null;
+	private ArrayList<Link> worklinklist=null;
+	private ArrayList<Link> prolinklist=null;
+	private ArrayList<VirtualLink> provirtuallinklist=null;
 	private HashMap<Integer, Regenerator> regthinglist=null; 
-	private ArrayList<Regenerator> Regneratorlist=new ArrayList<Regenerator>();
-	private LinearRoute proroute=new LinearRoute(null, 0, null);
+	private ArrayList<Regenerator> Regneratorlist=null;
+	private LinearRoute proroute=null;
 	private ArrayList<FSshareOnlink> FSoneachLink=null;
-	 private ArrayList<Regenerator> newreglist=new ArrayList<Regenerator>();
-	 private ArrayList<Regenerator> sharereglist=new ArrayList<Regenerator>();
-	 private Request request=new Request(demand);
+	 private ArrayList<Regenerator> newreglist=null;
+	 private ArrayList<Regenerator> sharereglist=null;
+	 private Request request=null;
 	 private ArrayList<Double> RegWorkLengthList=null;
+	 private ArrayList<Double> RegProLengthList=null;
 	 
-	 
+		public void setRegRegProLengthList(ArrayList<Double> RegProLengthList) {
+			this.RegProLengthList=RegProLengthList;
+		}
+		public ArrayList<Double> getRegProLengthList() {
+			return RegProLengthList;
+		}
+		
 		public void setRegWorkLengthList(ArrayList<Double> RegLengthList) {
 			this.RegWorkLengthList=RegLengthList;
 		}
 		public ArrayList<Double> getRegWorkLengthList() {
 			return RegWorkLengthList;
 		}
-		
-		
 		
 	public WorkandProtectRoute(NodePair demand) {
 		super();

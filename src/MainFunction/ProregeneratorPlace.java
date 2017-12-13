@@ -352,11 +352,11 @@ public class ProregeneratorPlace {
 			if (!partworkflag && RSAflag)
 				break;
 			if (i < set.length) {
-//				System.out.println("****************再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
-//				file_io.filewrite2(OutFileName, "****************再生器的位置为：" + set[i]);
+				System.out.println("****************再生器的位置为：" + set[i]); // set里面的数应该是节点的位置+1！
+				file_io.filewrite2(OutFileName, "****************再生器的位置为：" + set[i]);
 			} else {
-//				System.out.println("************最后一个再生器与终结点之间的RSA ");
-//				file_io.filewrite2(OutFileName, "************最后一个再生器与终结点之间的RSA ");
+				System.out.println("************最后一个再生器与终结点之间的RSA ");
+				file_io.filewrite2(OutFileName, "************最后一个再生器与终结点之间的RSA ");
 				regflag = true;
 			}
 			do {// 通过一个

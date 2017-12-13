@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import general.Constant;
 import general.file_out_put;
 import network.Layer;
 import network.Link;
@@ -159,16 +160,16 @@ public class Mymain {
 				for(double length: wpr.getRegWorkLengthList()){
 					double cost=0;
 					if (length > 2000 && length <= 4000) {
-						cost=1;
+						cost=Constant.Cost_OEO_reg_BPSK;
 						file_io.filewrite2(OutFileName,"采用BPSK,cost为："+ cost);
 					} else if (length > 1000 && length <= 2000) {
-						cost=1.3;
+						cost=Constant.Cost_OEO_reg_QPSK;
 						file_io.filewrite2(OutFileName,"采用QPSK,cost为："+ cost);
 					} else if (length > 500 && length <= 1000) {
-						cost=1.5;
+						cost=Constant.Cost_OEO_reg_8QAM;
 						file_io.filewrite2(OutFileName,"采用8QAM,cost为："+ cost);
 					} else if (length > 0 && length <= 500) {
-						cost=1.7;
+						cost=Constant.Cost_OEO_reg_16QAM;
 						file_io.filewrite2(OutFileName,"采用16QAM,cost为："+ cost);
 					}
 					WorkCost=WorkCost+cost;
