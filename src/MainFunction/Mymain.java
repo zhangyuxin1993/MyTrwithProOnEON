@@ -25,7 +25,7 @@ public class Mymain {
 		int numOfTransponder = 0;
 		file_out_put file_io=new file_out_put();
 		Mymain mm=new Mymain();
-		
+		int average=0;
 		ArrayList<NodePair> RadomNodepairlist=new ArrayList<NodePair>();
 		Network network_base = new Network("ip over EON", 0, null);
 		network_base.readPhysicalTopology(TopologyName);
@@ -38,6 +38,9 @@ public class Mymain {
 		for(NodePair np:RadomNodepairlist){
 			System.out.println(np.getName()+"  "+ np.getTrafficdemand());
 		}
+		/*
+		 * 计算average的大小
+		 */
 		//以下可以读取表格中的业务
 //		ReadDemand rd=new ReadDemand();
 //		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
@@ -47,22 +50,21 @@ public class Mymain {
 //		 Readnodepairlist.put(nodepair.getName() , nodepair);
 //		 }
 //		 iplayer.setNodepairlist(Readnodepairlist);
+		
+		
 		for(int shuffle=0;shuffle<1;shuffle++){//打乱次序100次
 			double TotalWorkCost=0,TotalProCost=0;
 			file_io.filewrite2(OutFileName, "  ");
 			file_io.filewrite2(OutFileName, "shuffle="+shuffle);
 			
 			Collections.shuffle(RadomNodepairlist);//打乱产生的业务100次
-			
-//			HashMap<String, NodePair> NodepairListForEach=new HashMap<String, NodePair>();
-//			for(NodePair nodepair: RadomNodepairlist){
-//				NodepairListForEach.put(nodepair.getName(),nodepair);
-//				file_io.filewrite2(OutFileName, "节点对  "+nodepair.getName()+"  流量：" + nodepair.getTrafficdemand());
-//			}
-			
-			ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
+			for(NodePair nodepair: RadomNodepairlist){
+				file_io.filewrite2(OutFileName, "节点对  "+nodepair.getName()+"  流量：" + nodepair.getTrafficdemand());
+			}
 			
 			// 产生的节点对之间的容量(int)(Math.random()*(2*Constant.AVER_DEMAND-20));
+			ArrayList<WorkandProtectRoute> wprlist = new ArrayList<>();
+			ArrayList<NodePair> SmallNodePairList = new ArrayList<NodePair>();
 			LinearRoute ipWorkRoute = new LinearRoute(null, 0, null);
 			LinearRoute opWorkRoute = new LinearRoute(null, 0, null);
 			Network network = new Network("ip over EON", 0, null);
@@ -74,25 +76,21 @@ public class Mymain {
 			Layer oplayer = network.getLayerlist().get("Physical");
 		
 			mm.NodepairListset(iplayer, RadomNodepairlist);
-//			iplayer.setNodepairlist(NodepairListForEach);
 			//TEST
-//			file_io.filewrite2(OutFileName, "IP层中的业务");
-//			HashMap<String, NodePair> map3 = iplayer.getNodepairlist();
-//			Iterator<String> iter3 = map3.keySet().iterator();
-//			while (iter3.hasNext()) {
-//				NodePair NodePair = (NodePair) (map3.get(iter3.next()));
-//				file_io.filewrite2(OutFileName, NodePair.getName()+"  "+ NodePair.getTrafficdemand());
-//			}
 			
-			ArrayList<NodePair> demandlist = Rankflow(iplayer);
-//			for (int n = 0; n < RadomNodepairlist.size(); n++) {
+			ArrayList<NodePair> demandlist = mm.getDemandList(iplayer);
+			
 			for (int n = 0; n < demandlist.size(); n++) {
 				boolean iproutingFlag = false;
 				boolean ipproFlag = false;
 				boolean opworkFlag = false;
 				
-//				NodePair nodepair = RadomNodepairlist.get(n);
 				NodePair nodepair = demandlist.get(n);
+				
+				if(nodepair.getTrafficdemand()<average ){
+					SmallNodePairList.add(nodepair);
+					continue;
+				}
 				System.out.println();
 				System.out.println();
 				file_io.filewrite2(OutFileName, "");
@@ -129,6 +127,7 @@ public class Mymain {
 						
 					}
 				}
+			
 			}
 			System.out.println();
 			System.out.println();
@@ -467,19 +466,15 @@ public class Mymain {
 		return TotalProCost;
 	}
 public void NodepairListset(Layer ipLayer,ArrayList<NodePair> nodepairlist) {
-//	System.out.println();
 	HashMap<String, NodePair> IPnodePairList =  new HashMap<String, NodePair>();
 	
 	HashMap<String, NodePair> map3 = ipLayer.getNodepairlist();
 	Iterator<String> iter3 = map3.keySet().iterator();
 
-//	System.out.println("ip nodepair size="+ ipLayer.getNodepairlist().size());
 	while (iter3.hasNext()) {
 		NodePair NodePair = (NodePair) (map3.get(iter3.next()));
-//		System.out.println("IP层原本的节点对"+NodePair.getName());
 		for(int n=0;n<nodepairlist.size();n++){
 			NodePair nodePairinList=nodepairlist.get(n);
-//			System.out.println("list里面的节点对 "+nodePairinList.getName()+"  "+ nodePairinList.getTrafficdemand());
 			if(nodePairinList.getName().equals(NodePair.getName())){
 				NodePair.setTrafficdemand(nodePairinList.getTrafficdemand());
 				IPnodePairList.put(NodePair.getName(), NodePair);
@@ -488,6 +483,22 @@ public void NodepairListset(Layer ipLayer,ArrayList<NodePair> nodepairlist) {
 		}
 	}
 	ipLayer.setNodepairlist(IPnodePairList);
-//	System.out.println(ipLayer.getNodepairlist().size());
+}
+public ArrayList<NodePair> getDemandList(Layer ipLayer) {
+	ArrayList<NodePair> demandList=new ArrayList<NodePair>();
+	
+	HashMap<String, NodePair> map3 = ipLayer.getNodepairlist();
+	Iterator<String> iter3 = map3.keySet().iterator();
+
+	while (iter3.hasNext()) {
+		NodePair NodePair = (NodePair) (map3.get(iter3.next()));
+		demandList.add(NodePair);
+	}
+	return demandList;
+	
+}
+public void mainMethod() {
+	
+	
 }
 }
