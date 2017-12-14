@@ -52,7 +52,7 @@ public class Mymain {
 //		 iplayer.setNodepairlist(Readnodepairlist);
 		
 		
-		for(int shuffle=0;shuffle<1;shuffle++){//打乱次序100次
+		for(int shuffle=0;shuffle<3;shuffle++){//打乱次序100次
 			double TotalWorkCost=0,TotalProCost=0;
 			file_io.filewrite2(OutFileName, "  ");
 			file_io.filewrite2(OutFileName, "shuffle="+shuffle);
@@ -75,7 +75,7 @@ public class Mymain {
 			Layer oplayer = network.getLayerlist().get("Physical");
 		
 			mm.NodepairListset(iplayer, RadomNodepairlist);//在IP层设置nodepairList
-			ArrayList<NodePair> demandlist = mm.getDemandList(iplayer);
+			ArrayList<NodePair> demandlist = mm.getDemandList(iplayer,RadomNodepairlist);
 			
 			for (int n = 0; n < demandlist.size(); n++) {
 				NodePair nodepair = demandlist.get(n);
@@ -87,18 +87,22 @@ public class Mymain {
 				System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
 				file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
 				
-//				if(nodepair.getTrafficdemand()<average ){
-//					SmallNodePairList.add(nodepair);
-//					continue;
-//				}
-				/*
-				 * main_method
-				 */
+				if(nodepair.getTrafficdemand()<5 ){
+					SmallNodePairList.add(nodepair);
+					continue;
+				}
+
 				mm.mainMethod(nodepair, iplayer, oplayer, numOfTransponder, wprlist);
-//				if(SmallNodePairList!=null&&SmallNodePairList.size()!=0){
-//					for()
-//				}
+				
 			}
+				if(SmallNodePairList!=null&&SmallNodePairList.size()!=0){
+					for(NodePair smallnodepair:SmallNodePairList){
+						file_io.filewrite2(OutFileName, "");
+						file_io.filewrite2(OutFileName, "正在操作的节点对： " + smallnodepair.getName() + "  他的流量需求是： " + smallnodepair.getTrafficdemand());
+						mm.mainMethod(smallnodepair, iplayer, oplayer, numOfTransponder, wprlist);
+					}
+				}
+			
 			System.out.println();
 			System.out.println();
 			file_io.filewrite2(OutFileName, "");
@@ -169,6 +173,7 @@ public class Mymain {
 				file_io.filewrite_without(OutFileName,"保护路径：");
 				if(wpr.getproroute()!=null)
 				wpr.getproroute().OutputRoute_node(wpr.getproroute(), OutFileName);
+				else file_io.filewrite_without(OutFileName,"保护路径在IP层grooming成功");
 				file_io.filewrite2(OutFileName, "");
 				
 				file_io.filewrite_without(OutFileName,"保护路径放置共享再生器节点：");
@@ -454,19 +459,27 @@ public void NodepairListset(Layer ipLayer,ArrayList<NodePair> nodepairlist) {
 	}
 	ipLayer.setNodepairlist(IPnodePairList);
 }
-public ArrayList<NodePair> getDemandList(Layer ipLayer) {
+public ArrayList<NodePair> getDemandList(Layer ipLayer,ArrayList<NodePair> RadomNodepairlist) {
 	ArrayList<NodePair> demandList=new ArrayList<NodePair>();
 	
-	HashMap<String, NodePair> map3 = ipLayer.getNodepairlist();
-	Iterator<String> iter3 = map3.keySet().iterator();
-
-	while (iter3.hasNext()) {
-		NodePair NodePair = (NodePair) (map3.get(iter3.next()));
-		demandList.add(NodePair);
-	}
+	ArrayList<NodePair> NewFormatnodePairList=new ArrayList<NodePair>();
+	HashMap<String,NodePair> nodepairlist=ipLayer.getNodepairlist();
+     Iterator<String> iter1=nodepairlist.keySet().iterator();
+     while(iter1.hasNext()){
+    	 NodePair nodepair=(NodePair)(nodepairlist.get(iter1.next()));
+    	 NewFormatnodePairList.add(nodepair);
+     }
+     	for(NodePair np: RadomNodepairlist){
+     		for(NodePair nodepairInIP: NewFormatnodePairList){
+     			if(np.getName().equals(nodepairInIP.getName())){
+     				demandList.add(nodepairInIP);
+     				break;
+     			}
+     		}
+     	}
 	return demandList;
-	
 }
+
 public void mainMethod(NodePair nodepair, Layer iplayer, Layer oplayer,int numOfTransponder, ArrayList<WorkandProtectRoute> wprlist) throws IOException {
 	// 先在IP层路由工作
 	boolean iproutingFlag = false;

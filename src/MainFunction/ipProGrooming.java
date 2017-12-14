@@ -24,9 +24,8 @@ public class ipProGrooming {
 //		String OutFileName = "F:\\programFile\\RegwithProandTrgro\\NSFNET.dat";
 		file_out_put file_io=new file_out_put();
 		
-		System.out.println("节点对：" + nodepair.getName() + "   flag=" + flag);
 		file_io.filewrite2(OutFileName,"  ");
-		file_io.filewrite2(OutFileName,"节点对：" + nodepair.getName() + "   flag=" + flag);
+		file_io.filewrite2(OutFileName,"开始保护路由" );
 		ArrayList<VirtualLink> DelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<VirtualLink> SumDelLinkList = new ArrayList<VirtualLink>();
 		ArrayList<Link> DelIPLinkList = new ArrayList<Link>();
@@ -204,10 +203,11 @@ public class ipProGrooming {
 			file_io.filewrite_without(OutFileName,"**************保护路径在IP层找到路由  ");
 			newRoute.OutputRoute_node(newRoute);
 			ArrayList<Link> totallink = new ArrayList<>();
+			file_io.filewrite2(OutFileName,"IP路由上的链路：" );
 			for (int c = 0; c < newRoute.getLinklist().size(); c++) {
 				Link link = newRoute.getLinklist().get(c); // 找到的路由上面的link
 				System.out.println("IP路由上的链路：" + link.getName());
-				file_io.filewrite2(OutFileName,"IP路由上的链路：" + link.getName());
+				file_io.filewrite_without(OutFileName, link.getName()+"  ");
 				/*
 				 * 如果路由成功 则需要找到IP层上的link对应的虚拟链路 改变其容量
 				 */
@@ -218,12 +218,9 @@ public class ipProGrooming {
 					Link link1 = (Link) (linklist2.get(linkitor2.next()));// IPlayer里面的link
 					if (link1.getNodeA().getName().equals(link.getNodeA().getName())
 							&& link1.getNodeB().getName().equals(link.getNodeB().getName())) {
-						System.out.println("找到路由经过的链路： " + link1.getName());
-						file_io.filewrite2(OutFileName,"找到路由经过的链路： " + link1.getName());
+				
 						VirtualLink Vlink = link1.getVirtualLinkList().get(0);
-						// System.out.println(Vlink.getSrcnode() + " " +
-						// Vlink.getDesnode() + " "
-						// + Vlink.getRestcapacity());
+						// System.out.println(Vlink.getSrcnode() + " " +Vlink.getDesnode() + " "+ Vlink.getRestcapacity());
 						Vlink.setUsedcapacity(Vlink.getUsedcapacity() + nodepair.getTrafficdemand());
 						Vlink.setRestcapacity(Vlink.getFullcapacity() - Vlink.getUsedcapacity());
 						// System.out.println(Vlink.getRestcapacity());

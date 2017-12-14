@@ -26,13 +26,11 @@ public class opWorkingGrooming {
 		LinearRoute route_out=new LinearRoute(null, 0, null);
 		file_out_put file_io=new file_out_put();
 		ArrayList<Double> RegLengthList=new ArrayList<>();
-		
+		file_io.filewrite2(OutFileName," ");
 		System.out.println("IP层工作路由不成功，需要新建光路");
 		file_io.filewrite2(OutFileName,"IP层工作路由不成功，需要新建光路");
 		Node opsrcnode = oplayer.getNodelist().get(srcnode.getName());
 		Node opdesnode = oplayer.getNodelist().get(desnode.getName());
-		 System.out.println("源点： " + opsrcnode.getName() + " 终点： " +opdesnode.getName());
-		 file_io.filewrite2(OutFileName,"源点： " + opsrcnode.getName() + " 终点： " +opdesnode.getName());
 		 
 		// 在光层新建光路的时候不需要考虑容量的问题
 		 
@@ -165,8 +163,8 @@ public class opWorkingGrooming {
 		if(opworkflag){
 //				&&routelength<=4000) {
 			System.out.println();
-			System.out.println("在光层成功路由并且RSA");
-			file_io.filewrite2(OutFileName,"在光层成功路由并且RSA");
+			System.out.println("工作路径在光层成功路由并且RSA");
+			file_io.filewrite2(OutFileName,"工作路径在光层成功路由并且RSA");
 			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
 			Request re=new Request(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
