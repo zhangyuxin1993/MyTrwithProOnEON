@@ -69,7 +69,7 @@ public class DemandRadom {
 			nodePair.setTrafficdemand(radom.Num_random(1, 824)[0]+200);//产生200G-1T的容量
 			}
 			else{
-				nodePair.setTrafficdemand(radom.Num_random(1, 10)[0]);
+				nodePair.setTrafficdemand(radom.Num_random(1, 10)[0]+1);
 			}
 		}
 	}

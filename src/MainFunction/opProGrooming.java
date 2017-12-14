@@ -246,6 +246,17 @@ public class opProGrooming {// 光层路由保护
 				}
 			}
 		}
+		ArrayList<WorkandProtectRoute> FailWpr=new ArrayList<WorkandProtectRoute>();
+		if(!success){//在光层无法建立保护路由
+			for(WorkandProtectRoute wpr: wprlist){
+				if (wpr.getdemand().equals(nodepair)) {
+					FailWpr.add(wpr);
+				}
+			}
+			for(WorkandProtectRoute removewpr: FailWpr){
+				wprlist.remove(removewpr);
+			}
+		}
 		return success;
 	}
 

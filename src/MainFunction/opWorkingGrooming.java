@@ -178,8 +178,8 @@ public class opWorkingGrooming {
 		
 		}
 		if(!opworkflag) {
-			System.out.println("在光层路由失败 该业务阻塞");
-			file_io.filewrite2(OutFileName,"在光层路由失败 该业务阻塞");
+			System.out.println("工作路由光层路由失败 该业务阻塞");
+			file_io.filewrite2(OutFileName,"工作路由光层路由失败 该业务阻塞");
 		}
 		return opworkflag;
 	}
