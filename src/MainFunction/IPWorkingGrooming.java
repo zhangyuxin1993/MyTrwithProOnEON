@@ -32,18 +32,20 @@ public class IPWorkingGrooming {
 			Node desnode = nodepair.getDesNode();
 	
 			//test
-//			System.out.println("IP层上的链路条数为：" +  iplayer.getLinklist().size());
-//			file_io.filewrite2(OutFileName,"IP层上的链路条数为：" +  iplayer.getLinklist().size());
-//			HashMap<String, Link> linklisttest = iplayer.getLinklist();
-//			Iterator<String> linkitortest = linklisttest.keySet().iterator();
-//			while (linkitortest.hasNext()) {
-//				Link Mlink = (Link) (linklisttest.get(linkitortest.next()));
-//				file_io.filewrite2(OutFileName,"IP层上的链路为：" +  Mlink.getName());
-//				VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
-//				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtua
-//				file_io.filewrite2(OutFileName,"该IP链路上的虚拟链路为：" +  Vlink.getSrcnode()+"-"+Vlink.getDesnode()+"   性质为："+Vlink.getNature());
-//				}
-//			}
+			System.out.println("IP层上的链路条数为：" +  iplayer.getLinklist().size());
+			file_io.filewrite2(OutFileName,"IP层上的链路条数为：" +  iplayer.getLinklist().size());
+			HashMap<String, Link> linklisttest = iplayer.getLinklist();
+			Iterator<String> linkitortest = linklisttest.keySet().iterator();
+			while (linkitortest.hasNext()) {
+				Link Mlink = (Link) (linklisttest.get(linkitortest.next()));
+				if(Mlink==null)
+				System.out.println("why not print");
+				file_io.filewrite2(OutFileName,"IP层上的链路为：" +  Mlink.getName());
+				VirtualLinklist = Mlink.getVirtualLinkList();//取出IP层上的链路对应的虚拟链路 新建一个list使其本身的虚拟链路不改变						
+				for (VirtualLink Vlink : VirtualLinklist) { // 取出link上对应的virtua
+				file_io.filewrite2(OutFileName,"该IP链路上的虚拟链路为：" +  Vlink.getSrcnode()+"-"+Vlink.getDesnode()+"   性质为："+Vlink.getNature());
+				}
+			}
 			
 			HashMap<String, Link> linklist = iplayer.getLinklist();
 			Iterator<String> linkitor = linklist.keySet().iterator();
@@ -113,6 +115,7 @@ public class IPWorkingGrooming {
 			WorkandProtectRoute wpr=new WorkandProtectRoute(nodepair);
 			Request re=new Request(nodepair);
 			ArrayList<Link> totallink=new ArrayList<>();
+			
 			Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);
 
 			// 恢复iplayer里面删除的link

@@ -200,8 +200,8 @@ public class ipProGrooming {
 
 		if (newRoute.getNodelist().size() != 0) {
 			ipproflag = true;
-			System.out.print("**************保护路由在IP层上路由成功  ");
-			file_io.filewrite_without(OutFileName,"**************保护路由在IP层上路由成功  ");
+			System.out.print("**************保护路径在IP层找到路由  ");
+			file_io.filewrite_without(OutFileName,"**************保护路径在IP层找到路由  ");
 			newRoute.OutputRoute_node(newRoute);
 			ArrayList<Link> totallink = new ArrayList<>();
 			for (int c = 0; c < newRoute.getLinklist().size(); c++) {

@@ -14,12 +14,9 @@ import subgraph.LinearRoute;
 public class DemandRadom {
 	
 	public ArrayList<NodePair> NodePairRadom(int nodepairNum,String filename,Layer mylayer){//随机产生nodepair列表
-//		Layer mylayer= new Layer(null, 0, null, null);
 		ArrayList<LinearRoute> routelist_once=new ArrayList<LinearRoute>();
 		int serial=0;
 		
-//		mylayer.readTopology(filename);
-//		mylayer.generateNodepairs(); 
 		HashMap<String,Integer> nodepair_serial=new HashMap<String,Integer>();
 		ArrayList<NodePair> nodepairlist= new ArrayList<NodePair>();
 		HashMap<String, NodePair> Snodepair = mylayer.getNodepairlist();
@@ -61,28 +58,19 @@ public class DemandRadom {
 	}
 	
 	public void TrafficNumRadom(ArrayList<NodePair>nodepairlist ){
-		String serve = "F:\\zyx\\programFile\\USNET.dat";
-		String local = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
+//		String serve = "F:\\zyx\\programFile\\USNET.dat";
+//		String local = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
+//		file_out_put file_io=new file_out_put();
 		randomfunction radom=new randomfunction();
-		file_out_put file_io=new file_out_put();
-//		HashMap<String, NodePair> NodepairWithTraffic=new HashMap<String, NodePair>(0);
-		file_io.filewrite2(serve, "随机产生的节点对容量：");
+		int setDemand=0,nodepairNum=nodepairlist.size() ;
 		for(NodePair nodePair:nodepairlist){
-//			setDemand++;
-//			System.out.println(nodePair.getName());
-//			if(setDemand<nodepairNum/5){
-			nodePair.setTrafficdemand(radom.Num_random(1, 1025)[0]+200);//产生200G-1T的容量
-			file_io.filewrite2(serve,  nodePair.getName()+"  "+ nodePair.getTrafficdemand());
-//			}
-//			else{
-//				nodePair.setTrafficdemand(radom.Num_random(1, demandlimit)[0]+1);
-//			}
+			setDemand++;
+			if(setDemand<nodepairNum/5){
+			nodePair.setTrafficdemand(radom.Num_random(1, 824)[0]+200);//产生200G-1T的容量
+			}
+			else{
+				nodePair.setTrafficdemand(radom.Num_random(1, 10)[0]);
+			}
 		}
-//		System.out.println();
-//		for(NodePair nodePair:nodepairlist){
-//			System.out.print(nodePair.getName()+"   ");
-//			System.out.println(nodePair.getSlotsnum());
-//			NodepairWithTraffic.put(nodePair.getName(), nodePair);
-//		}
 	}
 }

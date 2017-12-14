@@ -155,6 +155,8 @@ public class RouteSearching {
 			newRoute.getNodelist().add(0, currentNode);
 			
 			while(currentNode != srcNode){
+//				System.out.println("index of currentnode "+ currentNode.getName()+" ="+ currentNode.getIndex()+
+//						"   index of parentnode "+ currentNode.getParentNode().getName()+" ="+ currentNode.getParentNode().getIndex());
 				Link link = layer.findLink(currentNode, currentNode.getParentNode());
 				newRoute.getLinklist().add(0, link);
 				

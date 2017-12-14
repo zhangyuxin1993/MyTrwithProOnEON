@@ -368,6 +368,12 @@ public class Layer extends CommonObject{
 	 */
 	public Link findLink(Node nodeA, Node nodeB){
 		String name;
+//		if(nodeA==null){
+//			System.out.println("AAAAAAAAAAA");
+//		}
+//		if(nodeB==null){
+//			System.out.println("BBBBBBBBBBBBBBBBB");
+//		}
 		if(nodeA.getIndex()<nodeB.getIndex())
 			name = nodeA.getName()+"-"+nodeB.getName();
 		else
