@@ -21,7 +21,7 @@ public class ProregeneratorPlace {
 
 	// 在RSAunderSet 里面控制阈值
 	public boolean ProRegeneratorPlace(NodePair nodepair, LinearRoute newRoute, ArrayList<WorkandProtectRoute> wprlist,
-			double routelength, Layer oplayer, Layer ipLayer, int IPflow, Request request) throws IOException {
+			double routelength, Layer oplayer, Layer ipLayer, int IPflow, Request request,ArrayList<Double> ProLengthList) throws IOException {
 		WorkandProtectRoute nowdemand = new WorkandProtectRoute(null);
 		ArrayList<VirtualLink> provirtuallinklist = new ArrayList<>();
 		ProregeneratorPlace rgp2 = new ProregeneratorPlace();
@@ -255,7 +255,7 @@ public class ProregeneratorPlace {
 				System.out.println();
 				// 先输出可共享再生器
 				if (DebugRegRoute.getUsedShareReg() != null) {
-					file_io.filewrite2(OutFileName, "!!!!!!!可共享的再生器的个数： "+ DebugRegRoute.getUsedShareReg().size());
+					file_io.filewrite2(OutFileName, "可共享的再生器 ");
 					for (Regenerator reg : DebugRegRoute.getUsedShareReg()) {
 						if (reg.getNature() == 0) {
 							file_io.filewrite2(OutFileName, reg.getnode().getName() + "  OEO再生器");
@@ -307,7 +307,7 @@ public class ProregeneratorPlace {
 				finalRoute = regplaceoption.get(0);
 			// 接下来对该最终链路进行RSA
 			rgp2.FinalRouteRSA(nodepair, finalRoute, oplayer, ipLayer, IPflow, wprlist, provirtuallinklist, ShareReg,
-					sharereglist, request);
+					sharereglist, request,ProLengthList);
 			// 对于finalroute进行再生器节点存储！！
 		}
 		if (regplaceoption.size() == 0) {
@@ -337,7 +337,7 @@ public class ProregeneratorPlace {
 			LinearRoute newRoute, Layer oplayer, Layer ipLayer, int IPflow, ArrayList<RouteAndRegPlace> regplaceoption,
 			ArrayList<WorkandProtectRoute> wprlist, NodePair nodepair) {
 		// 建立新的再生器 并且控制阈值
-		float threshold = (float) 0.03;// 在这里控制阈值
+		float threshold = (float) 0.3;// 在这里控制阈值
 		boolean partworkflag = false, RSAflag = false, regflag = false;
 		double length = 0;
 		file_out_put file_io = new file_out_put();
@@ -407,7 +407,7 @@ public class ProregeneratorPlace {
 					}
 				} else {// 使用了该可共享的再生器
 					for (Regenerator UsedShareReg : sharereglist) {
-						if (UsedShareReg.getnode().getName().equals(newRoute.getNodelist().get(set[k]))) {
+						if (UsedShareReg.getnode().getName().equals(newRoute.getNodelist().get(set[k]).getName())) {
 							UseShareReg.add(UsedShareReg);// 保存使用了的共享再生器
 							break;
 						}
@@ -478,8 +478,8 @@ public class ProregeneratorPlace {
 
 	public void FinalRouteRSA(NodePair nodepair, RouteAndRegPlace finalRoute, Layer oplayer, Layer ipLayer, int IPflow,
 			ArrayList<WorkandProtectRoute> wprlist, ArrayList<VirtualLink> provirtuallinklist,
-			ArrayList<Integer> ShareReg, ArrayList<Regenerator> sharereglist, Request request) {
-		// 对于最终路由 通过其再生器的类型 进行RSA（是否建立IP光路） 并且建立Wpr 存储其再生器的位置 类型
+			ArrayList<Integer> ShareReg, ArrayList<Regenerator> sharereglist, Request request,ArrayList<Double> ProLengthList) {
+		// 对于最终路由 通过其再生器的类型 进行RSA（是否建立IP光路） 并且存储Wpr 中再生器的位置 类型
 		ParameterTransfer pt = new ParameterTransfer();
 		file_out_put file_io = new file_out_put();
 		ArrayList<Link> alllinklist = new ArrayList<>();
@@ -525,20 +525,28 @@ public class ProregeneratorPlace {
 										Prolinkcapacitymodify(false, IPflow, length2, linklist2, oplayer, ipLayer,
 												provirtuallinklist, wprlist, nodepair, FSoneachLink, request,
 												sharereglist, pt);// 此时在n点放置再生器
+										ProLengthList.add(length2);
+										file_io.filewrite2(OutFileName, "length=" + length2);
 									} else if (reg.getNature() == 1) {
 										Prolinkcapacitymodify(true, IPflow, length2, linklist2, oplayer, ipLayer,
 												provirtuallinklist, wprlist, nodepair, FSoneachLink, request,
 												sharereglist, pt);// 此时在n点放置再生器
+										ProLengthList.add(length2);
+										file_io.filewrite2(OutFileName, "length=" + length2);
 									}
 								}
 							}
 						} else {// 该再生器不是共享再生器
 							if (finalRoute.getIPRegnode().contains(count)) {// 新建的再生器是IP再生器
 								Prolinkcapacitymodify(true, IPflow, length2, linklist2, oplayer, ipLayer,
-										provirtuallinklist, wprlist, nodepair, FSoneachLink, request, sharereglist, pt);// 此时在n点放置再生器
+										provirtuallinklist, wprlist, nodepair, FSoneachLink, request, sharereglist, pt);
+								ProLengthList.add(length2);
+								file_io.filewrite2(OutFileName, "length=" + length2);
 							} else {// 新建的再生器是纯OEO再生器
 								Prolinkcapacitymodify(false, IPflow, length2, linklist2, oplayer, ipLayer,
-										provirtuallinklist, wprlist, nodepair, FSoneachLink, request, sharereglist, pt);// 此时在n点放置再生器
+										provirtuallinklist, wprlist, nodepair, FSoneachLink, request, sharereglist, pt);
+								ProLengthList.add(length2);
+								file_io.filewrite2(OutFileName, "length=" + length2);
 							}
 						}
 
@@ -554,6 +562,8 @@ public class ProregeneratorPlace {
 					pt.setEndNode(finalRoute.getRoute().getNodelist().get(count));// 设置终止节点
 					Prolinkcapacitymodify(true, IPflow, length2, linklist2, oplayer, ipLayer, provirtuallinklist,
 							wprlist, nodepair, FSoneachLink, request, sharereglist, pt);// 为目的节点前的剩余链路进行RSA
+					ProLengthList.add(length2);
+					file_io.filewrite2(OutFileName, "length=" + length2);
 					for (Link addlink : linklist2) {
 						alllinklist.add(addlink);
 					}
@@ -605,12 +615,14 @@ public class ProregeneratorPlace {
 
 		for (WorkandProtectRoute wpr : wprlist) {
 			if (wpr.getdemand().equals(nodepair)) {
+				wpr.setproroute(finalRoute.getRoute());
+				wpr.setRegProLengthList(ProLengthList);
 				wpr.setFSoneachLink(FSoneachLink);
 				wpr.setregthinglist(hashregthinglist);
 				wpr.setRegeneratorlist(regthinglist);
 				wpr.setprolinklist(alllinklist);
 				wpr.setnewreglist(newReg);
-				wpr.setsharereglist(shareReg);
+				wpr.setsharereglist(finalRoute.getUsedShareReg());
 				wpr.setprovirtuallinklist(provirtuallinklist);
 			}
 		}
@@ -627,7 +639,6 @@ public class ProregeneratorPlace {
 		boolean opworkflag = false, shareFlag = true;
 		Node srcnode = new Node(null, 0, null, iplayer, 0, 0);
 		Node desnode = new Node(null, 0, null, iplayer, 0, 0);
-		Test t = new Test();
 		file_out_put file_io = new file_out_put();
 
 		if (routelength > 2000 && routelength <= 4000) {

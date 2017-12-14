@@ -25,7 +25,7 @@ public class WorkandProtectRoute {//一条业务工作路径 保护路径 以及上面使用的再生
 	 private ArrayList<Double> RegWorkLengthList=new ArrayList<Double>();
 	 private ArrayList<Double> RegProLengthList=new ArrayList<Double>();
 	 
-		public void setRegRegProLengthList(ArrayList<Double> RegProLengthList) {
+		public void setRegProLengthList(ArrayList<Double> RegProLengthList) {
 			this.RegProLengthList=RegProLengthList;
 		}
 		public ArrayList<Double> getRegProLengthList() {

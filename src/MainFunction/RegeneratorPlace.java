@@ -75,6 +75,7 @@ public class RegeneratorPlace {
 								ParameterTransfer pt = new ParameterTransfer();
 								partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair,pt);//
 								RemainRatio.add(pt.getRemainFlowRatio());
+								file_io.filewrite2(OutFileName, "length=" + length);
 								NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
 								FStotal = FStotal + newFS;
 								length = 0;
@@ -87,6 +88,7 @@ public class RegeneratorPlace {
 							ParameterTransfer pt = new ParameterTransfer();
 							partworkflag = vertify(IPflow, length, linklist, oplayer, ipLayer, wprlist, nodepair, pt);// 此时在n点放置再生器
 							RemainRatio.add(pt.getRemainFlowRatio());
+							file_io.filewrite2(OutFileName, "length=" + length);
 							NumRemainFlow = NumRemainFlow + pt.getNumremainFlow();
 							FStotal = FStotal + newFS;
 						}

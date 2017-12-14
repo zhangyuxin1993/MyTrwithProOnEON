@@ -46,6 +46,7 @@ public class LinearRoute extends Subgraph {
 			           file.filewrite(write_name,node.getName()+"   ");			          			           
 		      }		     
 		}		
+		 
 	}
 	
 	public void OutputRoute_node(LinearRoute newroute){//输出路径的节点信息

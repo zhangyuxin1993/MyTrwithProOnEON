@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import general.file_out_put;
 import graphalgorithms.RouteSearching;
 import network.Layer;
 import network.NodePair;
@@ -59,25 +60,29 @@ public class DemandRadom {
 		return nodepairlist;
 	}
 	
-	public HashMap<String, NodePair> TrafficNumRadom(ArrayList<NodePair>nodepairlist ){
+	public void TrafficNumRadom(ArrayList<NodePair>nodepairlist ){
+		String serve = "F:\\zyx\\programFile\\USNET.dat";
+		String local = "D:\\zyx\\programFile\\RegwithProandTrgro\\USNET.dat";
 		randomfunction radom=new randomfunction();
-		HashMap<String, NodePair> NodepairWithTraffic=new HashMap<String, NodePair>(0);
+		file_out_put file_io=new file_out_put();
+//		HashMap<String, NodePair> NodepairWithTraffic=new HashMap<String, NodePair>(0);
+		file_io.filewrite2(serve, "随机产生的节点对容量：");
 		for(NodePair nodePair:nodepairlist){
 //			setDemand++;
 //			System.out.println(nodePair.getName());
 //			if(setDemand<nodepairNum/5){
 			nodePair.setTrafficdemand(radom.Num_random(1, 1025)[0]+200);//产生200G-1T的容量
+			file_io.filewrite2(serve,  nodePair.getName()+"  "+ nodePair.getTrafficdemand());
 //			}
 //			else{
 //				nodePair.setTrafficdemand(radom.Num_random(1, demandlimit)[0]+1);
 //			}
 		}
 //		System.out.println();
-		for(NodePair nodePair:nodepairlist){
+//		for(NodePair nodePair:nodepairlist){
 //			System.out.print(nodePair.getName()+"   ");
 //			System.out.println(nodePair.getSlotsnum());
-			NodepairWithTraffic.put(nodePair.getName(), nodePair);
-		}
-		return NodepairWithTraffic;
+//			NodepairWithTraffic.put(nodePair.getName(), nodePair);
+//		}
 	}
 }

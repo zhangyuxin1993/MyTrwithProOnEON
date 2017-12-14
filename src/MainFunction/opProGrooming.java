@@ -34,6 +34,8 @@ public class opProGrooming {// 光层路由保护
 		ArrayList<VirtualLink> provirtuallinklist = new ArrayList<>();
 		ArrayList<FSshareOnlink> FSuseOnlink = new ArrayList<FSshareOnlink>();
 		ArrayList<Link> opDelLink = new ArrayList<Link>();
+		ArrayList<Double> ProLengthList=new ArrayList<Double>();
+		
 		System.out.println("************保护路由在IP层不能路由，需要在光层新建");
 		file_io.filewrite2(OutFileName, "************保护路由在IP层不能路由，需要在光层新建");
 
@@ -225,7 +227,7 @@ public class opProGrooming {// 光层路由保护
 			if (routelength > 4000) {
 				ProregeneratorPlace rgp = new ProregeneratorPlace();
 				success = rgp.ProRegeneratorPlace(nodepair, opPrtectRoute, wprlist, routelength, oplayer, iplayer,
-						IPflow, request);
+						IPflow, request,ProLengthList);
 			}
 		}
 
@@ -237,6 +239,7 @@ public class opProGrooming {// 光层路由保护
 					totallink = opPrtectRoute.getLinklist();
 					wpr.setrequest(request);
 					wpr.setprolinklist(totallink);
+					wpr.setproroute(opPrtectRoute);
 					wpr.setFSoneachLink(FSuseOnlink);
 					wpr.setprovirtuallinklist(provirtuallinklist);
 					wpr.setregthinglist(null);
