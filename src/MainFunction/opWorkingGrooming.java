@@ -93,8 +93,6 @@ public class opWorkingGrooming {
 					Request request = null;
 					ResourceOnLink ro = new ResourceOnLink(request, link, index_wave.get(0), slotnum);
 					link.setMaxslot(slotnum + link.getMaxslot());
-					 System.out.println("物理层为链路分配容量后，链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
-					 file_io.filewrite2(OutFileName,"物理层为链路分配容量后，链路 " + link.getName() + "的最大slot是： " + link.getMaxslot()+" 可用频谱窗数： "+link.getSlotsindex().size());
 				} // 改变物理层上的链路容量 以便于下一次新建时分配slot
 			
 				String name = opsrcnode.getName() + "-" + opdesnode.getName();
@@ -128,26 +126,22 @@ public class opWorkingGrooming {
 				if(findflag){//如果在IP层中已经找到该链路
 				finlink.getVirtualLinkList().add(Vlink);
 				System.out.println("IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
-						+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
-						+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
-						+"   "+"虚拟链路cost： "+ Vlink.getcost());
+						+ Vlink.getUsedcapacity() + "\n"+"共有的flow:  " + Vlink.getFullcapacity()
+						+ "    预留的flow：  " + Vlink.getRestcapacity());
 				file_io.filewrite2(OutFileName,"IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
-						+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
-						+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
-						+"   "+"虚拟链路cost： "+ Vlink.getcost());
+						+ Vlink.getUsedcapacity() + "\n"+"共有的flow:  " + Vlink.getFullcapacity()
+						+ "    预留的flow：  " + Vlink.getRestcapacity());
 				System.out.println("工作链路在光层新建的链路：  "+finlink.getName()+"  上的虚拟链路条数： "+ finlink.getVirtualLinkList().size());
 				file_io.filewrite2(OutFileName,"工作链路在光层新建的链路：  "+finlink.getName()+"  上的虚拟链路条数： "+ finlink.getVirtualLinkList().size());
 				}
 				else{
 					createlink.getVirtualLinkList().add(Vlink);
 					System.out.println("IP层上新建链路 " + createlink.getName() + " 加入新的工作虚拟链路 上面的已用flow: "
-							+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
-							+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
-							+"   "+"虚拟链路cost： "+ Vlink.getcost());
+							+ Vlink.getUsedcapacity() + "\n"+"共有的flow:  " + Vlink.getFullcapacity()
+							+ "    预留的flow：  " + Vlink.getRestcapacity());
 					file_io.filewrite2(OutFileName,"IP层上新建链路 " + createlink.getName() + " 加入新的工作虚拟链路 上面的已用flow: "
-							+ Vlink.getUsedcapacity() + "\n "+"共有的flow:  " + Vlink.getFullcapacity()
-							+ "    预留的flow：  " + Vlink.getRestcapacity()+"\n"+"虚拟链路长度："+Vlink.getlength()
-							+"   "+"虚拟链路cost： "+ Vlink.getcost());
+							+ Vlink.getUsedcapacity() + "\n"+"共有的flow:  " + Vlink.getFullcapacity()
+							+ "    预留的flow：  " + Vlink.getRestcapacity());
 					System.out.println("*********工作链路在光层新建的链路：  "+createlink.getName()+"  上的虚拟链路条数： "+ createlink.getVirtualLinkList().size());
 					file_io.filewrite2(OutFileName,"*********工作链路在光层新建的链路：  "+createlink.getName()+"  上的虚拟链路条数： "+ createlink.getVirtualLinkList().size());
 				}

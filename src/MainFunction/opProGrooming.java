@@ -21,7 +21,7 @@ public class opProGrooming {// 光层路由保护
 	String OutFileName = Mymain.OutFileName;
 
 	public boolean opprotectiongrooming(Layer iplayer, Layer oplayer, NodePair nodepair, LinearRoute route,
-			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist) throws IOException {// flag=true表示保护IP层建立的工作路径
+			int numOfTransponder, boolean flag, ArrayList<WorkandProtectRoute> wprlist,float threshold) throws IOException {// flag=true表示保护IP层建立的工作路径
 		// flag=flase表示光层建立的工作路径
 		RouteSearching Dijkstra = new RouteSearching();
 		Request request = new Request(nodepair);
@@ -196,7 +196,7 @@ public class opProGrooming {// 光层路由保护
 								+ "    预留的flow：  " + Vlink.getRestcapacity() );
 						file_io.filewrite2(OutFileName,
 								"IP层已存在的链路 " + finlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: " + Vlink.getUsedcapacity()
-										+ "\n " + "共有的flow:  " + Vlink.getFullcapacity() + "    预留的flow：  "
+										+ "\n" + "共有的flow:  " + Vlink.getFullcapacity() + "    预留的flow：  "
 										+ Vlink.getRestcapacity() );
 						System.out.println("*********已存在IP层链路：  " + finlink.getName() + "  上的虚拟链路条数： "
 								+ finlink.getVirtualLinkList().size());
@@ -207,7 +207,7 @@ public class opProGrooming {// 光层路由保护
 						file_io.filewrite2(OutFileName, "虚拟链路条数：" + createlink.getVirtualLinkList().size());
 						createlink.getVirtualLinkList().add(Vlink);
 						System.out.println("IP层上新建链路 " + createlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: "
-								+ Vlink.getUsedcapacity() + "\n " + "共有的flow:  " + Vlink.getFullcapacity()
+								+ Vlink.getUsedcapacity() + "\n" + "共有的flow:  " + Vlink.getFullcapacity()
 								+ "    预留的flow：  " + Vlink.getRestcapacity() );
 						file_io.filewrite2(OutFileName,
 								"IP层上新建链路 " + createlink.getName() + " 加入新的保护虚拟链路 上面的已用flow: " + Vlink.getUsedcapacity()
@@ -221,7 +221,7 @@ public class opProGrooming {// 光层路由保护
 			if (routelength > 4000) {
 				ProregeneratorPlace rgp = new ProregeneratorPlace();
 				success = rgp.ProRegeneratorPlace(nodepair, opPrtectRoute, wprlist, routelength, oplayer, iplayer,
-						IPflow, request,ProLengthList);
+						IPflow, request,ProLengthList,threshold);
 			}
 		}
 
@@ -239,6 +239,9 @@ public class opProGrooming {// 光层路由保护
 					wpr.setregthinglist(null);
 				}
 			}
+		}
+		if(success){
+			file_io.filewrite2(OutFileName, "保护路径已成功建立");
 		}
 		ArrayList<WorkandProtectRoute> FailWpr=new ArrayList<WorkandProtectRoute>();
 		if(!success){//在光层无法建立保护路由
@@ -354,7 +357,6 @@ public class opProGrooming {// 光层路由保护
 						}
 					}
 					// test
-
 					// for (int remove : RemoveslotIndex) {
 					// file_io.filewrite_without(OutFileName,"需要移除的FS为"+remove+" ");
 					// }
@@ -367,19 +369,16 @@ public class opProGrooming {// 光层路由保护
 					if (RemoveslotIndex.size() != 0 && RemoveslotIndex != null) {
 						for (int remove : RemoveslotIndex) {
 
-							// file_io.filewrite2(OutFileName,"可以共享的FS数目还剩
-							// "+shareslotWPR.get(wpr).size());
+							// file_io.filewrite2(OutFileName,"可以共享的FS数目还剩"+shareslotWPR.get(wpr).size());
 							// for(int last:shareslotWPR.get(wpr)){
 							// file_io.filewrite_without(OutFileName,last+" ");
 							// }
 							// file_io.filewrite2(OutFileName,"");
 							int index = shareslotWPR.get(wpr).indexOf(remove);
 							// file_io.filewrite2(OutFileName," "+remove);
-							// file_io.filewrite2(OutFileName,"需要移除的链路index为
-							// "+index);
+							// file_io.filewrite2(OutFileName,"需要移除的链路index为 "+index);
 							shareslotWPR.get(wpr).remove(index);
-							// file_io.filewrite2(OutFileName,"已经移除的FS为
-							// "+remove);
+							// file_io.filewrite2(OutFileName,"已经移除的FS为 "+remove);
 						} // 将每个WPR上面不可以共享的FS去掉
 					}
 					FSshareOnlink fsol = new FSshareOnlink(link, shareslotIndex);
@@ -391,7 +390,6 @@ public class opProGrooming {// 光层路由保护
 			for (WorkandProtectRoute wpr : wprlist) {
 				if (shareslotWPR.keySet().contains(wpr)) {
 					if (shareslotWPR.get(wpr).size() != 0) {
-						file_io.filewrite2(OutFileName, " ");
 						file_io.filewrite_without(OutFileName, "链路 " + link.getName() + " 上可以共享的slot为 ");
 						System.out.print("链路 " + link.getName() + " 上可以共享的slot为 ");
 						for (int release : shareslotWPR.get(wpr)) {// 释放可共享资源
@@ -414,12 +412,11 @@ public class opProGrooming {// 光层路由保护
 							// "+re.getNodepair().getName());
 							// }
 
-							
 							// link.getSlotsarray().get(release).getoccupiedreqlist().get(0);
 							// link.getSlotsarray().get(release).getoccupiedreqlist().remove(res);
 							link.getSlotsarray().get(release).getoccupiedreqlist().remove(request);
 							// test
-							file_io.filewrite_without(OutFileName, release + "    ");
+							file_io.filewrite_without(OutFileName, release + "  ");
 							System.out.print(release + "    ");
 						}
 						file_io.filewrite2(OutFileName, " ");

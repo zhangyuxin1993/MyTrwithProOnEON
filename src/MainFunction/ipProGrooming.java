@@ -178,17 +178,6 @@ public class ipProGrooming {
 				Dijlink.getVirtualLinkList().remove(vlink);
 			} // 将所有剩余容量大于最小剩余容量的链路全部放入集合 并删除
 		}
-		// test
-		HashMap<String, Link> linklistt = iplayer.getLinklist();
-		Iterator<String> linkitorr = linklistt.keySet().iterator();
-		while (linkitorr.hasNext()) {
-			Link link = (Link) (linklistt.get(linkitorr.next()));
-			System.out.println("剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
-					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
-			file_io.filewrite2(OutFileName,"剩余的IP层链路为" + link.getName() + "  剩余的虚拟链路条数为：" + link.getVirtualLinkList().size()
-					+ "虚拟链路上剩余的容量为：" + link.getVirtualLinkList().get(0).getRestcapacity());
-		}
-
 		LinearRoute newRoute = new LinearRoute(null, 0, null);
 		Dijkstra.Dijkstras(srcnode, desnode, iplayer, newRoute, null);// 在iplayer里面找寻最短保护路径
 
@@ -266,6 +255,12 @@ public class ipProGrooming {
 			}
 		}
 		DelhighcapVlink.clear();
+		if(ipproflag){
+			file_io.filewrite2(OutFileName,"保护路径在IP层成功路由");
+		}
+		else{
+			file_io.filewrite2(OutFileName,"保护路径在IP层路由失败");
+		}
 		return ipproflag;
 	}
 
