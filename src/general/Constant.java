@@ -25,9 +25,9 @@ public class Constant {
 	public final static double Cost_OEO_reg_8QAM=1.5;   
 	public final static double Cost_OEO_reg_16QAM=1.7;   
 	
-	public final static int Cost_IP_reg_BPSK=2;  //IP再生 不同调制格式下的cost
-	public final static double Cost_IP_reg_QPSK=2.6;  
-	public final static double Cost_IP_reg_8QAM=3;   
-	public final static double Cost_IP_reg_16QAM=3.4;   
+	public final static double Cost_IP_reg_BPSK=1.3;  //IP再生 不同调制格式下的cost
+	public final static double Cost_IP_reg_QPSK=1.69;  
+	public final static double Cost_IP_reg_8QAM=1.95;   
+	public final static double Cost_IP_reg_16QAM=2.21;   
 }
 

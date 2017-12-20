@@ -19,11 +19,12 @@ import subgraph.LinearRoute;
 public class Mymain {
 //	public static String OutFileName = "D:\\zyx\\programFile\\RegwithProandTrgro\\cost239.dat";
 //	public static String FinalResultFile = "D:\\zyx\\programFile\\RegwithProandTrgro\\cost239_FinalResult.dat";
-	public static String OutFileName = "F:\\zyx\\programFile\\cost239.dat";
-	public static String FinalResultFile = "F:\\zyx\\programFile\\cost239_FinalResult.dat";
+	public static String OutFileName = "F:\\zyx\\programFile\\USNET.dat";
+	public static String FinalResultFile = "F:\\zyx\\programFile\\USNET_FinalResult.dat";
 	public static void main(String[] args) throws IOException {
 //		String TopologyName = "D:/zyx/Topology/cost239.csv";
-		String TopologyName = "F:/zyx/Topology/cost239.csv";
+		String TopologyName = "F:/zyx/Topology/USNET.csv";
+		int DemandNum=50;
 		int numOfTransponder = 0;
 		file_out_put file_io=new file_out_put();
 		Mymain mm=new Mymain();
@@ -32,38 +33,36 @@ public class Mymain {
 		network_base.readPhysicalTopology(TopologyName);
 		network_base.copyNodes();
 		network_base.createNodepair();// 每个layer都生成节点对 产生节点对的时候会自动生成nodepair之间的demand
-		DemandRadom dr=new DemandRadom();
 		Layer iplayer_base = network_base.getLayerlist().get("Layer0");
-		RadomNodepairlist=dr.NodePairRadom(10,TopologyName,iplayer_base);//随机产生结对
+	
+		DemandRadom dr=new DemandRadom();
+		RadomNodepairlist=dr.NodePairRadom(DemandNum,TopologyName,iplayer_base);//随机产生结对
 		dr.TrafficNumRadom(RadomNodepairlist);
 		for(NodePair np:RadomNodepairlist){//输出随机产生节点对的大小
-			System.out.println(np.getName()+"  "+ np.getTrafficdemand());
+			file_io.filewrite2(FinalResultFile, np.getName());
 		}
-		
+		for(NodePair np:RadomNodepairlist){//输出随机产生节点对的大小
+			file_io.filewrite(FinalResultFile, np.getTrafficdemand());
+		}
 		//以下可以读取表格中的业务
 //		ReadDemand rd=new ReadDemand();
-//		HashMap<String, NodePair> Readnodepairlist = new HashMap<String, NodePair>();
-//		 nodepairlist=rd.readDemand(iplayer, "D:/10node.csv");
-//		 for(NodePair nodepair:nodepairlist){
-//			 System.out.println(nodepair.getName()+"  "+nodepair.getTrafficdemand());
-//		 Readnodepairlist.put(nodepair.getName() , nodepair);
-//		 }
-//		 iplayer.setNodepairlist(Readnodepairlist);
-		
+//		RadomNodepairlist=rd.readDemand(iplayer_base, "f:\\zyx\\cost239Traffic.csv");
+//		RadomNodepairlist=rd.readDemand(iplayer_base, "D:/cost239Traffic.csv");
+ 
 		/*
 		 * 设置threshold循环
 		 */
-		for(float threshold=0;threshold<=0.1; threshold=(float) (threshold+0.01)){
+		for(float threshold=0;threshold<=1.05; threshold=(float) (threshold+0.1)){
 			double bestResult=100000;
 			int bestshuffle=1000,NumOfIPreg=0,NumofOEOreg=0;
 			
-		for(int shuffle=0;shuffle<3;shuffle++){//打乱次序100次
+		for(int shuffle=0;shuffle<10;shuffle++){//打乱次序100次
 			double TotalWorkCost=0,TotalProCost=0;
-			file_io.filewrite2(OutFileName, " ");
+//			file_io.filewrite2(OutFileName, " ");
 			file_io.filewrite2(FinalResultFile, " ");
-			file_io.filewrite2(OutFileName, "threshold="+threshold);
+//			file_io.filewrite2(OutFileName, "threshold="+threshold);
 			file_io.filewrite2(FinalResultFile, "threshold="+threshold);
-			file_io.filewrite2(OutFileName, "shuffle="+shuffle);
+//			file_io.filewrite2(OutFileName, "shuffle="+shuffle);
 			file_io.filewrite2(FinalResultFile, "shuffle="+shuffle);
 		
 			Collections.shuffle(RadomNodepairlist);//打乱产生的业务100次
@@ -88,14 +87,14 @@ public class Mymain {
 			
 			for (int n = 0; n < demandlist.size(); n++) {
 				NodePair nodepair = demandlist.get(n);
-				System.out.println();
-				System.out.println();
-				file_io.filewrite2(OutFileName, "");
-				file_io.filewrite2(OutFileName, "");
-				System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
-				file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+//				System.out.println();
+//				System.out.println();
+//				file_io.filewrite2(OutFileName, "");
+//				file_io.filewrite2(OutFileName, "");
+//				System.out.println("正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
+//				file_io.filewrite2(OutFileName, "正在操作的节点对： " + nodepair.getName() + "  他的流量需求是： " + nodepair.getTrafficdemand());
 				
-				if(nodepair.getTrafficdemand()<50 ){
+				if(nodepair.getTrafficdemand()<20 ){
 					SmallNodePairList.add(nodepair);
 					continue;
 				}
@@ -104,9 +103,9 @@ public class Mymain {
 			}
 				if(SmallNodePairList!=null&&SmallNodePairList.size()!=0){
 					for(NodePair smallnodepair:SmallNodePairList){
-						file_io.filewrite2(OutFileName, "");
-						file_io.filewrite2(OutFileName, "");
-						file_io.filewrite2(OutFileName, "正在操作的节点对： " + smallnodepair.getName() + "  他的流量需求是： " + smallnodepair.getTrafficdemand());
+//						file_io.filewrite2(OutFileName, "");
+//						file_io.filewrite2(OutFileName, "");
+//						file_io.filewrite2(OutFileName, "正在操作的节点对： " + smallnodepair.getName() + "  他的流量需求是： " + smallnodepair.getTrafficdemand());
 						mm.mainMethod(smallnodepair, iplayer, oplayer, numOfTransponder, wprlist,threshold);
 					}
 				}
@@ -119,6 +118,10 @@ public class Mymain {
 			int demandnum=0,TotalWorkRegNum=0,TotalWorkIPReg=0,
 					TotalProRegNum=0,TotalProIPReg=0;
 			ArrayList<Regenerator> reglist=new ArrayList<>();
+			if(wprlist.size()!=DemandNum) {
+				file_io.filewrite2(FinalResultFile, "此次shuffle无法完成所有业务" );
+				continue;
+			}
 			for (WorkandProtectRoute wpr : wprlist) {
 				demandnum++;
 				file_io.filewrite2(FinalResultFile, "业务：" + demandnum+"  "+wpr.getdemand().getName());
@@ -312,7 +315,7 @@ public class Mymain {
 		file_io.filewrite2(FinalResultFile, "Best shuffle="+bestshuffle+"  Best Result="+bestResult);
 		file_io.filewrite2(FinalResultFile, "Num of Pro IP reg="+NumOfIPreg+"  Num of Pro OEO reg="+NumofOEOreg);
 		file_io.filewrite2(FinalResultFile, "Finish a threshold");
-	}
+		}
 		System.out.println("Finish");
 	}
 //main函数结束
@@ -419,44 +422,44 @@ public class Mymain {
 			if(wpr.getnewreglist().contains(reg)){//该再生器为新建的再生器
 				if(reg.getNature()==0){//OEO再生器
 					double cost=0;
-					file_io.filewrite2(OutFileName,"保护路径上第"+count+"个OEO再生器两端的cost");
+					file_io.filewrite2(FinalResultFile,"保护路径上第"+count+"个OEO再生器两端的cost");
 					for(int num=count;num<=count+1;num++){
 					double length=	wpr.getRegProLengthList().get(num);
-					file_io.filewrite2(OutFileName,"距离为 "+length);
+					file_io.filewrite2(FinalResultFile,"距离为 "+length);
 					if (length > 2000 && length <= 4000) {
 						cost=Constant.Cost_OEO_reg_BPSK;
-						file_io.filewrite2(OutFileName,"采用BPSK,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用BPSK,cost为："+ cost);
 					} else if (length > 1000 && length <= 2000) {
 						cost=Constant.Cost_OEO_reg_QPSK;
-						file_io.filewrite2(OutFileName,"采用QPSK,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用QPSK,cost为："+ cost);
 					} else if (length > 500 && length <= 1000) {
 						cost=Constant.Cost_OEO_reg_8QAM;
-						file_io.filewrite2(OutFileName,"采用8QAM,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用8QAM,cost为："+ cost);
 					} else if (length > 0 && length <= 500) {
 						cost=Constant.Cost_OEO_reg_16QAM;
-						file_io.filewrite2(OutFileName,"采用16QAM,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用16QAM,cost为："+ cost);
 					}
 						TotalProCost = TotalProCost + cost;
 					}
 				}
 				if(reg.getNature()==1){//IP再生器
 					double cost=0;
-					file_io.filewrite2(OutFileName,"保护路径上第"+count+"个IP再生器两端的cost");
+					file_io.filewrite2(FinalResultFile,"保护路径上第"+count+"个IP再生器两端的cost");
 					for(int num=count;num<=count+1;num++){
 					double length=	wpr.getRegProLengthList().get(num);
-					file_io.filewrite2(OutFileName,"距离为 "+length);
+					file_io.filewrite2(FinalResultFile,"距离为 "+length);
 					if (length > 2000 && length <= 4000) {
 						cost=Constant.Cost_IP_reg_BPSK;
-						file_io.filewrite2(OutFileName,"采用BPSK,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用BPSK,cost为："+ cost);
 					} else if (length > 1000 && length <= 2000) {
 						cost=Constant.Cost_IP_reg_QPSK;
-						file_io.filewrite2(OutFileName,"采用QPSK,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用QPSK,cost为："+ cost);
 					} else if (length > 500 && length <= 1000) {
 						cost=Constant.Cost_IP_reg_8QAM;
-						file_io.filewrite2(OutFileName,"采用8QAM,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用8QAM,cost为："+ cost);
 					} else if (length > 0 && length <= 500) {
 						cost=Constant.Cost_IP_reg_16QAM;
-						file_io.filewrite2(OutFileName,"采用16QAM,cost为："+ cost);
+						file_io.filewrite2(FinalResultFile,"采用16QAM,cost为："+ cost);
 					}
 						TotalProCost = TotalProCost + cost;
 					}
